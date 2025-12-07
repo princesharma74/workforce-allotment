@@ -1,0 +1,39 @@
+name: 1. Standard Mixed Feasibility
+people:
+- name: Alice
+  skills:
+  - Python
+  - SQL
+- name: Bob
+  skills:
+  - Java
+- name: Charlie
+  skills:
+  - Python
+  - Java
+  - SQL
+projects:
+- name: Web App
+  tasks:
+  - name: Backend
+    skill: Python
+    ranges:
+    - - '2024-01-01'
+      - '2024-01-05'
+  - name: Database
+    skill: SQL
+    ranges:
+    - - '2024-01-03'
+      - '2024-01-07'
+- name: Legacy System
+  tasks:
+  - name: Maintenance
+    skill: Java
+    ranges:
+    - - '2024-01-01'
+      - '2024-01-05'
+  - name: Migration
+    skill: Python
+    ranges:
+    - - '2024-01-01'
+      - '2024-01-05'

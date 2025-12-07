@@ -1,0 +1,22 @@
+name: 2. Skill Mismatch (Rust)
+people:
+- name: Alice
+  skills:
+  - Python
+  - SQL
+- name: Bob
+  skills:
+  - Java
+- name: Charlie
+  skills:
+  - Python
+  - Java
+  - SQL
+projects:
+- name: Rust Rewrite
+  tasks:
+  - name: Core Engine
+    skill: Rust
+    ranges:
+    - - '2024-02-01'
+      - '2024-02-05'
