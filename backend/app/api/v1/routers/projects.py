@@ -28,7 +28,8 @@ def create_project(project_in: ProjectCreate, session: Session = Depends(get_ses
         task = Task(
             name=t_data.name,
             project_id=db_project.id,
-            skill_id=skill.id
+            skill_id=skill.id,
+            workforce_count=t_data.workforce_count
         )
         session.add(task)
         session.commit()
@@ -52,7 +53,7 @@ def read_projects(session: Session = Depends(get_session)):
     return [_project_to_read(p) for p in projects]
 
 @router.delete("/{project_id}")
-def delete_project(project_id: int, session: Session = Depends(get_session)):
+def delete_project(project_id: str, session: Session = Depends(get_session)):
     project = session.get(Project, project_id)
     if not project:
          raise HTTPException(status_code=404, detail="Project not found")
@@ -71,7 +72,7 @@ def delete_project(project_id: int, session: Session = Depends(get_session)):
     return {"ok": True}
 
 @router.put("/{project_id}", response_model=ProjectRead)
-def update_project(project_id: int, project_in: ProjectUpdate, session: Session = Depends(get_session)):
+def update_project(project_id: str, project_in: ProjectUpdate, session: Session = Depends(get_session)):
     project = session.get(Project, project_id)
     if not project:
         raise HTTPException(status_code=404, detail="Project not found")
@@ -85,7 +86,7 @@ def update_project(project_id: int, project_in: ProjectUpdate, session: Session 
     return _project_to_read(project)
 
 @router.delete("/tasks/{task_id}")
-def delete_task(task_id: int, session: Session = Depends(get_session)):
+def delete_task(task_id: str, session: Session = Depends(get_session)):
     task = session.get(Task, task_id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -100,7 +101,7 @@ def delete_task(task_id: int, session: Session = Depends(get_session)):
     return {"ok": True}
 
 @router.put("/tasks/{task_id}", response_model=TaskRead)
-def update_task(task_id: int, task_in: TaskUpdate, session: Session = Depends(get_session)):
+def update_task(task_id: str, task_in: TaskUpdate, session: Session = Depends(get_session)):
     task = session.get(Task, task_id)
     if not task:
          raise HTTPException(status_code=404, detail="Task not found")
@@ -132,6 +133,9 @@ def update_task(task_id: int, task_in: TaskUpdate, session: Session = Depends(ge
             )
             session.add(tr)
             
+    if task_in.workforce_count is not None:
+        task.workforce_count = task_in.workforce_count
+
     session.add(task)
     session.commit()
     session.refresh(task)
@@ -145,24 +149,43 @@ def update_task(task_id: int, task_in: TaskUpdate, session: Session = Depends(ge
         name=task.name,
         project_id=task.project_id,
         skill_id=task.skill_id,
-        assigned_person_id=task.assigned_person_id,
+        workforce_count=task.workforce_count,
+        assignees=task.assignees,
         required_skill=SkillRead(id=task.required_skill.id, name=task.required_skill.name),
         required_ranges=req_ranges
     )
 
 def _project_to_read(project: Project) -> ProjectRead:
-    from backend.app.schemas import DateRange
+    from backend.app.schemas import DateRange, PersonRead, SkillRead
+    # Need to handle potential recursion or just creating bare objects? 
+    # PersonRead expects skills/ranges. 
+    # Let's do a best effort minimal construction to avoid N+1 infinite loops if PersonRead had assignments.
+    # PersonRead does NOT have assignments.
+    
     tasks_read = []
     for t in project.tasks:
         req_ranges = [DateRange(start=r.start_date, end=r.end_date) for r in t.required_ranges]
+        
+        assignees_read = []
+        for p in t.assignees:
+             assignees_read.append(PersonRead(
+                 id=p.id,
+                 name=p.name,
+                 joining_date=p.joining_date,
+                 termination_date=p.termination_date,
+                 skills=[SkillRead(id=s.id, name=s.name) for s in p.skills],
+                 busy_ranges=[DateRange(start=b.start_date, end=b.end_date) for b in p.schedule]
+             ))
+
         tasks_read.append(TaskRead(
             id=t.id,
             name=t.name,
             project_id=project.id,
             skill_id=t.skill_id,
-            assigned_person_id=t.assigned_person_id,
+            assignees=assignees_read,
             required_skill=SkillRead(id=t.required_skill.id, name=t.required_skill.name),
-            required_ranges=req_ranges
+            required_ranges=req_ranges,
+            workforce_count=t.workforce_count
         ))
         
     return ProjectRead(
@@ -172,7 +195,7 @@ def _project_to_read(project: Project) -> ProjectRead:
     )
 
 @router.put("/tasks/{task_id}/assign")
-def assign_task(task_id: int, person_id: int, session: Session = Depends(get_session)):
+def assign_task(task_id: str, person_id: str, session: Session = Depends(get_session)):
     task = session.get(Task, task_id)
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
@@ -183,10 +206,13 @@ def assign_task(task_id: int, person_id: int, session: Session = Depends(get_ses
     if not person:
         raise HTTPException(status_code=404, detail="Person not found")
         
-    task.assigned_person_id = person.id
-    session.add(task)
-    session.commit()
-    session.refresh(task)
+    # M2M Assignment
+    if person not in task.assignees:
+        task.assignees.append(person)
+        session.add(task)
+        session.commit()
+        session.refresh(task)
+        
     return {"status": "assigned", "task": task.name, "person": person.name}
 
 @router.post("/assignments/bulk")
@@ -206,7 +232,8 @@ def bulk_assign_tasks(request: BulkAssignmentRequest, session: Session = Depends
             errors.append(f"Person {assignment.person_id} not found")
             continue
             
-        task.assigned_person_id = person.id
+        if person not in task.assignees:
+            task.assignees.append(person)
         session.add(task)
         count += 1
         

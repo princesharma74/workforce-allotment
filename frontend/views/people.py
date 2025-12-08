@@ -35,6 +35,18 @@ def render_add_person_tab(skills):
     skill_options = sorted([s['name'] for s in skills])
     selected_skills = st.multiselect("Skills", skill_options, key="person_skills")
     
+    # Efficiency Inputs for Selected Skills
+    skills_payload = []
+    if selected_skills:
+        st.caption("Set Efficiency for selected skills:")
+        for s_name in selected_skills:
+            col_eff1, col_eff2 = st.columns([3, 1])
+            with col_eff1:
+                st.write(f"Efficiency for {s_name}")
+            with col_eff2:
+                eff = st.number_input(f"Eff ({s_name})", min_value=1, max_value=10, value=1, key=f"eff_{s_name}")
+            skills_payload.append({"name": s_name, "efficiency": eff})
+    
     st.markdown("### Occupancies (Leaves/Busy Dates)")
     st.caption("Add existing busy schedules.")
     
@@ -68,7 +80,7 @@ def render_add_person_tab(skills):
                 "name": name,
                 "joining_date": str(start_date),
                 "termination_date": str(term_date) if term_date else None,
-                "skill_names": selected_skills,
+                "skills": skills_payload,
                 "busy_ranges": st.session_state.get("temp_occupancies", [])
             }
             
@@ -129,9 +141,25 @@ def render_edit_person_tab(skills):
                 new_term = None
             
             # Skills
-            current_skills = [s['name'] for s in person['skills']]
+            # Get current efficiencies
+            current_skills_map = {s['name']: s.get('efficiency', 1) for s in person['skills']}
+            current_skill_names = sorted(list(current_skills_map.keys()))
+            
             all_skills = sorted([s['name'] for s in skills])
-            new_skills = st.multiselect("Skills", all_skills, default=current_skills)
+            new_skills_names = st.multiselect("Skills", all_skills, default=current_skill_names)
+            
+            new_skills_payload = []
+            if new_skills_names:
+                st.caption("Set Efficiency for selected skills:")
+                for s_name in new_skills_names:
+                    # preserving existing efficiency if present
+                    default_eff = current_skills_map.get(s_name, 1)
+                    col_eff1, col_eff2 = st.columns([3, 1])
+                    with col_eff1:
+                        st.write(f"Efficiency for {s_name}")
+                    with col_eff2:
+                        eff = st.number_input(f"Eff ({s_name})", min_value=1, max_value=10, value=default_eff, key=f"edit_eff_{person['id']}_{s_name}")
+                    new_skills_payload.append({"name": s_name, "efficiency": eff})
             
             # Busy Ranges
             # Simplified: Text Area with instructions or just Re-Add?
@@ -147,7 +175,7 @@ def render_edit_person_tab(skills):
                     "name": new_name,
                     "joining_date": str(new_join),
                     "termination_date": str(new_term) if new_term else None,
-                    "skill_names": new_skills
+                    "skills": new_skills_payload
                     # busy_ranges not included here, updated separately if needed or we can merge logic
                 }
                 from frontend.utils.api import update_person
@@ -226,8 +254,16 @@ def render_manual_assignment_tab():
         selected_project = project_names_map[selected_project_name]
         
         if selected_person and selected_project:
-            # Filter unassigned tasks
-            available_tasks = [t for t in selected_project['tasks'] if t['assigned_person_id'] is None]
+            # Filter unassigned tasks (or tasks that need more people)
+            available_tasks = []
+            for t in selected_project['tasks']:
+                 needed = t.get('workforce_count', 1)
+                 assignees = t.get('assignees', [])
+                 if len(assignees) < needed:
+                     available_tasks.append(t)
+                 elif st.toggle(f"Show full tasks? ({t['name']})", key=f"tog_{t['id']}"):
+                     available_tasks.append(t) # Allow manual override if user toggles
+                     
             if available_tasks:
                 task_options = {f"{t['name']} ({t['required_skill']['name']})": t for t in available_tasks}
                 selected_task_label = st.selectbox("Select Task", list(task_options.keys()), key="man_assign_task")
@@ -259,13 +295,14 @@ def render_roster():
         if projects:
             for proj in projects:
                 for t in proj['tasks']:
-                    if t['assigned_person_id']:
-                        if t['assigned_person_id'] in assignments_map:
-                            assignments_map[t['assigned_person_id']].append(f"{t['name']} ({proj['name']})")
+                    for person in t.get('assignees', []):
+                        pid = person['id']
+                        if pid in assignments_map:
+                            assignments_map[pid].append(f"{t['name']} ({proj['name']})")
 
         people_data = []
         for p in people:
-            skills_str = ", ".join([s['name'] for s in p['skills']])
+            skills_str = ", ".join([f"{s['name']} ({s.get('efficiency', 1)})" for s in p['skills']])
             busy_str = ", ".join([f"{r['start']} to {r['end']}" for r in p['busy_ranges']]) if p['busy_ranges'] else "None"
             avail_str = f"{p['joining_date']} -> {p['termination_date'] if p['termination_date'] else 'Indefinite'}"
             

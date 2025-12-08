@@ -15,7 +15,14 @@ class SkillCreate(SkillBase):
     pass
 
 class SkillRead(SkillBase):
-    id: int
+    id: str
+
+class PersonSkillCreate(SQLModel):
+    name: str
+    efficiency: int = 1
+
+class PersonSkillRead(SkillRead):
+    efficiency: int = 1
 
 class PersonBase(SQLModel):
     name: str
@@ -23,12 +30,12 @@ class PersonBase(SQLModel):
     termination_date: Optional[date] = None
 
 class PersonCreate(PersonBase):
-    skill_names: List[str] = []
+    skills: List[PersonSkillCreate] = []
     busy_ranges: List[DateRange] = [] 
 
 class PersonRead(PersonBase):
-    id: int
-    skills: List[SkillRead] = []
+    id: str
+    skills: List[PersonSkillRead] = []
     busy_ranges: List[DateRange] = [] 
 
 class ProjectBase(SQLModel):
@@ -38,21 +45,24 @@ class TaskCreateInput(SQLModel):
     name: str
     skill_name: str
     required_ranges: List[DateRange] = []
+    workforce_count: int = 1
 
 class ProjectCreate(ProjectBase):
     tasks: List[TaskCreateInput] 
 
 class TaskRead(SQLModel):
-    id: int
+    id: str
     name: str
-    project_id: int
-    skill_id: int
-    assigned_person_id: Optional[int]
+    project_id: str
+    skill_id: str
+    # assignees: List["PersonRead"] # Circular dependency issue, leaving out details or using base
+    assignees: List[PersonRead] = []
     required_skill: SkillRead
     required_ranges: List[DateRange]
+    workforce_count: int
 
 class ProjectRead(ProjectBase):
-    id: int
+    id: str
     tasks: List[TaskRead] = []
 
 class TaskAnalysisResult(TaskRead):
@@ -64,8 +74,8 @@ class ProjectAnalysisResult(ProjectRead):
     tasks: List[TaskAnalysisResult]
 
 class TaskAssignment(SQLModel):
-    task_id: int
-    person_id: int
+    task_id: str
+    person_id: str
 
 class BulkAssignmentRequest(SQLModel):
     assignments: List[TaskAssignment]
@@ -77,7 +87,7 @@ class PersonUpdate(SQLModel):
     name: Optional[str] = None
     joining_date: Optional[date] = None
     termination_date: Optional[date] = None
-    skill_names: Optional[List[str]] = None
+    skills: Optional[List[PersonSkillCreate]] = None
     busy_ranges: Optional[List[DateRange]] = None
 
 class ProjectUpdate(SQLModel):
@@ -86,4 +96,5 @@ class ProjectUpdate(SQLModel):
 class TaskUpdate(SQLModel):
     name: Optional[str] = None
     skill_name: Optional[str] = None
+    workforce_count: Optional[int] = None
     required_ranges: Optional[List[DateRange]] = None

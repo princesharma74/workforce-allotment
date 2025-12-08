@@ -36,10 +36,14 @@ def render_analysis():
             for p in feasible:
                 with st.expander(f"✅ {p['name']}"):
                     for t in p['tasks']:
-                        assigned_id = t['assigned_person_id']
-                        assigned_name = people_map.get(assigned_id, f"ID {assigned_id}") if assigned_id else "Unassigned"
+                        assignees_list = t.get('assignees', [])
+                        if assignees_list:
+                            names = [person['name'] for person in assignees_list]
+                            assigned_str = f"Assigned to {', '.join(names)}"
+                        else:
+                            assigned_str = "Unassigned (Simulation)"
                         
-                        st.write(f"- {t['name']}: Assigned to {assigned_name}")
+                        st.write(f"- {t['name']}: {assigned_str}")
         
         with col2:
             st.error(f"Infeasible Projects: {len(infeasible)}")
@@ -61,10 +65,10 @@ def render_analysis():
                 assignments_to_apply = []
                 for p in feasible:
                     for t in p['tasks']:
-                        if t.get('assigned_person_id'):
+                        for person in t.get('assignees', []):
                             assignments_to_apply.append({
                                 "task_id": t['id'],
-                                "person_id": t['assigned_person_id']
+                                "person_id": person['id']
                             })
                 
                 if assignments_to_apply:

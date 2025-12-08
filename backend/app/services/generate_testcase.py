@@ -16,7 +16,12 @@ def generate_testcase(num_people, num_projects, max_tasks_per_project, output_fi
     people = []
     for i in range(1, num_people + 1):
         num_skills = random.randint(1, 4)
-        person_skills = random.sample(skills_pool, num_skills)
+        person_skill_names = random.sample(skills_pool, num_skills)
+        person_skills = []
+        for s_name in person_skill_names:
+            efficiency = random.choices([1, 2, 3], weights=[0.7, 0.2, 0.1])[0]
+            person_skills.append({"name": s_name, "efficiency": efficiency})
+            
         people.append({
             "name": f"Person_{i}",
             "skills": person_skills
@@ -44,7 +49,8 @@ def generate_testcase(num_people, num_projects, max_tasks_per_project, output_fi
             tasks.append({
                 "name": f"Task_{i}_{j}",
                 "skill": skill,
-                "ranges": [[str(task_start), str(task_end)]]
+                "ranges": [[str(task_start), str(task_end)]],
+                "workforce_count": random.randint(1, 3)
             })
             
         projects.append({

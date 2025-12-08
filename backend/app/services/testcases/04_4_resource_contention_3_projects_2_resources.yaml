@@ -1,0 +1,39 @@
+name: 4. Resource Contention (3 Projects, 2 Resources)
+people:
+- name: Alice
+  skills:
+  - Python
+  - SQL
+- name: Bob
+  skills:
+  - Java
+- name: Charlie
+  skills:
+  - Python
+  - Java
+  - SQL
+projects:
+- name: Project A
+  tasks:
+  - name: Task A
+    skill: Python
+    ranges:
+    - - '2024-01-01'
+      - '2024-01-05'
+    workforce_count: 1
+- name: Project B
+  tasks:
+  - name: Task B
+    skill: Python
+    ranges:
+    - - '2024-01-01'
+      - '2024-01-05'
+    workforce_count: 1
+- name: Project C
+  tasks:
+  - name: Task C
+    skill: Python
+    ranges:
+    - - '2024-01-01'
+      - '2024-01-05'
+    workforce_count: 1

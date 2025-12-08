@@ -25,7 +25,7 @@ def read_skills(session: Session = Depends(get_session)):
     return skills
 
 @router.delete("/{skill_id}")
-def delete_skill(skill_id: int, session: Session = Depends(get_session)):
+def delete_skill(skill_id: str, session: Session = Depends(get_session)):
     skill = session.get(Skill, skill_id)
     if not skill:
         raise HTTPException(status_code=404, detail="Skill not found")
@@ -34,7 +34,7 @@ def delete_skill(skill_id: int, session: Session = Depends(get_session)):
     return {"ok": True}
 
 @router.put("/{skill_id}", response_model=SkillRead)
-def update_skill(skill_id: int, skill_in: SkillUpdate, session: Session = Depends(get_session)):
+def update_skill(skill_id: str, skill_in: SkillUpdate, session: Session = Depends(get_session)):
     skill = session.get(Skill, skill_id)
     if not skill:
         raise HTTPException(status_code=404, detail="Skill not found")

@@ -19,7 +19,10 @@ def create_person(person: PersonCreate, session: Session = Depends(get_session))
     session.refresh(db_person)
 
     # Add skills
-    for skill_name in person.skill_names:
+    for skill_input in person.skills:
+        skill_name = skill_input.name
+        efficiency = skill_input.efficiency
+        
         skill = session.exec(select(Skill).where(Skill.name == skill_name)).first()
         if not skill:
             skill = Skill(name=skill_name)
@@ -28,7 +31,7 @@ def create_person(person: PersonCreate, session: Session = Depends(get_session))
             session.refresh(skill)
         
         # Link
-        link = PersonSkillLink(person_id=db_person.id, skill_id=skill.id)
+        link = PersonSkillLink(person_id=db_person.id, skill_id=skill.id, efficiency=efficiency)
         session.add(link)
     
     # Add busy ranges
@@ -52,7 +55,7 @@ def read_people(offset: int = 0, limit: int = 100, session: Session = Depends(ge
     return [_person_to_read(p) for p in people]
 
 @router.delete("/{person_id}")
-def delete_person(person_id: int, session: Session = Depends(get_session)):
+def delete_person(person_id: str, session: Session = Depends(get_session)):
     person = session.get(Person, person_id)
     if not person:
         raise HTTPException(status_code=404, detail="Person not found")
@@ -72,7 +75,7 @@ def delete_person(person_id: int, session: Session = Depends(get_session)):
     return {"ok": True}
 
 @router.put("/{person_id}", response_model=PersonRead)
-def update_person(person_id: int, person_in: PersonUpdate, session: Session = Depends(get_session)):
+def update_person(person_id: str, person_in: PersonUpdate, session: Session = Depends(get_session)):
     db_person = session.get(Person, person_id)
     if not db_person:
         raise HTTPException(status_code=404, detail="Person not found")
@@ -84,14 +87,17 @@ def update_person(person_id: int, person_in: PersonUpdate, session: Session = De
     if person_in.termination_date is not None:
         db_person.termination_date = person_in.termination_date
         
-    if person_in.skill_names is not None:
+    if person_in.skills is not None:
         # Clear existing
         links = session.exec(select(PersonSkillLink).where(PersonSkillLink.person_id == person_id)).all()
         for link in links:
             session.delete(link)
         
         # Add new
-        for skill_name in person_in.skill_names:
+        for skill_input in person_in.skills:
+            skill_name = skill_input.name
+            efficiency = skill_input.efficiency
+            
             skill = session.exec(select(Skill).where(Skill.name == skill_name)).first()
             if not skill:
                 skill = Skill(name=skill_name)
@@ -99,7 +105,7 @@ def update_person(person_id: int, person_in: PersonUpdate, session: Session = De
                 session.commit()
                 session.refresh(skill)
             
-            link = PersonSkillLink(person_id=db_person.id, skill_id=skill.id)
+            link = PersonSkillLink(person_id=db_person.id, skill_id=skill.id, efficiency=efficiency)
             session.add(link)
             
     if person_in.busy_ranges is not None:
@@ -123,12 +129,21 @@ def update_person(person_id: int, person_in: PersonUpdate, session: Session = De
     return _person_to_read(db_person)
 
 def _person_to_read(person: Person) -> PersonRead:
-    from backend.app.schemas import DateRange
+    from backend.app.schemas import DateRange, PersonSkillRead
+    
+    # Map efficient
+    skills_map = {l.skill_id: l.efficiency for l in person.skill_links}
+    
+    skills_read = []
+    for s in person.skills:
+        eff = skills_map.get(s.id, 1)
+        skills_read.append(PersonSkillRead(id=s.id, name=s.name, efficiency=eff))
+        
     return PersonRead(
         id=person.id,
         name=person.name,
         joining_date=person.joining_date,
         termination_date=person.termination_date,
-        skills=[SkillRead(id=s.id, name=s.name) for s in person.skills],
+        skills=skills_read,
         busy_ranges=[DateRange(start=b.start_date, end=b.end_date) for b in person.schedule]
     )

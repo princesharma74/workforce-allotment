@@ -18,8 +18,9 @@ def calculate_supply_and_demand(projects: List[dict], people: List[dict]):
                 end = date.fromisoformat(r['end'])
                 
                 current = start
+                count = task.get('workforce_count', 1)
                 while current <= end:
-                    demand_counts[skill_name][current.isoformat()] += 1
+                    demand_counts[skill_name][current.isoformat()] += count
                     current += timedelta(days=1)
     
     if not demand_counts:
@@ -82,7 +83,13 @@ def calculate_supply_and_demand(projects: List[dict], people: List[dict]):
                             break
                     
                     if not is_busy:
-                        supply_count += 1
+                        # Find efficiency for this skill
+                        efficiency = 1
+                        for s in person.get('skills', []):
+                            if s['name'] == skill:
+                                efficiency = s.get('efficiency', 1)
+                                break
+                        supply_count += efficiency
             
             skill_supply.append(supply_count)
             

@@ -49,7 +49,7 @@ def test_create_and_read_person(client: TestClient):
     person_data = {
         "name": "Alice",
         "joining_date": "2023-01-01",
-        "skill_names": ["Python", "SQL"],
+        "skills": [{"name": "Python", "efficiency": 1}, {"name": "SQL", "efficiency": 1}],
         "busy_ranges": [
             {"start": "2023-02-01", "end": "2023-02-10"}
         ]
@@ -122,7 +122,8 @@ def test_manual_assignment(client: TestClient, session: Session):
     
     # Verify assignment persistence
     session.refresh(task)
-    assert task.assigned_person_id == person.id
+    assert len(task.assignees) == 1
+    assert task.assignees[0].id == person.id
 
 def test_bulk_assignment(client: TestClient, session: Session):
     # Setup Data
@@ -155,8 +156,8 @@ def test_bulk_assignment(client: TestClient, session: Session):
     # Verify
     session.refresh(t1)
     session.refresh(t2)
-    assert t1.assigned_person_id == p1.id
-    assert t2.assigned_person_id == p2.id
+    assert t1.assignees[0].id == p1.id
+    assert t2.assignees[0].id == p2.id
 
 def test_scheduler_run(client: TestClient, session: Session):
     # Setup Feasible Scenario
@@ -164,7 +165,7 @@ def test_scheduler_run(client: TestClient, session: Session):
     client.post("/api/v1/people/", json={
         "name": "Charlie",
         "joining_date": "2023-01-01",
-        "skill_names": ["Java"],
+        "skills": [{"name": "Java", "efficiency": 1}],
         "busy_ranges": []
     })
     
@@ -188,18 +189,51 @@ def test_scheduler_run(client: TestClient, session: Session):
     # Check assignment in result but NOT in DB
     
     task_res = res["feasible"][0]["tasks"][0]
-    assert task_res["assigned_person_id"] is not None
+    assert len(task_res["assignees"]) == 1
     
     task = session.exec(select(Task).where(Task.name == "Core Logic")).first()
     session.refresh(task)
-    assert task.assigned_person_id is None # Dry run shouldn't persist
+    assert len(task.assignees) == 0 # Dry run shouldn't persist
     
     # Run Scheduler (Commit)
     response = client.post("/api/v1/scheduler/run?dry_run=false")
     assert response.status_code == 200
     
     session.refresh(task)
-    assert task.assigned_person_id is not None # Should persist
+    assert len(task.assignees) == 1 # Should persist
+
+def test_workforce_count_constraint(client: TestClient, session: Session):
+    # Setup: 2 People with Java
+    client.post("/api/v1/people/", json={"name": "Dev1", "joining_date": "2023-01-01", "skills": [{"name": "Java", "efficiency": 1}]})
+    client.post("/api/v1/people/", json={"name": "Dev2", "joining_date": "2023-01-01", "skills": [{"name": "Java", "efficiency": 1}]})
+    
+    # Project with task requiring workforce_count=2
+    client.post("/api/v1/projects/", json={
+        "name": "Big Project",
+        "tasks": [
+            {
+                "name": "Big Task", 
+                "skill_name": "Java", 
+                "workforce_count": 2,
+                "required_ranges": [{"start": "2023-06-01", "end": "2023-06-10"}]
+            }
+        ]
+    })
+    
+    # Run Scheduler
+    response = client.post("/api/v1/scheduler/run")
+    assert response.status_code == 200
+    res = response.json()
+    assert len(res["feasible"]) == 1
+    
+    # Verify both assigned
+    task_res = res["feasible"][0]["tasks"][0]
+    assert len(task_res["assignees"]) == 2
+    assert task_res["workforce_count"] == 2
+    
+    # Verify in DB
+    task = session.exec(select(Task).where(Task.name == "Big Task")).first()
+    assert len(task.assignees) == 2
 
 def test_person_validation_error(client: TestClient):
     response = client.post("/api/v1/people/", json={
@@ -241,7 +275,7 @@ def test_delete_and_update_flow(client: TestClient, session: Session):
     # Update
     response = client.put(f"/api/v1/people/{person_id}", json={
         "name": "UpdatedName",
-        "skill_names": ["RustLang"] 
+        "skills": [{"name": "RustLang", "efficiency": 1}] 
     })
     assert response.status_code == 200
     assert response.json()["name"] == "UpdatedName"

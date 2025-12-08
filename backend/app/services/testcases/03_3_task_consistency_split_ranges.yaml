@@ -1,0 +1,31 @@
+name: 3. Task Consistency (Split Ranges)
+people:
+- name: Alice
+  skills:
+  - Python
+  - SQL
+  pre_booked:
+  - - '2024-01-08'
+    - '2024-01-09'
+- name: Bob
+  skills:
+  - Java
+- name: Charlie
+  skills:
+  - Python
+  - Java
+  - SQL
+  pre_booked:
+  - - '2024-01-01'
+    - '2024-01-02'
+projects:
+- name: Split Task Project
+  tasks:
+  - name: Long Task
+    skill: Python
+    ranges:
+    - - '2024-01-01'
+      - '2024-01-02'
+    - - '2024-01-08'
+      - '2024-01-09'
+    workforce_count: 1

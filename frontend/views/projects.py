@@ -22,20 +22,37 @@ def render_create_project_tab(skills):
     project_name = st.text_input("Project Name")
     
     st.subheader("Add Tasks to Project")
-    
-    c1, c2, c3, c4 = st.columns([2, 2, 2, 1])
+    c1, c2, c3, c4, c5 = st.columns([2, 2, 2, 1, 1])
     with c1:
         task_name = st.text_input("Task Name", key="task_name_input")
     with c2:
         skill_options = sorted([s['name'] for s in skills])
         required_skill_name = st.selectbox("Required Skill", skill_options, key="task_skill_input")
     with c3:
-        date_range = st.date_input("Period", value=(date.today(), date.today() + timedelta(days=1)), key="task_date_input")
-    
+        # Initial data for the data editor
+        default_data = pd.DataFrame(
+            [
+                {"start": date.today(), "end": date.today() + timedelta(days=1)}
+            ]
+        )
+        # Use data_editor to allow adding multiple ranges
+        edited_df = st.data_editor(
+            default_data,
+            num_rows="dynamic",
+            width="stretch",
+            key="task_ranges_editor",
+            column_config={
+                "start": st.column_config.DateColumn("Start Date", required=True),
+                "end": st.column_config.DateColumn("End Date", required=True)
+            }
+        )
     with c4:
+        workforce_count = st.number_input("Count", min_value=1, value=1, key="task_wf_count")
+    
+    with c5:
         st.write("") 
         st.write("")
-        add_task_btn = st.button("Add Task")
+        add_task_btn = st.button("Add")
     
     if add_task_btn:
         if not project_name:
@@ -43,26 +60,43 @@ def render_create_project_tab(skills):
         elif not task_name:
             st.error("Please enter a task name.")
         else:
-            if isinstance(date_range, tuple) and len(date_range) == 2:
-                start, end = date_range
-                if "temp_tasks" not in st.session_state:
-                        st.session_state.temp_tasks = []
+            # check if edited_df is not empty
+            if not edited_df.empty:
+                req_ranges = []
+                for idx, row in edited_df.iterrows():
+                    # Handle potential NaT or None if row added but not filled, though required=True helps
+                    s = row.get("start")
+                    e = row.get("end")
+                    if s and e:
+                         req_ranges.append({"start": str(s), "end": str(e)})
                 
-                st.session_state.temp_tasks.append({
-                    "name": task_name,
-                    "skill_name": required_skill_name,
-                    "required_ranges": [{"start": str(start), "end": str(end)}]
-                })
-                st.success(f"Task '{task_name}' added to draft.")
+                if req_ranges:
+                    if "temp_tasks" not in st.session_state:
+                         st.session_state.temp_tasks = []
+                    
+                    st.session_state.temp_tasks.append({
+                        "name": task_name,
+                        "skill_name": required_skill_name,
+                        "required_ranges": req_ranges,
+                        "workforce_count": workforce_count
+                    })
+                    st.success(f"Task '{task_name}' added to draft.")
+                else:
+                    st.error("Please add at least one valid date range.")
             else:
-                st.error("Please select a valid date range (Start and End).")
+                st.error("Please add at least one valid date range.")
 
     if "temp_tasks" in st.session_state and st.session_state.temp_tasks:
         st.markdown("##### Tasks in Draft")
         draft_data = []
         for t in st.session_state.temp_tasks:
             ranges_str = ", ".join([f"{r['start']} to {r['end']}" for r in t['required_ranges']])
-            draft_data.append({"Task": t['name'], "Skill": t['skill_name'], "Period": ranges_str})
+            draft_data.append({
+                "Task": t['name'], 
+                "Skill": t['skill_name'], 
+                "Period": ranges_str,
+                "Count": t.get('workforce_count', 1)
+            })
         st.table(pd.DataFrame(draft_data))
         
         if st.button("Save Project"):
@@ -80,6 +114,28 @@ def render_create_project_tab(skills):
                     st.error(f"Error: {resp.text}")
             else:
                 st.error("Project Name required.")
+
+    st.divider()
+    st.subheader("Existing Projects")
+    projects = get_projects()
+    
+    if projects:
+         for p in projects:
+             with st.expander(f"{p['name']} ({len(p['tasks'])} tasks)"):
+                 for t in p['tasks']:
+                     assignees_list = t.get('assignees', [])
+                     if assignees_list:
+                         names = [ps['name'] for ps in assignees_list]
+                         assigned = ", ".join(names)
+                     else:
+                         assigned = "Unassigned"
+                     
+                     wc = t.get('workforce_count', 1)
+                     if t['required_ranges']:
+                         ranges_str = ", ".join([f"{r['start']} to {r['end']}" for r in t['required_ranges']])
+                         st.write(f"- **{t['name']}** (Needs {wc}): {t['required_skill']['name']} ({ranges_str}) -> {assigned}")
+                     else:
+                         st.write(f"- **{t['name']}** (Needs {wc}): {t['required_skill']['name']} (No dates) -> {assigned}")
 def render_manage_projects_tab(skills):
     projects = get_projects()
     if not projects:
@@ -135,33 +191,58 @@ def render_manage_projects_tab(skills):
                             s_idx = all_skills.index(task['required_skill']['name'])
                         except:
                             s_idx = 0
-                        t_skill = st.selectbox("Skill", all_skills, index=s_idx)
+                        t_skill = st.selectbox("Skill", all_skills, index=s_idx, key=f"ts_{task['id']}")
                         
-                        # Ranges - Simplified: Clear and Add New (One Range for now as per UI simplicity)
-                        # We show current ranges string
-                        c_rng_str = ", ".join([f"{r['start']} to {r['end']}" for r in task['required_ranges']])
-                        st.text(f"Current Dates: {c_rng_str}")
+                        t_count = st.number_input("Workforce Count", min_value=1, value=task.get('workforce_count', 1), step=1, key=f"tc_{task['id']}")
                         
-                        st.write("Update Dates (Leave unchecked to keep current)")
-                        update_dates = st.checkbox("Update Dates?", key=f"chk_dates_{task['id']}")
-                        new_start = None
-                        new_end = None
-                        if update_dates:
-                            d1, d2 = st.columns(2)
-                            with d1:
-                                new_start = st.date_input("Start", key=f"t_start_{task['id']}")
-                            with d2:
-                                new_end = st.date_input("End", key=f"t_end_{task['id']}")
+                        # Ranges - Multi-row editor
+                        st.subheader("Required Periods")
+                        
+                        # Prepare initial data frame for editor
+                        existing_ranges_data = []
+                        if task.get('required_ranges'):
+                            for r in task['required_ranges']:
+                                try:
+                                    s_d = date.fromisoformat(r['start'])
+                                    e_d = date.fromisoformat(r['end'])
+                                    existing_ranges_data.append({"start": s_d, "end": e_d})
+                                except ValueError:
+                                    pass
+                        else:
+                             # Default empty row if none
+                             existing_ranges_data.append({"start": date.today(), "end": date.today()})
+                        
+                        df_ranges = pd.DataFrame(existing_ranges_data)
+                        
+                        edited_ranges_df = st.data_editor(
+                             df_ranges,
+                             num_rows="dynamic",
+                             use_container_width=True,
+                             key=f"editor_ranges_{task['id']}",
+                             column_config={
+                                "start": st.column_config.DateColumn("Start Date", required=True),
+                                "end": st.column_config.DateColumn("End Date", required=True)
+                             }
+                        )
                         
                         submit_update = st.form_submit_button("Update Task")
                         
                         if submit_update:
+                            # Parse ranges from editor
+                            new_ranges_payload = []
+                            if not edited_ranges_df.empty:
+                                for i, row in edited_ranges_df.iterrows():
+                                    s = row.get("start")
+                                    e = row.get("end")
+                                    if s and e:
+                                        new_ranges_payload.append({"start": str(s), "end": str(e)})
+                            
                             payload = {
                                 "name": t_name,
-                                "skill_name": t_skill
+                                "skill_name": t_skill,
+                                "workforce_count": t_count,
+                                "required_ranges": new_ranges_payload
                             }
-                            if update_dates and new_start and new_end:
-                                payload["required_ranges"] = [{"start": str(new_start), "end": str(new_end)}]
                             
                             from frontend.utils.api import update_task
                             resp = update_task(task['id'], payload)
