@@ -21,6 +21,37 @@ def render_manage_projects():
 def render_create_project_tab(skills):
     project_name = st.text_input("Project Name")
     
+    # New Fields
+    col_p1, col_p2, col_p3 = st.columns(3)
+    with col_p1:
+        tapeout_date = st.date_input("Tapeout Date", value=None)
+        status = st.selectbox("Status", ["Backlog", "Draft", "Confirmed"], index=0)
+    with col_p2:
+        design_type = st.selectbox("Design Type", ["Hierarchical", "Flat"], index=0)
+        package_type = st.selectbox("Package Type", ["Flipchip", "Wirebond"], index=0)
+    with col_p3:
+        compilers_count = st.number_input("Compilers Count", min_value=0, value=0)
+        instances_per_compiler = st.number_input("Instances/Compiler", min_value=0, value=0)
+        duration_weeks = st.number_input("Duration (Weeks)", min_value=0, value=0)
+    
+    # Auto-generation
+    if st.button("Auto-Generate Tasks"):
+        from frontend.generator import generate_tasks_simulation
+        sim_data = {
+            "compilers_count": compilers_count,
+            "instances_per_compiler": instances_per_compiler,
+            "duration_weeks": duration_weeks,
+            "tapeout_date": str(tapeout_date) if tapeout_date else None
+        }
+        generated_tasks = generate_tasks_simulation(sim_data)
+        
+        if "temp_tasks" not in st.session_state:
+            st.session_state.temp_tasks = []
+            
+        st.session_state.temp_tasks.extend(generated_tasks)
+        st.success(f"Generated {len(generated_tasks)} tasks based on project info.")
+
+    
     st.subheader("Add Tasks to Project")
     c1, c2, c3, c4, c5 = st.columns([2, 2, 2, 1, 1])
     with c1:
@@ -103,6 +134,13 @@ def render_create_project_tab(skills):
             if project_name:
                 payload = {
                     "name": project_name,
+                    "tapeout_date": str(tapeout_date) if tapeout_date else None,
+                    "status": status,
+                    "design_type": design_type,
+                    "package_type": package_type,
+                    "compilers_count": compilers_count,
+                    "instances_per_compiler": instances_per_compiler,
+                    "duration_weeks": duration_weeks,
                     "tasks": st.session_state.temp_tasks
                 }
                 resp = create_project(payload)
@@ -154,11 +192,44 @@ def render_manage_projects_tab(skills):
         
         with st.expander("Project Settings", expanded=False):
             new_p_name = st.text_input("Rename Project", value=project['name'])
+            
+            # Update other fields
+            c_e1, c_e2, c_e3 = st.columns(3)
+            with c_e1:
+                cur_td = date.fromisoformat(project['tapeout_date']) if project.get('tapeout_date') else None
+                new_tapeout = st.date_input("Tapeout Date", value=cur_td, key=f"edit_od_{project['id']}")
+                cur_status = project.get('status')
+                s_opts = ["Backlog", "Draft", "Confirmed"]
+                s_idx = s_opts.index(cur_status) if cur_status in s_opts else 0
+                new_status = st.selectbox("Status", s_opts, index=s_idx, key=f"edit_st_{project['id']}")
+            with c_e2:
+                d_opts = ["Hierarchical", "Flat"] 
+                d_idx = d_opts.index(project.get('design_type')) if project.get('design_type') in d_opts else 0
+                new_design = st.selectbox("Design Type", d_opts, index=d_idx, key=f"edit_dt_{project['id']}")
+                
+                p_opts = ["Flipchip", "Wirebond"]
+                p_idx = p_opts.index(project.get('package_type')) if project.get('package_type') in p_opts else 0
+                new_package = st.selectbox("Package Type", p_opts, index=p_idx, key=f"edit_pt_{project['id']}")
+            with c_e3:
+                new_cc = st.number_input("Compilers", min_value=0, value=project.get('compilers_count', 0), key=f"edit_cc_{project['id']}")
+                new_ipc = st.number_input("Inst./Comp", min_value=0, value=project.get('instances_per_compiler', 0), key=f"edit_ipc_{project['id']}")
+                new_dur = st.number_input("Duration (Wks)", min_value=0, value=project.get('duration_weeks', 0), key=f"edit_dur_{project['id']}")
+            
             c_upd, c_del = st.columns(2)
             with c_upd:
-                if st.button("Update Name"):
+                if st.button("Update Project Details", key=f"upd_proj_{project['id']}"):
                     from frontend.utils.api import update_project
-                    resp = update_project(project['id'], {"name": new_p_name})
+                    payload = {
+                        "name": new_p_name,
+                        "tapeout_date": str(new_tapeout) if new_tapeout else None,
+                        "status": new_status,
+                        "design_type": new_design,
+                        "package_type": new_package,
+                        "compilers_count": new_cc,
+                        "instances_per_compiler": new_ipc,
+                        "duration_weeks": new_dur
+                    }
+                    resp = update_project(project['id'], payload)
                     if resp.status_code == 200:
                         st.success("Project renamed.")
                         st.rerun()
@@ -217,7 +288,7 @@ def render_manage_projects_tab(skills):
                         edited_ranges_df = st.data_editor(
                              df_ranges,
                              num_rows="dynamic",
-                             use_container_width=True,
+                             width="stretch",
                              key=f"editor_ranges_{task['id']}",
                              column_config={
                                 "start": st.column_config.DateColumn("Start Date", required=True),

@@ -10,7 +10,16 @@ router = APIRouter(prefix="/projects", tags=["projects"])
 
 @router.post("/", response_model=ProjectRead)
 def create_project(project_in: ProjectCreate, session: Session = Depends(get_session)):
-    db_project = Project(name=project_in.name)
+    db_project = Project(
+        name=project_in.name,
+        tapeout_date=project_in.tapeout_date,
+        compilers_count=project_in.compilers_count,
+        instances_per_compiler=project_in.instances_per_compiler,
+        duration_weeks=project_in.duration_weeks,
+        design_type=project_in.design_type,
+        package_type=project_in.package_type,
+        status=project_in.status
+    )
     session.add(db_project)
     session.commit()
     session.refresh(db_project)
@@ -79,6 +88,20 @@ def update_project(project_id: str, project_in: ProjectUpdate, session: Session 
         
     if project_in.name:
         project.name = project_in.name
+    if project_in.tapeout_date is not None:
+        project.tapeout_date = project_in.tapeout_date
+    if project_in.compilers_count is not None:
+        project.compilers_count = project_in.compilers_count
+    if project_in.instances_per_compiler is not None:
+        project.instances_per_compiler = project_in.instances_per_compiler
+    if project_in.duration_weeks is not None:
+        project.duration_weeks = project_in.duration_weeks
+    if project_in.design_type is not None:
+        project.design_type = project_in.design_type
+    if project_in.package_type is not None:
+        project.package_type = project_in.package_type
+    if project_in.status is not None:
+        project.status = project_in.status
     
     session.add(project)
     session.commit()
@@ -191,6 +214,13 @@ def _project_to_read(project: Project) -> ProjectRead:
     return ProjectRead(
         id=project.id,
         name=project.name,
+        tapeout_date=project.tapeout_date,
+        compilers_count=project.compilers_count,
+        instances_per_compiler=project.instances_per_compiler,
+        duration_weeks=project.duration_weeks,
+        design_type=project.design_type,
+        package_type=project.package_type,
+        status=project.status,
         tasks=tasks_read
     )
 

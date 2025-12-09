@@ -48,6 +48,7 @@ def test_create_and_read_person(client: TestClient):
     # Test creating a person with skills and busy ranges
     person_data = {
         "name": "Alice",
+        "email": "alice@example.com",
         "joining_date": "2023-01-01",
         "skills": [{"name": "Python", "efficiency": 1}, {"name": "SQL", "efficiency": 1}],
         "busy_ranges": [
@@ -58,6 +59,7 @@ def test_create_and_read_person(client: TestClient):
     assert response.status_code == 200
     data = response.json()
     assert data["name"] == "Alice"
+    assert data["email"] == "alice@example.com"
     assert len(data["skills"]) == 2
     assert len(data["busy_ranges"]) == 1
     assert data["busy_ranges"][0]["start"] == "2023-02-01"
@@ -71,6 +73,13 @@ def test_create_and_read_project(client: TestClient):
     # Create Project
     project_data = {
         "name": "Project Alpha",
+        "tapeout_date": "2023-12-01",
+        "compilers_count": 5,
+        "instances_per_compiler": 2,
+        "duration_weeks": 4,
+        "design_type": "Hierarchical",
+        "package_type": "Flipchip",
+        "status": "Draft",
         "tasks": [
             {
                 "name": "Backend Dev",
@@ -85,6 +94,9 @@ def test_create_and_read_project(client: TestClient):
     assert response.status_code == 200
     data = response.json()
     assert data["name"] == "Project Alpha"
+    assert data["tapeout_date"] == "2023-12-01"
+    assert data["status"] == "Draft"
+    assert data["design_type"] == "Hierarchical"
     assert len(data["tasks"]) == 1
     assert data["tasks"][0]["name"] == "Backend Dev"
     task_id = data["tasks"][0]["id"]

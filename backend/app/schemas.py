@@ -1,7 +1,7 @@
 from typing import List, Optional
 from datetime import date
 from sqlmodel import SQLModel
-from .models import Skill, PersonBusyRange, TaskRequiredRange
+from .models import Skill, PersonBusyRange, TaskRequiredRange, ProjectStatus, DesignType, PackageType
 
 # Shared properties
 class DateRange(SQLModel):
@@ -26,6 +26,7 @@ class PersonSkillRead(SkillRead):
 
 class PersonBase(SQLModel):
     name: str
+    email: Optional[str] = None
     joining_date: date
     termination_date: Optional[date] = None
 
@@ -40,6 +41,13 @@ class PersonRead(PersonBase):
 
 class ProjectBase(SQLModel):
     name: str
+    tapeout_date: Optional[date] = None
+    compilers_count: int = 0
+    instances_per_compiler: int = 0
+    duration_weeks: int = 0
+    design_type: Optional[DesignType] = None
+    package_type: Optional[PackageType] = None
+    status: ProjectStatus = ProjectStatus.BACKLOG
 
 class TaskCreateInput(SQLModel):
     name: str
@@ -85,6 +93,7 @@ class SkillUpdate(SQLModel):
 
 class PersonUpdate(SQLModel):
     name: Optional[str] = None
+    email: Optional[str] = None
     joining_date: Optional[date] = None
     termination_date: Optional[date] = None
     skills: Optional[List[PersonSkillCreate]] = None
@@ -92,6 +101,13 @@ class PersonUpdate(SQLModel):
 
 class ProjectUpdate(SQLModel):
     name: Optional[str] = None
+    tapeout_date: Optional[date] = None
+    compilers_count: Optional[int] = None
+    instances_per_compiler: Optional[int] = None
+    duration_weeks: Optional[int] = None
+    design_type: Optional[DesignType] = None
+    package_type: Optional[PackageType] = None
+    status: Optional[ProjectStatus] = None
 
 class TaskUpdate(SQLModel):
     name: Optional[str] = None

@@ -1,4 +1,4 @@
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Optional
 from datetime import timedelta
 from .models import (
     Project, Person, Task, 
@@ -91,13 +91,19 @@ class SchedulerService:
             needed = task.workforce_count
             current_efficiency = 0
             
+            rejection_stats = {}
+            total_people_checked = 0
+            
             # Try to find people to satisfy 'needed' efficiency
             for person in people:
                 if current_efficiency >= needed:
                     break
                 
+                total_people_checked += 1
                 # Check if person can check the task
-                if self.can_assign(person, task):
+                can_assign, reason = self.check_assignment_viability(person, task)
+                
+                if can_assign:
                     # Get efficiency
                     person_skill = next((s for s in person.skills if s.id == task.skill_id), None)
                     efficiency = getattr(person_skill, 'efficiency', 1) if person_skill else 0
@@ -108,18 +114,32 @@ class SchedulerService:
                     
                     assignments.append((person, task))
                     current_efficiency += efficiency
+                else:
+                    # Collect rejection reason
+                    if reason not in rejection_stats:
+                        rejection_stats[reason] = 0
+                    rejection_stats[reason] += 1
             
             if current_efficiency < needed:
-                task_failures[task.id] = f"Insufficient availability/skills. Needed {needed} efficiency, found {current_efficiency}."
+                # Build detailed failure message
+                reasons_str = "; ".join([f"{r}: {c}" for r, c in rejection_stats.items()])
+                msg = f"Insufficient workforce. Needed efficiency {needed}, found {current_efficiency}. "
+                msg += f"Checked {total_people_checked} people. "
+                if reasons_str:
+                    msg += f"Rejections: [{reasons_str}]"
+                else:
+                    msg += "No available people found."
+
+                task_failures[task.id] = msg
                 all_assigned = False
         
         return all_assigned, assignments, task_failures
 
-    def can_assign(self, person: Person, task: Task) -> bool:
+    def check_assignment_viability(self, person: Person, task: Task) -> Tuple[bool, Optional[str]]:
         # Check Skill
         person_skill = next((s for s in person.skills if s.id == task.skill_id), None)
         if not person_skill:
-            return False
+            return False, f"Missing skill '{task.required_skill.name}'"
             
         efficiency = getattr(person_skill, 'efficiency', 1)
             
@@ -127,14 +147,14 @@ class SchedulerService:
         for req_range in task.required_ranges:
             # Check employment
             if req_range.start_date < person.joining_date:
-                return False
+                return False, f"Not employed at start ({person.joining_date})"
             if person.termination_date and req_range.end_date > person.termination_date:
-                return False
+                return False, f"Terminated before end ({person.termination_date})"
             
             # Check manual schedule
             for busy in person.schedule:
                 if busy.overlaps(req_range.start_date, req_range.end_date):
-                    return False
+                    return False, "Busy in manual schedule"
             
         # Check Concurrency with specific attention to Efficiency
         interfering_ranges = []
@@ -155,14 +175,14 @@ class SchedulerService:
                 
                 if overlaps:
                     if not is_same_skill:
-                        return False # Cannot overlap different skills
+                        return False, f"Conflict with task '{assigned_task.name}' (different skill)"
                     interfering_ranges.append(ar)
-
+        
         if not interfering_ranges:
-            return True
+             return True, None
 
         if efficiency == 1:
-            return False
+            return False, "Already assigned overlapping task (Efficiency 1)"
             
         # Efficiency > 1: Check Max Overlap
         # We need to verify that adding the new task's ranges doesn't exceed efficiency
@@ -183,15 +203,7 @@ class SchedulerService:
                 events.append((r.start_date, 1))
                 events.append((r.end_date + timedelta(days=1), -1))
             
-            events.sort(key=lambda x: (x[0], x[1])) # Sort by time, then type (+1 before -1 for peaks? No, usually end is exclusive, but here inclusive.
-            # If end is inclusive (date), we use end+1 for -1.
-            # If Interval A=[0, 10], B=[11, 20]. A ends 10, B starts 11.
-            # Events: (0, 1), (11, -1), (11, 1), (21, -1).
-            # Overlap at 11: 0 -> (-1 first?) -> -1 -> (then +1) -> 0. Max 0. Correct.
-            # If Interval A=[0, 10], B=[10, 20].
-            # Events: (0, 1), (11, -1), (10, 1), (21, -1).
-            # Sort: (0, 1), (10, 1), (11, -1), (21, -1).
-            # At 10: +1 (A active), +1 (B starts). Sum 2. Overlap! Correct.
+            events.sort(key=lambda x: (x[0], x[1])) 
             
             max_load = 0
             current_load = 0
@@ -200,9 +212,9 @@ class SchedulerService:
                 max_load = max(max_load, current_load)
                 
             if max_load > efficiency:
-                return False
+                return False, f"Efficiency limit exceeded (Max {efficiency}, Needs {max_load})"
                         
-        return True
+        return True, None
 
     def rollback(self, assignments: List[Tuple[Person, Task]]):
         for person, task in assignments:

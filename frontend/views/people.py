@@ -27,6 +27,7 @@ def render_add_person_tab(skills):
     c1, c2 = st.columns(2)
     with c1:
         name = st.text_input("Name", key="person_name_input")
+        email = st.text_input("Email", key="person_email_input")
         start_date = st.date_input("Available From (Joining Date)", value=date.today(), key="person_start_date")
     with c2:
         has_term = st.checkbox("Has Termination Date?", key="person_has_term")
@@ -78,6 +79,7 @@ def render_add_person_tab(skills):
         if name and selected_skills:
             payload = {
                 "name": name,
+                "email": email if email else None,
                 "joining_date": str(start_date),
                 "termination_date": str(term_date) if term_date else None,
                 "skills": skills_payload,
@@ -125,6 +127,7 @@ def render_edit_person_tab(skills):
         
         with st.form("edit_person_form"):
             new_name = st.text_input("Name", value=person['name'])
+            new_email = st.text_input("Email", value=person.get('email', ''))
             
             c1, c2 = st.columns(2)
             with c1:
@@ -173,6 +176,7 @@ def render_edit_person_tab(skills):
             if st.form_submit_button("Update Details"):
                 payload = {
                     "name": new_name,
+                    "email": new_email if new_email else None,
                     "joining_date": str(new_join),
                     "termination_date": str(new_term) if new_term else None,
                     "skills": new_skills_payload
@@ -311,6 +315,8 @@ def render_roster():
             
             people_data.append({
                 "Name": p['name'], 
+                "Email": p.get('email', ''),
+                "Skills": skills_str, 
                 "Skills": skills_str, 
                 "Availability": avail_str,
                 "Leaves": busy_str,

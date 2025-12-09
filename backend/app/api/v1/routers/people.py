@@ -11,6 +11,7 @@ router = APIRouter(prefix="/people", tags=["people"])
 def create_person(person: PersonCreate, session: Session = Depends(get_session)):
     db_person = Person(
         name=person.name,
+        email=person.email,
         joining_date=person.joining_date,
         termination_date=person.termination_date
     )
@@ -82,6 +83,8 @@ def update_person(person_id: str, person_in: PersonUpdate, session: Session = De
         
     if person_in.name is not None:
         db_person.name = person_in.name
+    if person_in.email is not None:
+        db_person.email = person_in.email
     if person_in.joining_date is not None:
         db_person.joining_date = person_in.joining_date
     if person_in.termination_date is not None:
@@ -142,6 +145,7 @@ def _person_to_read(person: Person) -> PersonRead:
     return PersonRead(
         id=person.id,
         name=person.name,
+        email=person.email,
         joining_date=person.joining_date,
         termination_date=person.termination_date,
         skills=skills_read,

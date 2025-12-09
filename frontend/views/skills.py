@@ -16,6 +16,28 @@ def render_manage_skills():
             else:
                 st.error(f"Error: {resp.text}")
     
+    with st.expander("Populate Default Skills"):
+        if st.button("Add Standard Engineering Skills"):
+            defaults = ["Architecture", "Compiler Design", "RTL Design", 
+                        "Verification", "Physical Design", "Emulation", 
+                        "Firmware", "Validation"]
+            count = 0
+            for s in defaults:
+                # Naive check: just try to create, if it fails it might be because it exists
+                # But to be cleaner, we can check against current list if we fetched it earlier,
+                # or just fire and forget. 
+                # Let's fire and forget but check status code 
+                # (assuming backend handles duplicates gracefully or throws error)
+                r = create_skill(s)
+                if r.status_code == 200:
+                    count += 1
+            
+            if count > 0:
+                st.success(f"Added {count} new skills.")
+                st.rerun()
+            else:
+                st.info("No new skills added (they might already exist).")
+    
     st.subheader("Current Skills")
     skills = get_skills()
     if skills:
