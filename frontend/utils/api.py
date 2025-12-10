@@ -42,6 +42,9 @@ def create_project(payload):
 def assign_task(task_id, person_id):
     return requests.put(f"{API_URL}/projects/tasks/{task_id}/assign?person_id={person_id}")
 
+def unassign_task(task_id, person_id):
+    return requests.delete(f"{API_URL}/projects/tasks/{task_id}/assign?person_id={person_id}")
+
 def bulk_assign_tasks(assignments_list):
     # assignments_list: list of dicts {'task_id': int, 'person_id': int}
     return requests.post(f"{API_URL}/projects/assignments/bulk", json={"assignments": assignments_list})

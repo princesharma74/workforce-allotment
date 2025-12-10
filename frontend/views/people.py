@@ -190,6 +190,39 @@ def render_edit_person_tab(skills):
                 else:
                     st.error(f"Error: {resp.text}")
 
+
+        # Assigned Tasks Management
+        st.subheader("Assigned Tasks")
+        projects = get_projects()
+        assigned_tasks = []
+        if projects:
+            for proj in projects:
+                for t in proj['tasks']:
+                    for assignee in t.get('assignees', []):
+                        if assignee['id'] == person['id']:
+                            assigned_tasks.append({
+                                "task_id": t['id'], 
+                                "task_name": t['name'], 
+                                "project_name": proj['name']
+                            })
+        
+        if assigned_tasks:
+            for assignment in assigned_tasks:
+                c_assign1, c_assign2 = st.columns([4, 1])
+                with c_assign1:
+                    st.write(f"**{assignment['task_name']}** ({assignment['project_name']})")
+                with c_assign2:
+                    if st.button("Unassign", key=f"unassign_{person['id']}_{assignment['task_id']}"):
+                        from frontend.utils.api import unassign_task
+                        resp = unassign_task(assignment['task_id'], person['id'])
+                        if resp.status_code == 200:
+                            st.success(f"Unassigned {assignment['task_name']}")
+                            st.rerun()
+                        else:
+                             st.error(f"Error: {resp.text}")
+        else:
+            st.info("No tasks assigned to this person.")
+
         # Separate section for Occupancies to avoid complex form nesting state
         st.subheader("Manage Occupancies")
         st.caption("Adding ranges here will REPLACE the existing list with the new list + added ones? No, API replaces entire list if provided.")

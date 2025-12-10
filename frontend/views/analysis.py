@@ -31,10 +31,14 @@ def render_analysis():
         
         col1, col2 = st.columns(2)
         
+        # Track selected tasks
+        selected_task_ids = set()
+
         with col1:
             st.success(f"Feasible Projects: {len(feasible)}")
             for p in feasible:
                 with st.expander(f"✅ {p['name']}"):
+                    st.write("Select tasks to confirm:")
                     for t in p['tasks']:
                         assignees_list = t.get('assignees', [])
                         if assignees_list:
@@ -43,7 +47,16 @@ def render_analysis():
                         else:
                             assigned_str = "Unassigned (Simulation)"
                         
-                        st.write(f"- {t['name']}: {assigned_str}")
+                        # Checkbox for each task, default logic: checked if it has assignees? 
+                        # User requirement: "all tasks to be assigned at once" -> "able to confirm any task specifically"
+                        # Let's default to True so flow is smooth.
+                        is_selected = st.checkbox(
+                            f"{t['name']}: {assigned_str}", 
+                            value=True, 
+                            key=f"confirm_task_{t['id']}"
+                        )
+                        if is_selected:
+                            selected_task_ids.add(t['id'])
         
         with col2:
             st.error(f"Infeasible Projects: {len(infeasible)}")
@@ -58,18 +71,19 @@ def render_analysis():
                              # Optional: Show that this task was technically assignable
                              st.caption(f"- {t['name']}: Assignable (rolled back)")
 
-        st.info("These results are simulated. To apply these assignments to the main roster, click Confirm below.")
+        st.info(f"Selected {len(selected_task_ids)} tasks for assignment. Click Confirm below to apply.")
         if st.button("Confirm & Apply assignments"):
             with st.spinner("Applying assignments..."):
-                # specific assignment logic based on simulation results
+                # specific assignment logic based on simulation results AND user selection
                 assignments_to_apply = []
                 for p in feasible:
                     for t in p['tasks']:
-                        for person in t.get('assignees', []):
-                            assignments_to_apply.append({
-                                "task_id": t['id'],
-                                "person_id": person['id']
-                            })
+                        if t['id'] in selected_task_ids:
+                            for person in t.get('assignees', []):
+                                assignments_to_apply.append({
+                                    "task_id": t['id'],
+                                    "person_id": person['id']
+                                })
                 
                 if assignments_to_apply:
                     resp = bulk_assign_tasks(assignments_to_apply)
@@ -81,7 +95,7 @@ def render_analysis():
                     else:
                         st.error(f"Failed to apply assignments: {resp.text}")
                 else:
-                    st.warning("No assignments to apply from the simulation.")    
+                    st.warning("No assignments selected to apply.")    
     st.divider()
     st.header("Skill Demand & Supply Analytics")
     

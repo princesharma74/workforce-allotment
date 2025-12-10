@@ -269,3 +269,21 @@ def bulk_assign_tasks(request: BulkAssignmentRequest, session: Session = Depends
         
     session.commit()
     return {"status": "bulk_assigned", "count": count, "errors": errors}
+
+@router.delete("/tasks/{task_id}/assign")
+def unassign_task(task_id: str, person_id: str, session: Session = Depends(get_session)):
+    task = session.get(Task, task_id)
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+        
+    from backend.app.models import Person 
+    person = session.get(Person, person_id)
+    if not person:
+        raise HTTPException(status_code=404, detail="Person not found")
+        
+    if person in task.assignees:
+        task.assignees.remove(person)
+        session.add(task)
+        session.commit()
+    
+    return {"status": "unassigned", "task": task.name, "person": person.name}
