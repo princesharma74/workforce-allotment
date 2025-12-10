@@ -21,11 +21,17 @@ class SchedulerService:
             project_feasible = True
             project_failure = None
             
+            # Note: We need to remove these tasks from people's assigned_tasks if they are already there 
+            # (i.e. we are rescheduling this project).
+            # Otherwise, check_assignment_viability will see them as busy with *this* task.
+            ids_to_clear = {t.id for t in project.tasks}
+            for person in people:
+                # Rebuild assigned_tasks filtering out current project's tasks
+                person.assigned_tasks = [t for t in person.assigned_tasks if t.id not in ids_to_clear]
+            
             # Reset tasks in memory for logic
             for task in project.tasks:
                 task.assignees = []
-                # Note: We assume the 'people' list passed in does not have these tasks in their assigned_tasks 
-                # if we are treating this as a fresh schedule for this project.
             
             # Try to schedule
             success, assignments, failures = self.schedule_project(project, people)

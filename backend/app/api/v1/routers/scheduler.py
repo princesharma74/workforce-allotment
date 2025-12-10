@@ -62,6 +62,11 @@ def to_service_models(db_projects: List[Project], db_people: List[Person], effic
         
     # Map Projects and Tasks
     service_projects = []
+    
+    # helper map to find ServiceTask by id easily if needed, 
+    # though we can just iterate. But we need to link tasks to people.
+    all_service_tasks_map = {} 
+
     for proj in db_projects:
         tasks = []
         for t in proj.tasks:
@@ -75,12 +80,31 @@ def to_service_models(db_projects: List[Project], db_people: List[Person], effic
                 workforce_count=t.workforce_count,
                 required_skill=map_base_skill(t.required_skill),
                 required_ranges=req_ranges,
-                assignees=[] # Start clean
+                assignees=[] # will be populated below
             )
             tasks.append(st)
+            all_service_tasks_map[t.id] = st
             
         sproj = ServiceProject(id=proj.id, name=proj.name, tasks=tasks)
         service_projects.append(sproj)
+
+    # Now populate assigned_tasks for people and assignees for tasks based on DB
+    # We iterate over db_people again or iterate their assigned_tasks if available
+    for p in db_people:
+        sp = person_map[p.id]
+        for t in p.assigned_tasks:
+            if t.id in all_service_tasks_map:
+                st = all_service_tasks_map[t.id]
+                # bidirectional link
+                sp.assigned_tasks.append(st)
+                st.assignees.append(sp)
+            else:
+                # Task might be from a project not in db_projects list if we didn't fetch all?
+                # The current run_scheduler fetches *all* projects, so this should cover everything.
+                # However, if t.id is not in our map (maybe filtered out?), we should create a partial ServiceTask 
+                # or similar so the person still knows they are busy.
+                # Since we fetched "select(Project).all()", we have all tasks.
+                pass
 
     return service_projects, service_people
 
