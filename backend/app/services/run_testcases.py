@@ -132,8 +132,9 @@ def run_testcase(filepath: str):
                 print(f"    - {t.name}: {t.failure_reason}")
 
 
+from pathlib import Path
 def main():
-    test_dir = "/Users/princesharma74/Documents/Workforce Allotment/backend/app/services/testcases"
+    test_dir = Path(__file__).parent / 'testcases'
     files = sorted([f for f in os.listdir(test_dir) if f.endswith('.yaml')])
     
     for f in files:

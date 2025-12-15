@@ -1,0 +1,27 @@
+name: 10. Project Test 10
+people:
+- name: Alice
+  skills:
+  - Java
+  - SQL
+- name: Bob
+  skills:
+  - Java
+- name: Charlie
+  skills:
+  - Python
+projects:
+- name: Project A
+  tasks:
+  - name: Task A
+    skill: Java
+    ranges:
+    - - '2024-01-01'
+      - '2024-01-02'
+    workforce_count: 1
+  - name: Task B
+    skill: SQL
+    ranges:
+    - - '2024-01-01'
+      - '2024-01-02'
+    workforce_count: 1

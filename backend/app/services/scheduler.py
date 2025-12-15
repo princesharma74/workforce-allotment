@@ -101,7 +101,11 @@ class SchedulerService:
             total_people_checked = 0
             
             # Try to find people to satisfy 'needed' efficiency
-            for person in people:
+            # Sort people by number of skills (ascending) to use less versatile people first
+            # This helps avoid using a multi-skilled person for a task that a single-skilled person could do
+            sorted_people = sorted(people, key=lambda p: len(p.skills))
+            
+            for person in sorted_people:
                 if current_efficiency >= needed:
                     break
                 
