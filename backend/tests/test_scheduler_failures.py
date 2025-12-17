@@ -43,14 +43,11 @@ def test_scheduler_failure_reasons():
     result = infeasible[0]
     assert result.feasible is False
     
-    # Check task failure reason
-    task_res = result.tasks[0]
-    print(f"Failure Reason: {task_res.failure_reason}")
-    
-    assert "Insufficient workforce" in task_res.failure_reason
-    assert "Needed efficiency 2" in task_res.failure_reason
-    assert "found 1" in task_res.failure_reason
-    
+
+    # Check project failure reason
+    expected = "Task 'Task 1': Insufficient capacity. Required: 2, Available: 1"
+    assert result.failure_reason == expected
+
 def test_scheduler_busy_reason():
     scheduler = SchedulerService()
     skill_java = Skill(id="s1", name="Java")
@@ -83,8 +80,5 @@ def test_scheduler_busy_reason():
     feasible, infeasible = scheduler.schedule_all([project], [p1])
     
     assert len(infeasible) == 1
-    task_res = infeasible[0].tasks[0]
-    print(f"Failure Reason: {task_res.failure_reason}")
-    
-    assert "Rejections" in task_res.failure_reason
-    assert "Busy in manual schedule" in task_res.failure_reason
+    assert infeasible[0].feasible is False
+    assert infeasible[0].failure_reason == "Task 'Task 1': Insufficient capacity. Required: 1, Available: 0"

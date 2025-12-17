@@ -1,0 +1,37 @@
+name: Modular Test
+people:
+- name: Person_1
+  skills:
+  - name: Python
+    efficiency: 1
+- name: Person_2
+  skills:
+  - name: Python
+    efficiency: 2
+  - name: Rust
+    efficiency: 2
+- name: Person_3
+  skills:
+  - name: Python
+    efficiency: 1
+- name: Person_4
+  skills:
+  - name: Python
+    efficiency: 2
+  - name: Rust
+    efficiency: 2
+projects:
+- name: Project_1
+  tasks:
+  - name: Task_1_1
+    skill: Rust
+    ranges:
+    - - '2025-04-14'
+      - '2025-04-22'
+    workforce_count: 2
+  - name: Task_1_2
+    skill: Python
+    ranges:
+    - - '2025-02-12'
+      - '2025-02-17'
+    workforce_count: 3

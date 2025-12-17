@@ -1,5 +1,5 @@
 from typing import List, Tuple, Dict, Optional
-from datetime import timedelta
+from datetime import timedelta, date
 from ortools.sat.python import cp_model
 from .models import (
     Project, Person, Task, 
@@ -110,7 +110,7 @@ class SchedulerService:
                 # Best: AddNoOverlap(busy, task_interval) for every task.
                 
                 # We'll create the IntervalVar first
-                busy_int = model.NewFixedIntervalVar(start, dur, f'busy_p{person.id}_{start}')
+                busy_int = model.NewIntervalVar(start, dur, start + dur, f'busy_p{person.id}_{start}')
                 busy_intervals.append(busy_int)
 
             # 2. Locked Tasks (Existing Assignments)
@@ -122,7 +122,7 @@ class SchedulerService:
                         start = d2i(r.start_date)
                         dur = (r.end_date - r.start_date).days + 1
                         # It is present
-                        locked_int = model.NewFixedIntervalVar(start, dur, f'locked_t{t.id}_p{person.id}')
+                        locked_int = model.NewIntervalVar(start, dur, start + dur, f'locked_t{t.id}_p{person.id}')
                         person_intervals.append((locked_int, s_id))
             
             # 3. New Potential Assignments
@@ -190,7 +190,93 @@ class SchedulerService:
                             model.AddNoOverlap([iv1, iv2])
 
         # --- Objective ---
-        model.Maximize(sum(project_vars.values()))
+        
+        # 3. Load Balancing (Workload Distribution)
+        # We want to distribute workload within the active window of the projects being scheduled.
+        
+        # Determine active window
+        window_start = min_date # Fallback
+        window_end = min_date
+        
+        p_starts = []
+        p_ends = []
+        for p in projects:
+            for t in p.tasks:
+                for r in t.required_ranges:
+                    p_starts.append(r.start_date)
+                    p_ends.append(r.end_date)
+        
+        if p_starts:
+            window_start = min(p_starts)
+            window_end = max(p_ends)
+        else:
+            window_end = window_start + timedelta(days=365)
+
+        workload_sq_vars = []
+        
+        for person in people:
+            base_load = 0
+            
+            # Intersection helper
+            def get_overlap(r_start, r_end):
+                os = max(r_start, window_start)
+                oe = min(r_end, window_end)
+                if oe >= os:
+                    return (oe - os).days + 1
+                return 0
+
+            # 1. Busy Schedule
+            for b in person.schedule:
+                base_load += get_overlap(b.start_date, b.end_date)
+            
+            # 2. Locked Tasks
+            for t in person.assigned_tasks:
+                if t.id not in project_task_ids:
+                    for r in t.required_ranges:
+                        base_load += get_overlap(r.start_date, r.end_date)
+            
+            # 3. New Assignments (Variables)
+            new_load_expr = []
+            for project in projects:
+                for task in project.tasks:
+                    if (task.id, person.id) in task_assignment_vars:
+                         var = task_assignment_vars[(task.id, person.id)]
+                         task_load = 0
+                         for r in task.required_ranges:
+                             task_load += get_overlap(r.start_date, r.end_date)
+                         
+                         if task_load > 0:
+                             new_load_expr.append(var * task_load)
+            
+            # Create Workload Variable
+            # We assume a reasonable upper bound for workload days.
+            # Safe bound: 100,000 (approx 270 years)
+            w_var = model.NewIntVar(0, 100000, f'workload_{person.id}')
+            model.Add(w_var == base_load + sum(new_load_expr))
+            
+            # Square it to penalize peaks
+            w_sq_var = model.NewIntVar(0, 100000**2, f'sq_workload_{person.id}')
+            model.AddMultiplicationEquality(w_sq_var, [w_var, w_var])
+            workload_sq_vars.append(w_sq_var)
+
+        # Primary: Maximize number of active projects 
+        # Secondary: Minimize Assignments (Efficiency)
+        # Tertiary: Balance Workload (Minimize Sum of Squares)
+        
+        # Weights
+        PROJECT_WEIGHT = 1000000000000 # 10^12
+        ASSIGNMENT_COST = 1000000      # 10^6
+        WORKLOAD_COST = 1
+        
+        total_assignments = sum(task_assignment_vars.values())
+        total_projects = sum(project_vars.values())
+        total_sq_workload = sum(workload_sq_vars)
+        
+        model.Maximize(
+            total_projects * PROJECT_WEIGHT 
+            - total_assignments * ASSIGNMENT_COST 
+            - total_sq_workload * WORKLOAD_COST
+        )
         
         # --- Solve ---
         solver = cp_model.CpSolver()
@@ -200,10 +286,12 @@ class SchedulerService:
         infeasible_results = []
         
         if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+            # Pass 1: Apply Feasible Assignments
             for project in projects:
                 p_var = project_vars[project.id]
                 is_active = (solver.Value(p_var) == 1)
                 
+                # Reset assignees to be safe
                 for task in project.tasks:
                     task.assignees = []
                 
@@ -219,8 +307,15 @@ class SchedulerService:
                                         
                     result = self._build_result(project, True, None, {})
                     feasible_results.append(result)
-                else:
-                    result = self._build_result(project, False, "Optimization could not accommodate this project.", {})
+
+            # Pass 2: Analyze Infeasible Projects
+            for project in projects:
+                p_var = project_vars[project.id]
+                is_active = (solver.Value(p_var) == 1)
+                
+                if not is_active:
+                    reason, task_errors = self._analyze_failure_reason(project, people)
+                    result = self._build_result(project, False, reason, task_errors)
                     infeasible_results.append(result)
             
         else:
@@ -228,6 +323,78 @@ class SchedulerService:
                 infeasible_results.append(self._build_result(project, False, "Solver failed to find solution", {}))
                 
         return feasible_results, infeasible_results
+
+    def _analyze_failure_reason(self, project: Project, people: List[Person]) -> Tuple[str, Dict[int, str]]:
+        task_failures = {}
+        project_reasons = []
+
+        for task in project.tasks:
+            # 1. Total Skill availability check
+            skilled_people = [p for p in people if any(s.id == task.skill_id for s in p.skills)]
+            if not skilled_people:
+                msg = f"No workforce found with skill ID {task.skill_id}"
+                task_failures[task.id] = msg
+                project_reasons.append(msg)
+                continue
+
+            # 2. Employment check
+            employed_people = []
+            for p in skilled_people:
+                valid_employment = True
+                for r in task.required_ranges:
+                     if r.start_date < p.joining_date:
+                         valid_employment = False
+                     if p.termination_date and r.end_date > p.termination_date:
+                         valid_employment = False
+                if valid_employment:
+                    employed_people.append(p)
+            
+            if not employed_people:
+                msg = f"No skilled workforce employed during task dates"
+                task_failures[task.id] = msg
+                project_reasons.append(msg)
+                continue
+
+            # 3. Efficiency/Overlap check
+            # Calculate max available efficiency for this task's ranges
+            # considering ALREADY ASSIGNED tasks (from Pass 1 and locked) and BUSY ranges.
+            
+            total_efficiency = 0
+            for p in employed_people:
+                eff = next((s.efficiency for s in p.skills if s.id == task.skill_id), 1)
+                
+                # Check conflicts
+                is_available = True
+                for r in task.required_ranges:
+                    # Check busy
+                    for b in p.schedule:
+                        # Overlap logic
+                        if not (r.end_date < b.start_date or r.start_date > b.end_date):
+                            is_available = False
+                            break
+                    if not is_available: break
+                    
+                    # Check assigned tasks
+                    for at in p.assigned_tasks:
+                        for ar in at.required_ranges:
+                            if not (r.end_date < ar.start_date or r.start_date > ar.end_date):
+                                is_available = False
+                                break
+                        if not is_available: break
+                    if not is_available: break
+                
+                if is_available:
+                    total_efficiency += eff
+            
+            if total_efficiency < task.workforce_count:
+                msg = f"Insufficient capacity. Required: {task.workforce_count}, Available: {total_efficiency}"
+                task_failures[task.id] = msg
+                project_reasons.append(f"Task '{task.name}': {msg}")
+
+        if not project_reasons:
+            return "Conflict with other assignments or internal project overlap", task_failures
+        
+        return "; ".join(project_reasons[:3]), task_failures
 
 
     def _build_result(self, project: Project, feasible: bool, failure_reason: str, task_failures: Dict[int, str]) -> ProjectAnalysisResult:
