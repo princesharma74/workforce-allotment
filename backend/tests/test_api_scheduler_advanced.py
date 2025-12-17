@@ -222,5 +222,6 @@ def test_scheduler_respects_busy_ranges_via_api(client: TestClient, session: Ses
     assert len(res["infeasible"]) == 1
     assert res["infeasible"][0]["name"] == "Conflict Project"
     # Project failure reason check
-    assert res["infeasible"][0]["failure_reason"] == "Optimization could not accommodate this project."
+    # Project failure reason check
+    assert "Insufficient capacity" in res["infeasible"][0]["failure_reason"]
 

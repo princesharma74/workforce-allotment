@@ -115,8 +115,12 @@ def run_testcase(filepath: str):
 
     # Run Scheduler
     scheduler = SchedulerService()
+    import time
+    start_time = time.time()
     feasible, infeasible = scheduler.schedule_all(projects, people)
+    end_time = time.time()
     
+    print(f"Time Taken: {end_time - start_time:.4f} seconds")
     print(f"Feasible Projects: {len(feasible)}")
     for p in feasible:
         print(f"  [OK] {p.name}")
@@ -133,10 +137,16 @@ def run_testcase(filepath: str):
 
 
 from pathlib import Path
+import sys
+
 def main():
     test_dir = Path(__file__).parent / 'testcases'
     files = sorted([f for f in os.listdir(test_dir) if f.endswith('.yaml')])
     
+    if len(sys.argv) > 1:
+        pattern = sys.argv[1]
+        files = [f for f in files if pattern in f]
+
     for f in files:
         run_testcase(os.path.join(test_dir, f))
 

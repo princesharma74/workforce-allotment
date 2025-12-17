@@ -1,0 +1,868 @@
+
+--- Running Test Case: 01_1_standard_mixed_feasibility.yaml ---
+Time Taken: 0.0058 seconds
+Feasible Projects: 1
+  [OK] Legacy System
+    - Maintenance: Bob
+    - Migration: Charlie
+Infeasible Projects: 1
+  [FAIL] Web App: Conflict with other assignments or internal project overlap
+
+--- Running Test Case: 02_2_skill_mismatch_rust.yaml ---
+Time Taken: 0.0020 seconds
+Feasible Projects: 0
+Infeasible Projects: 1
+  [FAIL] Rust Rewrite: No workforce found with skill ID 4
+    - Core Engine: No workforce found with skill ID 4
+
+--- Running Test Case: 03_3_task_consistency_split_ranges.yaml ---
+Time Taken: 0.0022 seconds
+Feasible Projects: 1
+  [OK] Split Task Project
+    - Long Task: Charlie
+Infeasible Projects: 0
+
+--- Running Test Case: 04_4_resource_contention_3_projects_2_resources.yaml ---
+Time Taken: 0.0039 seconds
+Feasible Projects: 2
+  [OK] Project B
+    - Task B: Alice
+  [OK] Project C
+    - Task C: Charlie
+Infeasible Projects: 1
+  [FAIL] Project A: Task 'Task A': Insufficient capacity. Required: 1, Available: 0
+    - Task A: Insufficient capacity. Required: 1, Available: 0
+
+--- Running Test Case: 05_4_project_test_4.yaml ---
+Time Taken: 0.0027 seconds
+Feasible Projects: 1
+  [OK] Project A
+    - Task A: Alice
+    - Task B: Charlie
+Infeasible Projects: 0
+
+--- Running Test Case: 06_5_resource_contention_3_projects_2_resources.yaml ---
+Time Taken: 0.0036 seconds
+Feasible Projects: 2
+  [OK] Project B
+    - Task B: Charlie
+  [OK] Project C
+    - Task C: Alice
+Infeasible Projects: 1
+  [FAIL] Project A: Task 'Task A': Insufficient capacity. Required: 1, Available: 0
+    - Task A: Insufficient capacity. Required: 1, Available: 0
+
+--- Running Test Case: 07_6_project_test_6.yaml ---
+Time Taken: 0.0030 seconds
+Feasible Projects: 1
+  [OK] Project A
+    - Task A: Charlie
+    - Task B: Alice
+    - Task C: Bob
+Infeasible Projects: 0
+
+--- Running Test Case: 08_7_project_test_7.yaml ---
+Time Taken: 0.0028 seconds
+Feasible Projects: 2
+  [OK] Project A
+    - Task A: Alice
+  [OK] Project C
+    - Task A: Alice
+Infeasible Projects: 1
+  [FAIL] Project B: Task 'Task A': Insufficient capacity. Required: 1, Available: 0
+    - Task A: Insufficient capacity. Required: 1, Available: 0
+
+--- Running Test Case: 09_8_project_test_8.yaml ---
+Time Taken: 0.0021 seconds
+Feasible Projects: 1
+  [OK] Project A
+    - Task A: Alice
+    - Task B: Alice
+    - Task C: Alice
+Infeasible Projects: 0
+
+--- Running Test Case: 10_10_project_test_10.yaml ---
+Time Taken: 0.0022 seconds
+Feasible Projects: 1
+  [OK] Project A
+    - Task A: Bob
+    - Task B: Alice
+Infeasible Projects: 0
+
+--- Running Test Case: efficiency_test.yaml ---
+Time Taken: 0.8920 seconds
+Feasible Projects: 17
+  [OK] Project_1
+    - Task_1_1: Person_2, Person_20
+    - Task_1_2: Person_14, Person_17
+    - Task_1_3: Person_4
+    - Task_1_4: Person_7, Person_14
+    - Task_1_5: Person_17
+    - Task_1_6: Person_7
+    - Task_1_7: Person_9, Person_18
+    - Task_1_8: Person_6
+    - Task_1_9: Person_9, Person_14
+    - Task_1_10: Person_15
+  [OK] Project_2
+    - Task_2_1: Person_7
+    - Task_2_2: Person_17, Person_20
+    - Task_2_3: Person_10
+    - Task_2_4: Person_3
+    - Task_2_5: Person_1
+    - Task_2_6: Person_1
+    - Task_2_7: Person_16
+    - Task_2_8: Person_20
+    - Task_2_9: Person_1
+    - Task_2_10: Person_15
+  [OK] Project_3
+    - Task_3_1: Person_9
+    - Task_3_2: Person_4
+    - Task_3_3: Person_9
+    - Task_3_4: Person_2, Person_20
+    - Task_3_5: Person_7, Person_8
+    - Task_3_6: Person_4
+    - Task_3_7: Person_4
+    - Task_3_8: Person_4
+    - Task_3_9: Person_20
+  [OK] Project_4
+    - Task_4_1: Person_14, Person_17
+    - Task_4_2: Person_1, Person_20
+    - Task_4_3: Person_2, Person_6
+    - Task_4_4: Person_9
+    - Task_4_5: Person_1
+  [OK] Project_5
+    - Task_5_1: Person_5, Person_13
+    - Task_5_2: Person_17
+  [OK] Project_6
+    - Task_6_1: Person_5, Person_11
+  [OK] Project_8
+    - Task_8_1: Person_14, Person_17
+    - Task_8_2: Person_4
+    - Task_8_3: Person_20
+    - Task_8_4: Person_4
+    - Task_8_5: Person_9
+    - Task_8_6: Person_7
+    - Task_8_7: Person_2, Person_16
+  [OK] Project_9
+    - Task_9_1: Person_6
+    - Task_9_2: Person_3
+    - Task_9_3: Person_16
+    - Task_9_4: Person_9, Person_18
+    - Task_9_5: Person_4
+    - Task_9_6: Person_14
+    - Task_9_7: Person_7, Person_8
+    - Task_9_8: Person_11
+    - Task_9_9: Person_9
+    - Task_9_10: Person_14, Person_17
+  [OK] Project_10
+    - Task_10_1: Person_6
+    - Task_10_2: Person_20
+    - Task_10_3: Person_4
+    - Task_10_4: Person_14
+    - Task_10_5: Person_12
+  [OK] Project_11
+    - Task_11_1: Person_10
+  [OK] Project_12
+    - Task_12_1: Person_14
+    - Task_12_2: Person_5
+    - Task_12_3: Person_3
+    - Task_12_4: Person_7
+    - Task_12_5: Person_9
+    - Task_12_6: Person_7, Person_8
+    - Task_12_7: Person_10
+    - Task_12_8: Person_3
+  [OK] Project_13
+    - Task_13_1: Person_3
+    - Task_13_2: Person_5
+    - Task_13_3: Person_9, Person_20
+    - Task_13_4: Person_3
+    - Task_13_5: Person_5
+    - Task_13_6: Person_4
+  [OK] Project_14
+    - Task_14_1: Person_4
+    - Task_14_2: Person_9, Person_18
+    - Task_14_3: Person_1
+  [OK] Project_15
+    - Task_15_1: Person_4
+    - Task_15_2: Person_2, Person_6, Person_16
+    - Task_15_3: Person_19
+    - Task_15_4: Person_16
+    - Task_15_5: Person_19
+    - Task_15_6: Person_17
+    - Task_15_7: Person_5, Person_11
+    - Task_15_8: Person_3
+    - Task_15_9: Person_2, Person_16
+    - Task_15_10: Person_4
+  [OK] Project_16
+    - Task_16_1: Person_18
+    - Task_16_2: Person_20
+    - Task_16_3: Person_12
+    - Task_16_4: Person_20
+    - Task_16_5: Person_20
+    - Task_16_6: Person_6, Person_18
+    - Task_16_7: Person_12
+    - Task_16_8: Person_3
+  [OK] Project_18
+    - Task_18_1: Person_1
+    - Task_18_2: Person_7, Person_14
+    - Task_18_3: Person_7, Person_8
+    - Task_18_4: Person_20
+    - Task_18_5: Person_16
+  [OK] Project_19
+    - Task_19_1: Person_20
+    - Task_19_2: Person_7, Person_8
+    - Task_19_3: Person_3
+    - Task_19_4: Person_4
+    - Task_19_5: Person_7, Person_8
+    - Task_19_6: Person_2
+    - Task_19_7: Person_4
+Infeasible Projects: 3
+  [FAIL] Project_7: Task 'Task_7_6': Insufficient capacity. Required: 2, Available: 0; Task 'Task_7_7': Insufficient capacity. Required: 2, Available: 0; Task 'Task_7_8': Insufficient capacity. Required: 3, Available: 1
+    - Task_7_6: Insufficient capacity. Required: 2, Available: 0
+    - Task_7_7: Insufficient capacity. Required: 2, Available: 0
+    - Task_7_8: Insufficient capacity. Required: 3, Available: 1
+    - Task_7_9: Insufficient capacity. Required: 2, Available: 1
+  [FAIL] Project_17: Task 'Task_17_2': Insufficient capacity. Required: 2, Available: 0
+    - Task_17_2: Insufficient capacity. Required: 2, Available: 0
+  [FAIL] Project_20: Task 'Task_20_1': Insufficient capacity. Required: 1, Available: 0; Task 'Task_20_3': Insufficient capacity. Required: 1, Available: 0; Task 'Task_20_4': Insufficient capacity. Required: 3, Available: 0
+    - Task_20_1: Insufficient capacity. Required: 1, Available: 0
+    - Task_20_3: Insufficient capacity. Required: 1, Available: 0
+    - Task_20_4: Insufficient capacity. Required: 3, Available: 0
+
+--- Running Test Case: efficiency_verification.yaml ---
+Time Taken: 0.0022 seconds
+Feasible Projects: 1
+  [OK] HighDemandProject
+    - HardTask: EfficientPerson
+Infeasible Projects: 0
+
+--- Running Test Case: multiple_answers_check.yaml ---
+Time Taken: 0.0035 seconds
+Feasible Projects: 1
+  [OK] Project_1
+    - Task_1_1: Person_4
+    - Task_1_2: Person_1, Person_2
+Infeasible Projects: 0
+
+--- Running Test Case: tough_test_100_projects.yaml ---
+Time Taken: 60.7238 seconds
+Feasible Projects: 93
+  [OK] Project_1
+    - Task_1_1: Person_43
+    - Task_1_2: Person_28
+    - Task_1_3: Person_23, Person_34, Person_48
+    - Task_1_4: Person_30, Person_31
+    - Task_1_5: Person_11, Person_18, Person_23
+    - Task_1_6: Person_44
+    - Task_1_7: Person_2, Person_14
+    - Task_1_8: Person_26
+    - Task_1_9: Person_30, Person_37
+  [OK] Project_2
+    - Task_2_1: Person_41
+    - Task_2_2: Person_39
+    - Task_2_3: Person_32, Person_36
+    - Task_2_4: Person_43
+    - Task_2_5: Person_19
+    - Task_2_6: Person_19
+    - Task_2_7: Person_22
+    - Task_2_8: Person_14
+    - Task_2_9: Person_28
+    - Task_2_10: Person_43
+  [OK] Project_4
+    - Task_4_1: Person_12
+    - Task_4_2: Person_7
+    - Task_4_3: Person_37, Person_45
+    - Task_4_4: Person_20
+  [OK] Project_5
+    - Task_5_1: Person_12
+    - Task_5_2: Person_26, Person_38
+    - Task_5_3: Person_21, Person_49
+    - Task_5_4: Person_20
+    - Task_5_5: Person_45
+    - Task_5_6: Person_36
+  [OK] Project_6
+    - Task_6_1: Person_24, Person_38
+    - Task_6_2: Person_33
+  [OK] Project_7
+    - Task_7_1: Person_1
+    - Task_7_2: Person_5, Person_17
+  [OK] Project_8
+    - Task_8_1: Person_43
+    - Task_8_2: Person_5, Person_29
+    - Task_8_3: Person_18
+    - Task_8_4: Person_20
+    - Task_8_5: Person_43
+    - Task_8_6: Person_13
+    - Task_8_7: Person_32
+    - Task_8_8: Person_19
+    - Task_8_9: Person_22
+  [OK] Project_9
+    - Task_9_1: Person_29, Person_49
+    - Task_9_2: Person_10, Person_24
+    - Task_9_3: Person_20
+    - Task_9_4: Person_25, Person_31, Person_32
+    - Task_9_5: Person_26, Person_33
+    - Task_9_6: Person_37
+    - Task_9_7: Person_35, Person_44
+    - Task_9_8: Person_44
+    - Task_9_9: Person_26, Person_29, Person_40
+  [OK] Project_11
+    - Task_11_1: Person_34
+    - Task_11_2: Person_32, Person_40
+    - Task_11_3: Person_47
+    - Task_11_4: Person_44
+  [OK] Project_12
+    - Task_12_1: Person_20
+  [OK] Project_13
+    - Task_13_1: Person_1
+    - Task_13_2: Person_19
+    - Task_13_3: Person_8, Person_44
+  [OK] Project_14
+    - Task_14_1: Person_19
+    - Task_14_2: Person_1
+    - Task_14_3: Person_28
+  [OK] Project_16
+    - Task_16_1: Person_18
+    - Task_16_2: Person_22
+    - Task_16_3: Person_21, Person_31
+    - Task_16_4: Person_2, Person_36
+  [OK] Project_17
+    - Task_17_1: Person_28
+    - Task_17_2: Person_12
+    - Task_17_3: Person_26
+    - Task_17_4: Person_44
+    - Task_17_5: Person_19
+    - Task_17_6: Person_47
+  [OK] Project_18
+    - Task_18_1: Person_21, Person_25
+    - Task_18_2: Person_29
+    - Task_18_3: Person_5, Person_13
+    - Task_18_4: Person_42
+    - Task_18_5: Person_30, Person_37
+    - Task_18_6: Person_2
+    - Task_18_7: Person_12
+    - Task_18_8: Person_17, Person_29
+  [OK] Project_19
+    - Task_19_1: Person_42
+    - Task_19_2: Person_44
+    - Task_19_3: Person_21, Person_41
+  [OK] Project_20
+    - Task_20_1: Person_41
+    - Task_20_2: Person_44
+    - Task_20_3: Person_20
+    - Task_20_4: Person_37
+    - Task_20_5: Person_19
+    - Task_20_6: Person_7
+    - Task_20_7: Person_8
+    - Task_20_8: Person_30
+    - Task_20_9: Person_29, Person_44
+  [OK] Project_21
+    - Task_21_1: Person_46
+    - Task_21_2: Person_24, Person_35
+    - Task_21_3: Person_29
+    - Task_21_4: Person_21, Person_25
+    - Task_21_5: Person_16
+    - Task_21_6: Person_20
+    - Task_21_7: Person_45
+    - Task_21_8: Person_5, Person_25
+    - Task_21_9: Person_24
+    - Task_21_10: Person_25, Person_49
+  [OK] Project_22
+    - Task_22_1: Person_33
+    - Task_22_2: Person_44
+    - Task_22_3: Person_43
+    - Task_22_4: Person_41
+  [OK] Project_23
+    - Task_23_1: Person_10, Person_18, Person_24
+    - Task_23_2: Person_26
+    - Task_23_3: Person_11, Person_48
+    - Task_23_4: Person_8
+    - Task_23_5: Person_39
+    - Task_23_6: Person_28
+  [OK] Project_24
+    - Task_24_1: Person_24, Person_36
+    - Task_24_2: Person_24, Person_33
+    - Task_24_3: Person_14, Person_44
+    - Task_24_4: Person_15
+    - Task_24_5: Person_26
+    - Task_24_6: Person_37, Person_45
+    - Task_24_7: Person_34
+  [OK] Project_25
+    - Task_25_1: Person_31
+    - Task_25_2: Person_36, Person_38
+    - Task_25_3: Person_8, Person_40
+    - Task_25_4: Person_12, Person_37
+    - Task_25_5: Person_14
+    - Task_25_6: Person_17
+  [OK] Project_26
+    - Task_26_1: Person_21
+    - Task_26_2: Person_50
+    - Task_26_3: Person_36
+    - Task_26_4: Person_18
+    - Task_26_5: Person_10, Person_36
+  [OK] Project_27
+    - Task_27_1: Person_2, Person_33
+    - Task_27_2: Person_30, Person_43
+  [OK] Project_28
+    - Task_28_1: Person_47
+    - Task_28_2: Person_32, Person_35, Person_40
+    - Task_28_3: Person_19
+  [OK] Project_29
+    - Task_29_1: Person_50
+    - Task_29_2: Person_21, Person_41
+  [OK] Project_30
+    - Task_30_1: Person_38
+    - Task_30_2: Person_20
+    - Task_30_3: Person_30, Person_42
+    - Task_30_4: Person_3
+    - Task_30_5: Person_14, Person_37
+    - Task_30_6: Person_41
+    - Task_30_7: Person_23
+  [OK] Project_31
+    - Task_31_1: Person_28
+    - Task_31_2: Person_21, Person_41
+    - Task_31_3: Person_14
+    - Task_31_4: Person_18
+    - Task_31_5: Person_37
+    - Task_31_6: Person_33
+    - Task_31_7: Person_8, Person_35
+    - Task_31_8: Person_21, Person_49
+    - Task_31_9: Person_46
+    - Task_31_10: Person_46
+  [OK] Project_32
+    - Task_32_1: Person_14, Person_44
+    - Task_32_2: Person_45
+    - Task_32_3: Person_22
+    - Task_32_4: Person_22
+    - Task_32_5: Person_2
+    - Task_32_6: Person_11
+    - Task_32_7: Person_6, Person_15
+    - Task_32_8: Person_29
+    - Task_32_9: Person_12, Person_18, Person_29
+  [OK] Project_33
+    - Task_33_1: Person_21
+    - Task_33_2: Person_30, Person_41
+    - Task_33_3: Person_7
+    - Task_33_4: Person_49
+    - Task_33_5: Person_8, Person_40
+    - Task_33_6: Person_17
+    - Task_33_7: Person_21, Person_49
+    - Task_33_8: Person_43
+    - Task_33_9: Person_38
+    - Task_33_10: Person_38
+  [OK] Project_34
+    - Task_34_1: Person_10, Person_18, Person_40
+    - Task_34_2: Person_36
+  [OK] Project_35
+    - Task_35_1: Person_27
+    - Task_35_2: Person_7, Person_44
+    - Task_35_3: Person_12
+    - Task_35_4: Person_43
+  [OK] Project_36
+    - Task_36_1: Person_8
+  [OK] Project_37
+    - Task_37_1: Person_37
+    - Task_37_2: Person_7, Person_8
+    - Task_37_3: Person_27
+    - Task_37_4: Person_8
+  [OK] Project_38
+    - Task_38_1: Person_38
+    - Task_38_2: Person_21, Person_25
+    - Task_38_3: Person_19
+  [OK] Project_39
+    - Task_39_1: Person_12
+    - Task_39_2: Person_30
+    - Task_39_3: Person_2, Person_26
+    - Task_39_4: Person_34
+    - Task_39_5: Person_39
+    - Task_39_6: Person_32, Person_41, Person_49
+  [OK] Project_40
+    - Task_40_1: Person_43
+    - Task_40_2: Person_5
+    - Task_40_3: Person_13
+    - Task_40_4: Person_10, Person_38
+    - Task_40_5: Person_7, Person_44
+    - Task_40_6: Person_8, Person_44
+    - Task_40_7: Person_8, Person_14
+  [OK] Project_41
+    - Task_41_1: Person_12
+    - Task_41_2: Person_5, Person_17
+    - Task_41_3: Person_5
+    - Task_41_4: Person_9
+    - Task_41_5: Person_1
+    - Task_41_6: Person_49
+  [OK] Project_42
+    - Task_42_1: Person_14
+    - Task_42_2: Person_41, Person_49
+    - Task_42_3: Person_44
+  [OK] Project_43
+    - Task_43_1: Person_31
+    - Task_43_2: Person_21, Person_31
+    - Task_43_3: Person_19
+  [OK] Project_44
+    - Task_44_1: Person_39
+    - Task_44_2: Person_30
+    - Task_44_3: Person_38
+    - Task_44_4: Person_33
+  [OK] Project_45
+    - Task_45_1: Person_37
+    - Task_45_2: Person_21, Person_49
+  [OK] Project_46
+    - Task_46_1: Person_47
+    - Task_46_2: Person_30
+    - Task_46_3: Person_15
+    - Task_46_4: Person_38
+    - Task_46_5: Person_41
+    - Task_46_6: Person_10
+    - Task_46_7: Person_8, Person_18
+  [OK] Project_47
+    - Task_47_1: Person_38
+    - Task_47_2: Person_19
+    - Task_47_3: Person_31
+    - Task_47_4: Person_23
+    - Task_47_5: Person_23
+    - Task_47_6: Person_23
+    - Task_47_7: Person_46
+  [OK] Project_48
+    - Task_48_1: Person_44
+    - Task_48_2: Person_35, Person_40
+    - Task_48_3: Person_3
+    - Task_48_4: Person_14, Person_37
+    - Task_48_5: Person_6, Person_46, Person_49
+    - Task_48_6: Person_21
+    - Task_48_7: Person_19
+    - Task_48_8: Person_21
+    - Task_48_9: Person_38
+  [OK] Project_49
+    - Task_49_1: Person_17, Person_33
+    - Task_49_2: Person_35, Person_38
+    - Task_49_3: Person_25
+    - Task_49_4: Person_15
+    - Task_49_5: Person_37, Person_42
+  [OK] Project_50
+    - Task_50_1: Person_29, Person_33
+    - Task_50_2: Person_21, Person_49
+    - Task_50_3: Person_38
+    - Task_50_4: Person_20
+    - Task_50_5: Person_19
+    - Task_50_6: Person_14, Person_44
+    - Task_50_7: Person_30
+  [OK] Project_51
+    - Task_51_1: Person_8, Person_44
+    - Task_51_2: Person_24, Person_29
+    - Task_51_3: Person_16
+    - Task_51_4: Person_8
+    - Task_51_5: Person_39
+    - Task_51_6: Person_29, Person_40
+    - Task_51_7: Person_44
+    - Task_51_8: Person_28
+    - Task_51_9: Person_23
+  [OK] Project_52
+    - Task_52_1: Person_22
+    - Task_52_2: Person_37, Person_45
+    - Task_52_3: Person_32
+    - Task_52_4: Person_35
+    - Task_52_5: Person_45
+    - Task_52_6: Person_16
+  [OK] Project_53
+    - Task_53_1: Person_13
+    - Task_53_2: Person_20
+    - Task_53_3: Person_38
+    - Task_53_4: Person_28
+    - Task_53_5: Person_45
+    - Task_53_6: Person_7, Person_29
+    - Task_53_7: Person_5
+    - Task_53_8: Person_25
+  [OK] Project_54
+    - Task_54_1: Person_27
+    - Task_54_2: Person_19
+    - Task_54_3: Person_38
+    - Task_54_4: Person_23
+    - Task_54_5: Person_50
+    - Task_54_6: Person_31
+    - Task_54_7: Person_32
+  [OK] Project_55
+    - Task_55_1: Person_1
+  [OK] Project_56
+    - Task_56_1: Person_43
+  [OK] Project_57
+    - Task_57_1: Person_21
+  [OK] Project_58
+    - Task_58_1: Person_32
+    - Task_58_2: Person_32
+    - Task_58_3: Person_22
+    - Task_58_4: Person_5
+    - Task_58_5: Person_37
+    - Task_58_6: Person_9
+    - Task_58_7: Person_44
+  [OK] Project_59
+    - Task_59_1: Person_8
+    - Task_59_2: Person_19
+    - Task_59_3: Person_20
+    - Task_59_4: Person_19
+    - Task_59_5: Person_37
+    - Task_59_6: Person_17
+    - Task_59_7: Person_24, Person_41, Person_42
+    - Task_59_8: Person_15, Person_28
+    - Task_59_9: Person_28
+  [OK] Project_61
+    - Task_61_1: Person_12, Person_31
+  [OK] Project_62
+    - Task_62_1: Person_38
+    - Task_62_2: Person_42
+    - Task_62_3: Person_31
+    - Task_62_4: Person_10, Person_24, Person_36
+    - Task_62_5: Person_18, Person_38
+    - Task_62_6: Person_32
+  [OK] Project_63
+    - Task_63_1: Person_22
+    - Task_63_2: Person_2
+    - Task_63_3: Person_18
+  [OK] Project_64
+    - Task_64_1: Person_30
+    - Task_64_2: Person_36
+    - Task_64_3: Person_35, Person_37
+    - Task_64_4: Person_1
+    - Task_64_5: Person_19, Person_45
+    - Task_64_6: Person_8
+    - Task_64_7: Person_12
+    - Task_64_8: Person_32
+    - Task_64_9: Person_19
+    - Task_64_10: Person_11, Person_23
+  [OK] Project_67
+    - Task_67_1: Person_12
+    - Task_67_2: Person_33
+    - Task_67_3: Person_29
+    - Task_67_4: Person_19
+    - Task_67_5: Person_12, Person_35
+    - Task_67_6: Person_43
+    - Task_67_7: Person_23
+    - Task_67_8: Person_21, Person_25
+    - Task_67_9: Person_19
+  [OK] Project_68
+    - Task_68_1: Person_5
+    - Task_68_2: Person_37
+    - Task_68_3: Person_21, Person_31
+    - Task_68_4: Person_1
+    - Task_68_5: Person_33
+    - Task_68_6: Person_17
+    - Task_68_7: Person_39
+    - Task_68_8: Person_35
+  [OK] Project_69
+    - Task_69_1: Person_11, Person_34
+    - Task_69_2: Person_10, Person_30
+    - Task_69_3: Person_9
+    - Task_69_4: Person_34
+    - Task_69_5: Person_41
+    - Task_69_6: Person_30, Person_35
+  [OK] Project_70
+    - Task_70_1: Person_26, Person_29
+    - Task_70_2: Person_19
+    - Task_70_3: Person_29
+    - Task_70_4: Person_32, Person_35
+    - Task_70_5: Person_25
+    - Task_70_6: Person_31
+    - Task_70_7: Person_42
+    - Task_70_8: Person_10
+    - Task_70_9: Person_30
+  [OK] Project_71
+    - Task_71_1: Person_21
+  [OK] Project_72
+    - Task_72_1: Person_30, Person_37
+    - Task_72_2: Person_5, Person_33
+    - Task_72_3: Person_8, Person_18
+    - Task_72_4: Person_19
+    - Task_72_5: Person_44
+    - Task_72_6: Person_32
+    - Task_72_7: Person_41
+    - Task_72_8: Person_37, Person_42
+    - Task_72_9: Person_27
+    - Task_72_10: Person_30
+  [OK] Project_73
+    - Task_73_1: Person_11
+    - Task_73_2: Person_21
+    - Task_73_3: Person_20
+    - Task_73_4: Person_19
+    - Task_73_5: Person_49
+    - Task_73_6: Person_42
+  [OK] Project_74
+    - Task_74_1: Person_1
+    - Task_74_2: Person_43
+    - Task_74_3: Person_12
+    - Task_74_4: Person_19
+    - Task_74_5: Person_22, Person_23
+    - Task_74_6: Person_1
+    - Task_74_7: Person_41
+    - Task_74_8: Person_25
+    - Task_74_9: Person_30
+    - Task_74_10: Person_2
+  [OK] Project_75
+    - Task_75_1: Person_37
+    - Task_75_2: Person_13
+    - Task_75_3: Person_8, Person_35
+    - Task_75_4: Person_24, Person_26
+    - Task_75_5: Person_16
+    - Task_75_6: Person_13
+  [OK] Project_76
+    - Task_76_1: Person_28
+    - Task_76_2: Person_24, Person_38
+    - Task_76_3: Person_49
+    - Task_76_4: Person_38
+    - Task_76_5: Person_23
+    - Task_76_6: Person_24
+  [OK] Project_77
+    - Task_77_1: Person_12
+    - Task_77_2: Person_47
+    - Task_77_3: Person_32
+    - Task_77_4: Person_2, Person_29
+  [OK] Project_78
+    - Task_78_1: Person_21
+    - Task_78_2: Person_3, Person_5
+    - Task_78_3: Person_39
+    - Task_78_4: Person_43
+    - Task_78_5: Person_21, Person_49
+  [OK] Project_79
+    - Task_79_1: Person_24, Person_33
+    - Task_79_2: Person_19
+    - Task_79_3: Person_38
+    - Task_79_4: Person_21
+    - Task_79_5: Person_36
+    - Task_79_6: Person_20
+    - Task_79_7: Person_8
+  [OK] Project_80
+    - Task_80_1: Person_43
+    - Task_80_2: Person_34
+    - Task_80_3: Person_45
+  [OK] Project_81
+    - Task_81_1: Person_15, Person_28
+    - Task_81_2: Person_28
+    - Task_81_3: Person_26, Person_29, Person_40
+    - Task_81_4: Person_37, Person_43
+  [OK] Project_82
+    - Task_82_1: Person_14, Person_43, Person_45
+  [OK] Project_83
+    - Task_83_1: Person_45
+    - Task_83_2: Person_46
+    - Task_83_3: Person_34
+    - Task_83_4: Person_19
+    - Task_83_5: Person_22
+  [OK] Project_84
+    - Task_84_1: Person_43
+    - Task_84_2: Person_46
+    - Task_84_3: Person_13
+    - Task_84_4: Person_8
+    - Task_84_5: Person_24, Person_38
+    - Task_84_6: Person_8, Person_40
+  [OK] Project_85
+    - Task_85_1: Person_46
+    - Task_85_2: Person_21, Person_31
+    - Task_85_3: Person_16
+  [OK] Project_86
+    - Task_86_1: Person_15
+    - Task_86_2: Person_40
+  [OK] Project_87
+    - Task_87_1: Person_9
+    - Task_87_2: Person_20
+    - Task_87_3: Person_33
+    - Task_87_4: Person_10, Person_37
+    - Task_87_5: Person_38
+    - Task_87_6: Person_21
+  [OK] Project_88
+    - Task_88_1: Person_19
+    - Task_88_2: Person_25
+    - Task_88_3: Person_13
+  [OK] Project_89
+    - Task_89_1: Person_38
+    - Task_89_2: Person_19
+    - Task_89_3: Person_22
+    - Task_89_4: Person_8, Person_40
+    - Task_89_5: Person_23
+    - Task_89_6: Person_8, Person_14
+  [OK] Project_90
+    - Task_90_1: Person_37, Person_42
+    - Task_90_2: Person_20
+  [OK] Project_91
+    - Task_91_1: Person_30, Person_31
+  [OK] Project_92
+    - Task_92_1: Person_13
+    - Task_92_2: Person_2, Person_14
+    - Task_92_3: Person_20
+    - Task_92_4: Person_17
+    - Task_92_5: Person_37
+    - Task_92_6: Person_37
+    - Task_92_7: Person_25, Person_31, Person_49
+    - Task_92_8: Person_20
+    - Task_92_9: Person_19
+  [OK] Project_94
+    - Task_94_1: Person_28
+    - Task_94_2: Person_5, Person_33
+  [OK] Project_95
+    - Task_95_1: Person_19
+    - Task_95_2: Person_21, Person_32
+    - Task_95_3: Person_44
+    - Task_95_4: Person_21
+    - Task_95_5: Person_23
+  [OK] Project_96
+    - Task_96_1: Person_35
+    - Task_96_2: Person_44
+    - Task_96_3: Person_41
+    - Task_96_4: Person_19
+    - Task_96_5: Person_39
+    - Task_96_6: Person_10
+    - Task_96_7: Person_26, Person_38
+    - Task_96_8: Person_13
+  [OK] Project_97
+    - Task_97_1: Person_2
+    - Task_97_2: Person_24, Person_26
+    - Task_97_3: Person_17
+  [OK] Project_98
+    - Task_98_1: Person_19
+    - Task_98_2: Person_1
+    - Task_98_3: Person_36
+    - Task_98_4: Person_8
+  [OK] Project_99
+    - Task_99_1: Person_45
+    - Task_99_2: Person_44
+    - Task_99_3: Person_6
+    - Task_99_4: Person_20
+    - Task_99_5: Person_30, Person_43
+    - Task_99_6: Person_10, Person_12
+    - Task_99_7: Person_28
+    - Task_99_8: Person_6
+  [OK] Project_100
+    - Task_100_1: Person_21
+    - Task_100_2: Person_37
+    - Task_100_3: Person_21, Person_32
+    - Task_100_4: Person_14, Person_33
+    - Task_100_5: Person_12
+    - Task_100_6: Person_27
+    - Task_100_7: Person_19
+    - Task_100_8: Person_30, Person_42
+Infeasible Projects: 7
+  [FAIL] Project_3: Task 'Task_3_2': Insufficient capacity. Required: 3, Available: 0; Task 'Task_3_3': Insufficient capacity. Required: 3, Available: 0; Task 'Task_3_4': Insufficient capacity. Required: 3, Available: 2
+    - Task_3_2: Insufficient capacity. Required: 3, Available: 0
+    - Task_3_3: Insufficient capacity. Required: 3, Available: 0
+    - Task_3_4: Insufficient capacity. Required: 3, Available: 2
+    - Task_3_5: Insufficient capacity. Required: 3, Available: 0
+    - Task_3_6: Insufficient capacity. Required: 2, Available: 0
+  [FAIL] Project_10: Task 'Task_10_1': Insufficient capacity. Required: 1, Available: 0; Task 'Task_10_4': Insufficient capacity. Required: 3, Available: 2
+    - Task_10_1: Insufficient capacity. Required: 1, Available: 0
+    - Task_10_4: Insufficient capacity. Required: 3, Available: 2
+  [FAIL] Project_15: Task 'Task_15_1': Insufficient capacity. Required: 2, Available: 0; Task 'Task_15_2': Insufficient capacity. Required: 3, Available: 0; Task 'Task_15_8': Insufficient capacity. Required: 1, Available: 0
+    - Task_15_1: Insufficient capacity. Required: 2, Available: 0
+    - Task_15_2: Insufficient capacity. Required: 3, Available: 0
+    - Task_15_8: Insufficient capacity. Required: 1, Available: 0
+  [FAIL] Project_60: Task 'Task_60_4': Insufficient capacity. Required: 1, Available: 0; Task 'Task_60_6': Insufficient capacity. Required: 3, Available: 0
+    - Task_60_4: Insufficient capacity. Required: 1, Available: 0
+    - Task_60_6: Insufficient capacity. Required: 3, Available: 0
+  [FAIL] Project_65: Task 'Task_65_2': Insufficient capacity. Required: 2, Available: 0; Task 'Task_65_3': Insufficient capacity. Required: 1, Available: 0; Task 'Task_65_5': Insufficient capacity. Required: 3, Available: 0
+    - Task_65_2: Insufficient capacity. Required: 2, Available: 0
+    - Task_65_3: Insufficient capacity. Required: 1, Available: 0
+    - Task_65_5: Insufficient capacity. Required: 3, Available: 0
+  [FAIL] Project_66: Task 'Task_66_2': Insufficient capacity. Required: 1, Available: 0; Task 'Task_66_5': Insufficient capacity. Required: 1, Available: 0
+    - Task_66_2: Insufficient capacity. Required: 1, Available: 0
+    - Task_66_5: Insufficient capacity. Required: 1, Available: 0
+  [FAIL] Project_93: Task 'Task_93_3': Insufficient capacity. Required: 3, Available: 0; Task 'Task_93_4': Insufficient capacity. Required: 2, Available: 0; Task 'Task_93_6': Insufficient capacity. Required: 1, Available: 0
+    - Task_93_3: Insufficient capacity. Required: 3, Available: 0
+    - Task_93_4: Insufficient capacity. Required: 2, Available: 0
+    - Task_93_6: Insufficient capacity. Required: 1, Available: 0

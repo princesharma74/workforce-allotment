@@ -1,0 +1,3845 @@
+name: Test 100
+people:
+- name: Person_1
+  skills:
+  - name: TypeScript
+    efficiency: 3
+  - name: SQL
+    efficiency: 1
+  - name: Python
+    efficiency: 1
+- name: Person_2
+  skills:
+  - name: C++
+    efficiency: 1
+  - name: TypeScript
+    efficiency: 2
+  - name: SQL
+    efficiency: 1
+  - name: Rust
+    efficiency: 2
+- name: Person_3
+  skills:
+  - name: Python
+    efficiency: 1
+- name: Person_4
+  skills:
+  - name: TypeScript
+    efficiency: 1
+- name: Person_5
+  skills:
+  - name: SQL
+    efficiency: 2
+  - name: Docker
+    efficiency: 2
+  - name: Python
+    efficiency: 2
+  - name: Rust
+    efficiency: 2
+- name: Person_6
+  skills:
+  - name: SQL
+    efficiency: 1
+- name: Person_7
+  skills:
+  - name: AWS
+    efficiency: 1
+  - name: Docker
+    efficiency: 1
+  - name: TypeScript
+    efficiency: 1
+- name: Person_8
+  skills:
+  - name: Rust
+    efficiency: 1
+  - name: AWS
+    efficiency: 2
+- name: Person_9
+  skills:
+  - name: TypeScript
+    efficiency: 2
+- name: Person_10
+  skills:
+  - name: Go
+    efficiency: 1
+  - name: C++
+    efficiency: 1
+- name: Person_11
+  skills:
+  - name: Docker
+    efficiency: 1
+- name: Person_12
+  skills:
+  - name: Go
+    efficiency: 1
+  - name: Python
+    efficiency: 2
+  - name: SQL
+    efficiency: 3
+  - name: C++
+    efficiency: 1
+- name: Person_13
+  skills:
+  - name: Docker
+    efficiency: 1
+  - name: Rust
+    efficiency: 1
+  - name: TypeScript
+    efficiency: 3
+- name: Person_14
+  skills:
+  - name: AWS
+    efficiency: 1
+  - name: Rust
+    efficiency: 1
+  - name: C++
+    efficiency: 1
+- name: Person_15
+  skills:
+  - name: SQL
+    efficiency: 2
+- name: Person_16
+  skills:
+  - name: TypeScript
+    efficiency: 1
+- name: Person_17
+  skills:
+  - name: Rust
+    efficiency: 1
+  - name: Docker
+    efficiency: 1
+  - name: TypeScript
+    efficiency: 1
+  - name: SQL
+    efficiency: 1
+- name: Person_18
+  skills:
+  - name: AWS
+    efficiency: 1
+  - name: Go
+    efficiency: 1
+  - name: Docker
+    efficiency: 1
+- name: Person_19
+  skills:
+  - name: Docker
+    efficiency: 3
+  - name: Python
+    efficiency: 1
+- name: Person_20
+  skills:
+  - name: Python
+    efficiency: 3
+- name: Person_21
+  skills:
+  - name: TypeScript
+    efficiency: 1
+  - name: Java
+    efficiency: 2
+  - name: Go
+    efficiency: 1
+- name: Person_22
+  skills:
+  - name: SQL
+    efficiency: 1
+  - name: Python
+    efficiency: 1
+- name: Person_23
+  skills:
+  - name: Python
+    efficiency: 1
+  - name: SQL
+    efficiency: 2
+  - name: Docker
+    efficiency: 1
+- name: Person_24
+  skills:
+  - name: C++
+    efficiency: 1
+  - name: Go
+    efficiency: 1
+  - name: Rust
+    efficiency: 1
+- name: Person_25
+  skills:
+  - name: Java
+    efficiency: 1
+  - name: Docker
+    efficiency: 1
+  - name: SQL
+    efficiency: 1
+- name: Person_26
+  skills:
+  - name: Go
+    efficiency: 1
+  - name: Docker
+    efficiency: 2
+  - name: Rust
+    efficiency: 1
+- name: Person_27
+  skills:
+  - name: TypeScript
+    efficiency: 1
+- name: Person_28
+  skills:
+  - name: SQL
+    efficiency: 2
+- name: Person_29
+  skills:
+  - name: Go
+    efficiency: 1
+  - name: SQL
+    efficiency: 1
+  - name: Rust
+    efficiency: 2
+  - name: AWS
+    efficiency: 1
+- name: Person_30
+  skills:
+  - name: Docker
+    efficiency: 2
+  - name: TypeScript
+    efficiency: 1
+  - name: C++
+    efficiency: 2
+  - name: Rust
+    efficiency: 1
+- name: Person_31
+  skills:
+  - name: C++
+    efficiency: 1
+  - name: Java
+    efficiency: 1
+- name: Person_32
+  skills:
+  - name: Java
+    efficiency: 1
+  - name: C++
+    efficiency: 1
+  - name: Python
+    efficiency: 1
+  - name: Go
+    efficiency: 1
+- name: Person_33
+  skills:
+  - name: Rust
+    efficiency: 2
+- name: Person_34
+  skills:
+  - name: Docker
+    efficiency: 1
+  - name: TypeScript
+    efficiency: 1
+- name: Person_35
+  skills:
+  - name: AWS
+    efficiency: 1
+  - name: Go
+    efficiency: 1
+  - name: C++
+    efficiency: 1
+- name: Person_36
+  skills:
+  - name: C++
+    efficiency: 1
+  - name: SQL
+    efficiency: 3
+  - name: Go
+    efficiency: 1
+  - name: Python
+    efficiency: 1
+- name: Person_37
+  skills:
+  - name: SQL
+    efficiency: 3
+  - name: C++
+    efficiency: 2
+  - name: Rust
+    efficiency: 2
+- name: Person_38
+  skills:
+  - name: Go
+    efficiency: 2
+  - name: TypeScript
+    efficiency: 2
+  - name: SQL
+    efficiency: 2
+- name: Person_39
+  skills:
+  - name: TypeScript
+    efficiency: 2
+- name: Person_40
+  skills:
+  - name: TypeScript
+    efficiency: 1
+  - name: AWS
+    efficiency: 1
+  - name: Go
+    efficiency: 1
+- name: Person_41
+  skills:
+  - name: TypeScript
+    efficiency: 2
+  - name: Java
+    efficiency: 1
+  - name: Rust
+    efficiency: 2
+  - name: C++
+    efficiency: 1
+- name: Person_42
+  skills:
+  - name: C++
+    efficiency: 1
+  - name: Docker
+    efficiency: 1
+- name: Person_43
+  skills:
+  - name: C++
+    efficiency: 1
+  - name: Python
+    efficiency: 3
+  - name: Docker
+    efficiency: 1
+- name: Person_44
+  skills:
+  - name: AWS
+    efficiency: 2
+  - name: C++
+    efficiency: 1
+  - name: SQL
+    efficiency: 1
+- name: Person_45
+  skills:
+  - name: C++
+    efficiency: 1
+  - name: Python
+    efficiency: 2
+- name: Person_46
+  skills:
+  - name: TypeScript
+    efficiency: 1
+  - name: SQL
+    efficiency: 1
+- name: Person_47
+  skills:
+  - name: TypeScript
+    efficiency: 2
+- name: Person_48
+  skills:
+  - name: Docker
+    efficiency: 1
+- name: Person_49
+  skills:
+  - name: AWS
+    efficiency: 1
+  - name: Java
+    efficiency: 1
+  - name: SQL
+    efficiency: 1
+  - name: Docker
+    efficiency: 1
+- name: Person_50
+  skills:
+  - name: TypeScript
+    efficiency: 1
+projects:
+- name: Project_1
+  tasks:
+  - name: Task_1_1
+    skill: Python
+    ranges:
+    - - '2025-04-16'
+      - '2025-04-21'
+    workforce_count: 2
+  - name: Task_1_2
+    skill: SQL
+    ranges:
+    - - '2025-04-13'
+      - '2025-04-23'
+    workforce_count: 2
+  - name: Task_1_3
+    skill: Docker
+    ranges:
+    - - '2025-02-16'
+      - '2025-02-27'
+    workforce_count: 3
+  - name: Task_1_4
+    skill: C++
+    ranges:
+    - - '2025-03-05'
+      - '2025-03-08'
+    workforce_count: 3
+  - name: Task_1_5
+    skill: Docker
+    ranges:
+    - - '2025-01-23'
+      - '2025-01-31'
+    workforce_count: 3
+  - name: Task_1_6
+    skill: AWS
+    ranges:
+    - - '2025-02-04'
+      - '2025-02-07'
+    workforce_count: 2
+  - name: Task_1_7
+    skill: Rust
+    ranges:
+    - - '2025-01-10'
+      - '2025-01-21'
+    workforce_count: 3
+  - name: Task_1_8
+    skill: Go
+    ranges:
+    - - '2025-03-29'
+      - '2025-03-31'
+    workforce_count: 1
+  - name: Task_1_9
+    skill: C++
+    ranges:
+    - - '2025-06-09'
+      - '2025-06-11'
+    workforce_count: 3
+- name: Project_2
+  tasks:
+  - name: Task_2_1
+    skill: Rust
+    ranges:
+    - - '2025-03-20'
+      - '2025-03-26'
+    workforce_count: 2
+  - name: Task_2_2
+    skill: TypeScript
+    ranges:
+    - - '2025-02-05'
+      - '2025-02-06'
+    workforce_count: 2
+  - name: Task_2_3
+    skill: Go
+    ranges:
+    - - '2025-06-02'
+      - '2025-06-10'
+    workforce_count: 2
+  - name: Task_2_4
+    skill: Python
+    ranges:
+    - - '2025-04-18'
+      - '2025-04-23'
+    workforce_count: 1
+  - name: Task_2_5
+    skill: Docker
+    ranges:
+    - - '2025-05-31'
+      - '2025-06-03'
+    workforce_count: 3
+  - name: Task_2_6
+    skill: Docker
+    ranges:
+    - - '2025-04-26'
+      - '2025-05-07'
+    workforce_count: 3
+  - name: Task_2_7
+    skill: Python
+    ranges:
+    - - '2025-01-25'
+      - '2025-01-30'
+    workforce_count: 1
+  - name: Task_2_8
+    skill: Rust
+    ranges:
+    - - '2025-04-24'
+      - '2025-04-29'
+    workforce_count: 1
+  - name: Task_2_9
+    skill: SQL
+    ranges:
+    - - '2025-02-03'
+      - '2025-02-14'
+    workforce_count: 1
+  - name: Task_2_10
+    skill: Python
+    ranges:
+    - - '2025-05-25'
+      - '2025-05-27'
+    workforce_count: 2
+- name: Project_3
+  tasks:
+  - name: Task_3_1
+    skill: Rust
+    ranges:
+    - - '2025-02-01'
+      - '2025-02-07'
+    workforce_count: 1
+  - name: Task_3_2
+    skill: AWS
+    ranges:
+    - - '2025-02-21'
+      - '2025-03-07'
+    workforce_count: 3
+  - name: Task_3_3
+    skill: Go
+    ranges:
+    - - '2025-04-21'
+      - '2025-05-02'
+    workforce_count: 3
+  - name: Task_3_4
+    skill: AWS
+    ranges:
+    - - '2025-05-16'
+      - '2025-05-25'
+    workforce_count: 3
+  - name: Task_3_5
+    skill: AWS
+    ranges:
+    - - '2025-04-21'
+      - '2025-04-25'
+    workforce_count: 3
+  - name: Task_3_6
+    skill: Java
+    ranges:
+    - - '2025-01-27'
+      - '2025-02-09'
+    workforce_count: 2
+- name: Project_4
+  tasks:
+  - name: Task_4_1
+    skill: SQL
+    ranges:
+    - - '2025-05-30'
+      - '2025-06-10'
+    workforce_count: 3
+  - name: Task_4_2
+    skill: AWS
+    ranges:
+    - - '2025-03-07'
+      - '2025-03-20'
+    workforce_count: 1
+  - name: Task_4_3
+    skill: C++
+    ranges:
+    - - '2025-06-01'
+      - '2025-06-15'
+    workforce_count: 3
+  - name: Task_4_4
+    skill: Python
+    ranges:
+    - - '2025-02-23'
+      - '2025-02-25'
+    workforce_count: 2
+- name: Project_5
+  tasks:
+  - name: Task_5_1
+    skill: Python
+    ranges:
+    - - '2025-01-29'
+      - '2025-01-30'
+    workforce_count: 2
+  - name: Task_5_2
+    skill: Go
+    ranges:
+    - - '2025-04-22'
+      - '2025-04-30'
+    workforce_count: 3
+  - name: Task_5_3
+    skill: Java
+    ranges:
+    - - '2025-03-31'
+      - '2025-04-05'
+    workforce_count: 3
+  - name: Task_5_4
+    skill: Python
+    ranges:
+    - - '2025-04-03'
+      - '2025-04-07'
+    workforce_count: 2
+  - name: Task_5_5
+    skill: Python
+    ranges:
+    - - '2025-05-01'
+      - '2025-05-04'
+    workforce_count: 2
+  - name: Task_5_6
+    skill: Go
+    ranges:
+    - - '2025-05-05'
+      - '2025-05-18'
+    workforce_count: 1
+- name: Project_6
+  tasks:
+  - name: Task_6_1
+    skill: Go
+    ranges:
+    - - '2025-06-05'
+      - '2025-06-14'
+    workforce_count: 3
+  - name: Task_6_2
+    skill: Rust
+    ranges:
+    - - '2025-03-01'
+      - '2025-03-14'
+    workforce_count: 2
+- name: Project_7
+  tasks:
+  - name: Task_7_1
+    skill: TypeScript
+    ranges:
+    - - '2025-04-02'
+      - '2025-04-16'
+    workforce_count: 3
+  - name: Task_7_2
+    skill: Rust
+    ranges:
+    - - '2025-04-17'
+      - '2025-04-22'
+    workforce_count: 3
+- name: Project_8
+  tasks:
+  - name: Task_8_1
+    skill: C++
+    ranges:
+    - - '2025-06-22'
+      - '2025-07-01'
+    workforce_count: 1
+  - name: Task_8_2
+    skill: Rust
+    ranges:
+    - - '2025-04-14'
+      - '2025-04-19'
+    workforce_count: 3
+  - name: Task_8_3
+    skill: Go
+    ranges:
+    - - '2025-04-05'
+      - '2025-04-14'
+    workforce_count: 1
+  - name: Task_8_4
+    skill: Python
+    ranges:
+    - - '2025-02-07'
+      - '2025-02-15'
+    workforce_count: 2
+  - name: Task_8_5
+    skill: Python
+    ranges:
+    - - '2025-03-25'
+      - '2025-03-29'
+    workforce_count: 3
+  - name: Task_8_6
+    skill: TypeScript
+    ranges:
+    - - '2025-06-03'
+      - '2025-06-06'
+    workforce_count: 3
+  - name: Task_8_7
+    skill: Go
+    ranges:
+    - - '2025-03-13'
+      - '2025-03-20'
+    workforce_count: 1
+  - name: Task_8_8
+    skill: Docker
+    ranges:
+    - - '2025-04-03'
+      - '2025-04-07'
+    workforce_count: 2
+  - name: Task_8_9
+    skill: SQL
+    ranges:
+    - - '2025-05-31'
+      - '2025-06-02'
+    workforce_count: 1
+- name: Project_9
+  tasks:
+  - name: Task_9_1
+    skill: AWS
+    ranges:
+    - - '2025-04-25'
+      - '2025-05-08'
+    workforce_count: 2
+  - name: Task_9_2
+    skill: C++
+    ranges:
+    - - '2025-02-07'
+      - '2025-02-08'
+    workforce_count: 2
+  - name: Task_9_3
+    skill: Python
+    ranges:
+    - - '2025-06-07'
+      - '2025-06-16'
+    workforce_count: 2
+  - name: Task_9_4
+    skill: Java
+    ranges:
+    - - '2025-01-29'
+      - '2025-01-31'
+    workforce_count: 3
+  - name: Task_9_5
+    skill: Rust
+    ranges:
+    - - '2025-05-02'
+      - '2025-05-03'
+    workforce_count: 3
+  - name: Task_9_6
+    skill: C++
+    ranges:
+    - - '2025-02-26'
+      - '2025-03-08'
+    workforce_count: 2
+  - name: Task_9_7
+    skill: AWS
+    ranges:
+    - - '2025-03-26'
+      - '2025-04-05'
+    workforce_count: 3
+  - name: Task_9_8
+    skill: AWS
+    ranges:
+    - - '2025-04-28'
+      - '2025-05-03'
+    workforce_count: 1
+  - name: Task_9_9
+    skill: Go
+    ranges:
+    - - '2025-01-07'
+      - '2025-01-14'
+    workforce_count: 3
+- name: Project_10
+  tasks:
+  - name: Task_10_1
+    skill: Java
+    ranges:
+    - - '2025-06-10'
+      - '2025-06-22'
+    workforce_count: 1
+  - name: Task_10_2
+    skill: TypeScript
+    ranges:
+    - - '2025-05-30'
+      - '2025-06-01'
+    workforce_count: 1
+  - name: Task_10_3
+    skill: Rust
+    ranges:
+    - - '2025-04-14'
+      - '2025-04-23'
+    workforce_count: 1
+  - name: Task_10_4
+    skill: Python
+    ranges:
+    - - '2025-03-27'
+      - '2025-03-31'
+    workforce_count: 3
+  - name: Task_10_5
+    skill: Go
+    ranges:
+    - - '2025-02-09'
+      - '2025-02-19'
+    workforce_count: 2
+- name: Project_11
+  tasks:
+  - name: Task_11_1
+    skill: Docker
+    ranges:
+    - - '2025-06-15'
+      - '2025-06-25'
+    workforce_count: 1
+  - name: Task_11_2
+    skill: Go
+    ranges:
+    - - '2025-04-07'
+      - '2025-04-13'
+    workforce_count: 2
+  - name: Task_11_3
+    skill: TypeScript
+    ranges:
+    - - '2025-02-18'
+      - '2025-02-20'
+    workforce_count: 2
+  - name: Task_11_4
+    skill: AWS
+    ranges:
+    - - '2025-06-27'
+      - '2025-07-07'
+    workforce_count: 2
+- name: Project_12
+  tasks:
+  - name: Task_12_1
+    skill: Python
+    ranges:
+    - - '2025-03-23'
+      - '2025-03-27'
+    workforce_count: 3
+- name: Project_13
+  tasks:
+  - name: Task_13_1
+    skill: TypeScript
+    ranges:
+    - - '2025-05-11'
+      - '2025-05-20'
+    workforce_count: 3
+  - name: Task_13_2
+    skill: Docker
+    ranges:
+    - - '2025-06-25'
+      - '2025-07-01'
+    workforce_count: 3
+  - name: Task_13_3
+    skill: AWS
+    ranges:
+    - - '2025-03-09'
+      - '2025-03-20'
+    workforce_count: 3
+- name: Project_14
+  tasks:
+  - name: Task_14_1
+    skill: Docker
+    ranges:
+    - - '2025-02-27'
+      - '2025-03-05'
+    workforce_count: 3
+  - name: Task_14_2
+    skill: TypeScript
+    ranges:
+    - - '2025-02-07'
+      - '2025-02-14'
+    workforce_count: 3
+  - name: Task_14_3
+    skill: SQL
+    ranges:
+    - - '2025-02-17'
+      - '2025-02-19'
+    workforce_count: 1
+- name: Project_15
+  tasks:
+  - name: Task_15_1
+    skill: Java
+    ranges:
+    - - '2025-04-01'
+      - '2025-04-12'
+    workforce_count: 2
+  - name: Task_15_2
+    skill: Java
+    ranges:
+    - - '2025-01-28'
+      - '2025-02-10'
+    workforce_count: 3
+  - name: Task_15_3
+    skill: TypeScript
+    ranges:
+    - - '2025-02-15'
+      - '2025-02-22'
+    workforce_count: 3
+  - name: Task_15_4
+    skill: Rust
+    ranges:
+    - - '2025-04-20'
+      - '2025-04-22'
+    workforce_count: 1
+  - name: Task_15_5
+    skill: TypeScript
+    ranges:
+    - - '2025-03-10'
+      - '2025-03-14'
+    workforce_count: 1
+  - name: Task_15_6
+    skill: TypeScript
+    ranges:
+    - - '2025-03-22'
+      - '2025-04-02'
+    workforce_count: 2
+  - name: Task_15_7
+    skill: Docker
+    ranges:
+    - - '2025-05-18'
+      - '2025-05-21'
+    workforce_count: 3
+  - name: Task_15_8
+    skill: C++
+    ranges:
+    - - '2025-02-28'
+      - '2025-03-14'
+    workforce_count: 1
+  - name: Task_15_9
+    skill: Docker
+    ranges:
+    - - '2025-01-02'
+      - '2025-01-14'
+    workforce_count: 2
+  - name: Task_15_10
+    skill: AWS
+    ranges:
+    - - '2025-06-10'
+      - '2025-06-24'
+    workforce_count: 1
+- name: Project_16
+  tasks:
+  - name: Task_16_1
+    skill: AWS
+    ranges:
+    - - '2025-02-04'
+      - '2025-02-15'
+    workforce_count: 1
+  - name: Task_16_2
+    skill: Python
+    ranges:
+    - - '2025-06-18'
+      - '2025-06-30'
+    workforce_count: 1
+  - name: Task_16_3
+    skill: Java
+    ranges:
+    - - '2025-04-18'
+      - '2025-04-24'
+    workforce_count: 3
+  - name: Task_16_4
+    skill: C++
+    ranges:
+    - - '2025-03-29'
+      - '2025-04-09'
+    workforce_count: 2
+- name: Project_17
+  tasks:
+  - name: Task_17_1
+    skill: SQL
+    ranges:
+    - - '2025-04-08'
+      - '2025-04-13'
+    workforce_count: 2
+  - name: Task_17_2
+    skill: SQL
+    ranges:
+    - - '2025-06-03'
+      - '2025-06-05'
+    workforce_count: 3
+  - name: Task_17_3
+    skill: Go
+    ranges:
+    - - '2025-04-04'
+      - '2025-04-17'
+    workforce_count: 1
+  - name: Task_17_4
+    skill: AWS
+    ranges:
+    - - '2025-06-25'
+      - '2025-06-29'
+    workforce_count: 2
+  - name: Task_17_5
+    skill: Docker
+    ranges:
+    - - '2025-05-08'
+      - '2025-05-14'
+    workforce_count: 3
+  - name: Task_17_6
+    skill: TypeScript
+    ranges:
+    - - '2025-02-18'
+      - '2025-02-20'
+    workforce_count: 1
+- name: Project_18
+  tasks:
+  - name: Task_18_1
+    skill: Java
+    ranges:
+    - - '2025-06-01'
+      - '2025-06-08'
+    workforce_count: 3
+  - name: Task_18_2
+    skill: Rust
+    ranges:
+    - - '2025-06-17'
+      - '2025-06-30'
+    workforce_count: 2
+  - name: Task_18_3
+    skill: Rust
+    ranges:
+    - - '2025-03-29'
+      - '2025-04-07'
+    workforce_count: 3
+  - name: Task_18_4
+    skill: Docker
+    ranges:
+    - - '2025-01-01'
+      - '2025-01-02'
+    workforce_count: 1
+  - name: Task_18_5
+    skill: C++
+    ranges:
+    - - '2025-02-23'
+      - '2025-02-25'
+    workforce_count: 3
+  - name: Task_18_6
+    skill: Rust
+    ranges:
+    - - '2025-06-24'
+      - '2025-07-08'
+    workforce_count: 2
+  - name: Task_18_7
+    skill: SQL
+    ranges:
+    - - '2025-01-08'
+      - '2025-01-21'
+    workforce_count: 3
+  - name: Task_18_8
+    skill: Rust
+    ranges:
+    - - '2025-05-19'
+      - '2025-05-20'
+    workforce_count: 3
+- name: Project_19
+  tasks:
+  - name: Task_19_1
+    skill: Docker
+    ranges:
+    - - '2025-05-14'
+      - '2025-05-21'
+    workforce_count: 1
+  - name: Task_19_2
+    skill: AWS
+    ranges:
+    - - '2025-02-20'
+      - '2025-02-22'
+    workforce_count: 2
+  - name: Task_19_3
+    skill: Java
+    ranges:
+    - - '2025-01-25'
+      - '2025-02-06'
+    workforce_count: 3
+- name: Project_20
+  tasks:
+  - name: Task_20_1
+    skill: Rust
+    ranges:
+    - - '2025-06-05'
+      - '2025-06-14'
+    workforce_count: 2
+  - name: Task_20_2
+    skill: AWS
+    ranges:
+    - - '2025-04-30'
+      - '2025-05-02'
+    workforce_count: 2
+  - name: Task_20_3
+    skill: Python
+    ranges:
+    - - '2025-02-27'
+      - '2025-03-13'
+    workforce_count: 3
+  - name: Task_20_4
+    skill: C++
+    ranges:
+    - - '2025-02-16'
+      - '2025-02-22'
+    workforce_count: 1
+  - name: Task_20_5
+    skill: Docker
+    ranges:
+    - - '2025-02-25'
+      - '2025-03-07'
+    workforce_count: 2
+  - name: Task_20_6
+    skill: AWS
+    ranges:
+    - - '2025-06-28'
+      - '2025-07-05'
+    workforce_count: 1
+  - name: Task_20_7
+    skill: AWS
+    ranges:
+    - - '2025-06-26'
+      - '2025-07-04'
+    workforce_count: 2
+  - name: Task_20_8
+    skill: C++
+    ranges:
+    - - '2025-01-21'
+      - '2025-02-04'
+    workforce_count: 2
+  - name: Task_20_9
+    skill: AWS
+    ranges:
+    - - '2025-03-05'
+      - '2025-03-07'
+    workforce_count: 3
+- name: Project_21
+  tasks:
+  - name: Task_21_1
+    skill: SQL
+    ranges:
+    - - '2025-01-01'
+      - '2025-01-11'
+    workforce_count: 1
+  - name: Task_21_2
+    skill: Go
+    ranges:
+    - - '2025-04-25'
+      - '2025-04-28'
+    workforce_count: 2
+  - name: Task_21_3
+    skill: Rust
+    ranges:
+    - - '2025-05-21'
+      - '2025-06-03'
+    workforce_count: 2
+  - name: Task_21_4
+    skill: Java
+    ranges:
+    - - '2025-06-29'
+      - '2025-07-09'
+    workforce_count: 3
+  - name: Task_21_5
+    skill: TypeScript
+    ranges:
+    - - '2025-01-07'
+      - '2025-01-11'
+    workforce_count: 1
+  - name: Task_21_6
+    skill: Python
+    ranges:
+    - - '2025-01-12'
+      - '2025-01-22'
+    workforce_count: 3
+  - name: Task_21_7
+    skill: Python
+    ranges:
+    - - '2025-04-30'
+      - '2025-05-10'
+    workforce_count: 1
+  - name: Task_21_8
+    skill: Docker
+    ranges:
+    - - '2025-02-01'
+      - '2025-02-04'
+    workforce_count: 3
+  - name: Task_21_9
+    skill: C++
+    ranges:
+    - - '2025-06-19'
+      - '2025-06-23'
+    workforce_count: 1
+  - name: Task_21_10
+    skill: Java
+    ranges:
+    - - '2025-01-12'
+      - '2025-01-17'
+    workforce_count: 2
+- name: Project_22
+  tasks:
+  - name: Task_22_1
+    skill: Rust
+    ranges:
+    - - '2025-05-03'
+      - '2025-05-14'
+    workforce_count: 2
+  - name: Task_22_2
+    skill: AWS
+    ranges:
+    - - '2025-01-17'
+      - '2025-01-26'
+    workforce_count: 2
+  - name: Task_22_3
+    skill: C++
+    ranges:
+    - - '2025-01-18'
+      - '2025-01-26'
+    workforce_count: 1
+  - name: Task_22_4
+    skill: Rust
+    ranges:
+    - - '2025-01-13'
+      - '2025-01-24'
+    workforce_count: 1
+- name: Project_23
+  tasks:
+  - name: Task_23_1
+    skill: Go
+    ranges:
+    - - '2025-01-07'
+      - '2025-01-16'
+    workforce_count: 3
+  - name: Task_23_2
+    skill: Docker
+    ranges:
+    - - '2025-05-25'
+      - '2025-06-07'
+    workforce_count: 2
+  - name: Task_23_3
+    skill: Docker
+    ranges:
+    - - '2025-02-04'
+      - '2025-02-14'
+    workforce_count: 2
+  - name: Task_23_4
+    skill: AWS
+    ranges:
+    - - '2025-04-08'
+      - '2025-04-21'
+    workforce_count: 2
+  - name: Task_23_5
+    skill: TypeScript
+    ranges:
+    - - '2025-03-05'
+      - '2025-03-07'
+    workforce_count: 2
+  - name: Task_23_6
+    skill: SQL
+    ranges:
+    - - '2025-02-07'
+      - '2025-02-09'
+    workforce_count: 1
+- name: Project_24
+  tasks:
+  - name: Task_24_1
+    skill: Go
+    ranges:
+    - - '2025-05-03'
+      - '2025-05-04'
+    workforce_count: 2
+  - name: Task_24_2
+    skill: Rust
+    ranges:
+    - - '2025-05-31'
+      - '2025-06-01'
+    workforce_count: 3
+  - name: Task_24_3
+    skill: AWS
+    ranges:
+    - - '2025-05-03'
+      - '2025-05-15'
+    workforce_count: 3
+  - name: Task_24_4
+    skill: SQL
+    ranges:
+    - - '2025-02-20'
+      - '2025-02-22'
+    workforce_count: 2
+  - name: Task_24_5
+    skill: Docker
+    ranges:
+    - - '2025-05-26'
+      - '2025-06-09'
+    workforce_count: 2
+  - name: Task_24_6
+    skill: C++
+    ranges:
+    - - '2025-03-17'
+      - '2025-03-20'
+    workforce_count: 3
+  - name: Task_24_7
+    skill: TypeScript
+    ranges:
+    - - '2025-05-03'
+      - '2025-05-08'
+    workforce_count: 1
+- name: Project_25
+  tasks:
+  - name: Task_25_1
+    skill: Java
+    ranges:
+    - - '2025-04-26'
+      - '2025-05-06'
+    workforce_count: 1
+  - name: Task_25_2
+    skill: Go
+    ranges:
+    - - '2025-04-13'
+      - '2025-04-25'
+    workforce_count: 3
+  - name: Task_25_3
+    skill: AWS
+    ranges:
+    - - '2025-04-03'
+      - '2025-04-06'
+    workforce_count: 3
+  - name: Task_25_4
+    skill: C++
+    ranges:
+    - - '2025-03-12'
+      - '2025-03-17'
+    workforce_count: 3
+  - name: Task_25_5
+    skill: AWS
+    ranges:
+    - - '2025-04-16'
+      - '2025-04-18'
+    workforce_count: 1
+  - name: Task_25_6
+    skill: Docker
+    ranges:
+    - - '2025-01-31'
+      - '2025-02-02'
+    workforce_count: 1
+- name: Project_26
+  tasks:
+  - name: Task_26_1
+    skill: Java
+    ranges:
+    - - '2025-01-07'
+      - '2025-01-15'
+    workforce_count: 1
+  - name: Task_26_2
+    skill: TypeScript
+    ranges:
+    - - '2025-06-07'
+      - '2025-06-17'
+    workforce_count: 1
+  - name: Task_26_3
+    skill: SQL
+    ranges:
+    - - '2025-05-19'
+      - '2025-05-22'
+    workforce_count: 2
+  - name: Task_26_4
+    skill: AWS
+    ranges:
+    - - '2025-05-15'
+      - '2025-05-27'
+    workforce_count: 1
+  - name: Task_26_5
+    skill: Go
+    ranges:
+    - - '2025-03-07'
+      - '2025-03-20'
+    workforce_count: 2
+- name: Project_27
+  tasks:
+  - name: Task_27_1
+    skill: Rust
+    ranges:
+    - - '2025-04-18'
+      - '2025-05-02'
+    workforce_count: 3
+  - name: Task_27_2
+    skill: C++
+    ranges:
+    - - '2025-04-03'
+      - '2025-04-05'
+    workforce_count: 3
+- name: Project_28
+  tasks:
+  - name: Task_28_1
+    skill: TypeScript
+    ranges:
+    - - '2025-01-18'
+      - '2025-01-22'
+    workforce_count: 2
+  - name: Task_28_2
+    skill: Go
+    ranges:
+    - - '2025-02-23'
+      - '2025-03-08'
+    workforce_count: 3
+  - name: Task_28_3
+    skill: Docker
+    ranges:
+    - - '2025-05-14'
+      - '2025-05-26'
+    workforce_count: 2
+- name: Project_29
+  tasks:
+  - name: Task_29_1
+    skill: TypeScript
+    ranges:
+    - - '2025-05-16'
+      - '2025-05-26'
+    workforce_count: 1
+  - name: Task_29_2
+    skill: Java
+    ranges:
+    - - '2025-03-04'
+      - '2025-03-06'
+    workforce_count: 3
+- name: Project_30
+  tasks:
+  - name: Task_30_1
+    skill: Go
+    ranges:
+    - - '2025-02-14'
+      - '2025-02-24'
+    workforce_count: 2
+  - name: Task_30_2
+    skill: Python
+    ranges:
+    - - '2025-01-28'
+      - '2025-02-06'
+    workforce_count: 3
+  - name: Task_30_3
+    skill: C++
+    ranges:
+    - - '2025-04-22'
+      - '2025-05-05'
+    workforce_count: 3
+  - name: Task_30_4
+    skill: Python
+    ranges:
+    - - '2025-03-29'
+      - '2025-03-31'
+    workforce_count: 1
+  - name: Task_30_5
+    skill: C++
+    ranges:
+    - - '2025-04-02'
+      - '2025-04-14'
+    workforce_count: 3
+  - name: Task_30_6
+    skill: Rust
+    ranges:
+    - - '2025-06-01'
+      - '2025-06-12'
+    workforce_count: 2
+  - name: Task_30_7
+    skill: SQL
+    ranges:
+    - - '2025-05-31'
+      - '2025-06-06'
+    workforce_count: 1
+- name: Project_31
+  tasks:
+  - name: Task_31_1
+    skill: SQL
+    ranges:
+    - - '2025-06-16'
+      - '2025-06-18'
+    workforce_count: 2
+  - name: Task_31_2
+    skill: Java
+    ranges:
+    - - '2025-05-20'
+      - '2025-05-31'
+    workforce_count: 3
+  - name: Task_31_3
+    skill: AWS
+    ranges:
+    - - '2025-06-11'
+      - '2025-06-16'
+    workforce_count: 1
+  - name: Task_31_4
+    skill: Go
+    ranges:
+    - - '2025-06-22'
+      - '2025-07-06'
+    workforce_count: 1
+  - name: Task_31_5
+    skill: C++
+    ranges:
+    - - '2025-02-26'
+      - '2025-03-09'
+    workforce_count: 2
+  - name: Task_31_6
+    skill: Rust
+    ranges:
+    - - '2025-01-23'
+      - '2025-01-31'
+    workforce_count: 2
+  - name: Task_31_7
+    skill: AWS
+    ranges:
+    - - '2025-03-13'
+      - '2025-03-16'
+    workforce_count: 3
+  - name: Task_31_8
+    skill: Java
+    ranges:
+    - - '2025-06-04'
+      - '2025-06-05'
+    workforce_count: 3
+  - name: Task_31_9
+    skill: SQL
+    ranges:
+    - - '2025-05-04'
+      - '2025-05-15'
+    workforce_count: 1
+  - name: Task_31_10
+    skill: SQL
+    ranges:
+    - - '2025-05-22'
+      - '2025-06-05'
+    workforce_count: 1
+- name: Project_32
+  tasks:
+  - name: Task_32_1
+    skill: AWS
+    ranges:
+    - - '2025-01-02'
+      - '2025-01-03'
+    workforce_count: 3
+  - name: Task_32_2
+    skill: Python
+    ranges:
+    - - '2025-01-10'
+      - '2025-01-19'
+    workforce_count: 2
+  - name: Task_32_3
+    skill: SQL
+    ranges:
+    - - '2025-03-04'
+      - '2025-03-14'
+    workforce_count: 1
+  - name: Task_32_4
+    skill: Python
+    ranges:
+    - - '2025-04-01'
+      - '2025-04-05'
+    workforce_count: 1
+  - name: Task_32_5
+    skill: Rust
+    ranges:
+    - - '2025-02-21'
+      - '2025-02-25'
+    workforce_count: 2
+  - name: Task_32_6
+    skill: Docker
+    ranges:
+    - - '2025-01-17'
+      - '2025-01-18'
+    workforce_count: 1
+  - name: Task_32_7
+    skill: SQL
+    ranges:
+    - - '2025-02-25'
+      - '2025-03-01'
+    workforce_count: 3
+  - name: Task_32_8
+    skill: Rust
+    ranges:
+    - - '2025-01-15'
+      - '2025-01-23'
+    workforce_count: 2
+  - name: Task_32_9
+    skill: Go
+    ranges:
+    - - '2025-02-22'
+      - '2025-03-03'
+    workforce_count: 3
+- name: Project_33
+  tasks:
+  - name: Task_33_1
+    skill: Java
+    ranges:
+    - - '2025-01-13'
+      - '2025-01-20'
+    workforce_count: 2
+  - name: Task_33_2
+    skill: C++
+    ranges:
+    - - '2025-04-25'
+      - '2025-05-08'
+    workforce_count: 3
+  - name: Task_33_3
+    skill: Docker
+    ranges:
+    - - '2025-01-23'
+      - '2025-02-05'
+    workforce_count: 1
+  - name: Task_33_4
+    skill: Java
+    ranges:
+    - - '2025-06-22'
+      - '2025-07-04'
+    workforce_count: 1
+  - name: Task_33_5
+    skill: AWS
+    ranges:
+    - - '2025-01-31'
+      - '2025-02-07'
+    workforce_count: 3
+  - name: Task_33_6
+    skill: SQL
+    ranges:
+    - - '2025-05-07'
+      - '2025-05-13'
+    workforce_count: 1
+  - name: Task_33_7
+    skill: Java
+    ranges:
+    - - '2025-01-30'
+      - '2025-02-04'
+    workforce_count: 3
+  - name: Task_33_8
+    skill: Python
+    ranges:
+    - - '2025-01-05'
+      - '2025-01-09'
+    workforce_count: 2
+  - name: Task_33_9
+    skill: Go
+    ranges:
+    - - '2025-06-29'
+      - '2025-07-09'
+    workforce_count: 2
+  - name: Task_33_10
+    skill: Go
+    ranges:
+    - - '2025-03-25'
+      - '2025-04-03'
+    workforce_count: 1
+- name: Project_34
+  tasks:
+  - name: Task_34_1
+    skill: Go
+    ranges:
+    - - '2025-04-22'
+      - '2025-05-06'
+    workforce_count: 3
+  - name: Task_34_2
+    skill: SQL
+    ranges:
+    - - '2025-02-01'
+      - '2025-02-03'
+    workforce_count: 3
+- name: Project_35
+  tasks:
+  - name: Task_35_1
+    skill: TypeScript
+    ranges:
+    - - '2025-01-23'
+      - '2025-01-28'
+    workforce_count: 1
+  - name: Task_35_2
+    skill: AWS
+    ranges:
+    - - '2025-01-10'
+      - '2025-01-15'
+    workforce_count: 3
+  - name: Task_35_3
+    skill: SQL
+    ranges:
+    - - '2025-03-20'
+      - '2025-03-28'
+    workforce_count: 3
+  - name: Task_35_4
+    skill: Python
+    ranges:
+    - - '2025-05-22'
+      - '2025-06-02'
+    workforce_count: 2
+- name: Project_36
+  tasks:
+  - name: Task_36_1
+    skill: AWS
+    ranges:
+    - - '2025-04-22'
+      - '2025-04-29'
+    workforce_count: 1
+- name: Project_37
+  tasks:
+  - name: Task_37_1
+    skill: C++
+    ranges:
+    - - '2025-06-28'
+      - '2025-07-04'
+    workforce_count: 2
+  - name: Task_37_2
+    skill: AWS
+    ranges:
+    - - '2025-04-25'
+      - '2025-04-28'
+    workforce_count: 3
+  - name: Task_37_3
+    skill: TypeScript
+    ranges:
+    - - '2025-04-08'
+      - '2025-04-09'
+    workforce_count: 1
+  - name: Task_37_4
+    skill: AWS
+    ranges:
+    - - '2025-03-24'
+      - '2025-04-02'
+    workforce_count: 2
+- name: Project_38
+  tasks:
+  - name: Task_38_1
+    skill: Go
+    ranges:
+    - - '2025-01-10'
+      - '2025-01-22'
+    workforce_count: 2
+  - name: Task_38_2
+    skill: Java
+    ranges:
+    - - '2025-04-11'
+      - '2025-04-19'
+    workforce_count: 3
+  - name: Task_38_3
+    skill: Docker
+    ranges:
+    - - '2025-02-13'
+      - '2025-02-27'
+    workforce_count: 1
+- name: Project_39
+  tasks:
+  - name: Task_39_1
+    skill: SQL
+    ranges:
+    - - '2025-01-24'
+      - '2025-01-26'
+    workforce_count: 2
+  - name: Task_39_2
+    skill: C++
+    ranges:
+    - - '2025-03-31'
+      - '2025-04-08'
+    workforce_count: 2
+  - name: Task_39_3
+    skill: Rust
+    ranges:
+    - - '2025-06-10'
+      - '2025-06-22'
+    workforce_count: 3
+  - name: Task_39_4
+    skill: Docker
+    ranges:
+    - - '2025-03-30'
+      - '2025-04-05'
+    workforce_count: 1
+  - name: Task_39_5
+    skill: TypeScript
+    ranges:
+    - - '2025-02-27'
+      - '2025-03-04'
+    workforce_count: 2
+  - name: Task_39_6
+    skill: Java
+    ranges:
+    - - '2025-05-14'
+      - '2025-05-17'
+    workforce_count: 3
+- name: Project_40
+  tasks:
+  - name: Task_40_1
+    skill: Python
+    ranges:
+    - - '2025-05-08'
+      - '2025-05-22'
+    workforce_count: 3
+  - name: Task_40_2
+    skill: Rust
+    ranges:
+    - - '2025-06-12'
+      - '2025-06-19'
+    workforce_count: 2
+  - name: Task_40_3
+    skill: TypeScript
+    ranges:
+    - - '2025-03-01'
+      - '2025-03-09'
+    workforce_count: 3
+  - name: Task_40_4
+    skill: Go
+    ranges:
+    - - '2025-06-08'
+      - '2025-06-13'
+    workforce_count: 3
+  - name: Task_40_5
+    skill: AWS
+    ranges:
+    - - '2025-02-24'
+      - '2025-03-02'
+    workforce_count: 3
+  - name: Task_40_6
+    skill: AWS
+    ranges:
+    - - '2025-05-10'
+      - '2025-05-11'
+    workforce_count: 3
+  - name: Task_40_7
+    skill: AWS
+    ranges:
+    - - '2025-06-04'
+      - '2025-06-08'
+    workforce_count: 3
+- name: Project_41
+  tasks:
+  - name: Task_41_1
+    skill: SQL
+    ranges:
+    - - '2025-01-02'
+      - '2025-01-15'
+    workforce_count: 3
+  - name: Task_41_2
+    skill: Rust
+    ranges:
+    - - '2025-01-09'
+      - '2025-01-22'
+    workforce_count: 3
+  - name: Task_41_3
+    skill: Rust
+    ranges:
+    - - '2025-03-23'
+      - '2025-03-31'
+    workforce_count: 1
+  - name: Task_41_4
+    skill: TypeScript
+    ranges:
+    - - '2025-01-09'
+      - '2025-01-19'
+    workforce_count: 2
+  - name: Task_41_5
+    skill: Python
+    ranges:
+    - - '2025-06-07'
+      - '2025-06-21'
+    workforce_count: 1
+  - name: Task_41_6
+    skill: Java
+    ranges:
+    - - '2025-02-19'
+      - '2025-03-05'
+    workforce_count: 1
+- name: Project_42
+  tasks:
+  - name: Task_42_1
+    skill: C++
+    ranges:
+    - - '2025-06-28'
+      - '2025-07-03'
+    workforce_count: 1
+  - name: Task_42_2
+    skill: Java
+    ranges:
+    - - '2025-04-18'
+      - '2025-04-24'
+    workforce_count: 2
+  - name: Task_42_3
+    skill: AWS
+    ranges:
+    - - '2025-01-05'
+      - '2025-01-18'
+    workforce_count: 1
+- name: Project_43
+  tasks:
+  - name: Task_43_1
+    skill: Java
+    ranges:
+    - - '2025-06-27'
+      - '2025-07-05'
+    workforce_count: 1
+  - name: Task_43_2
+    skill: Java
+    ranges:
+    - - '2025-03-15'
+      - '2025-03-23'
+    workforce_count: 3
+  - name: Task_43_3
+    skill: Docker
+    ranges:
+    - - '2025-03-25'
+      - '2025-04-06'
+    workforce_count: 2
+- name: Project_44
+  tasks:
+  - name: Task_44_1
+    skill: TypeScript
+    ranges:
+    - - '2025-06-22'
+      - '2025-06-25'
+    workforce_count: 1
+  - name: Task_44_2
+    skill: C++
+    ranges:
+    - - '2025-01-24'
+      - '2025-01-31'
+    workforce_count: 2
+  - name: Task_44_3
+    skill: Go
+    ranges:
+    - - '2025-06-21'
+      - '2025-06-28'
+    workforce_count: 2
+  - name: Task_44_4
+    skill: Rust
+    ranges:
+    - - '2025-03-28'
+      - '2025-04-09'
+    workforce_count: 1
+- name: Project_45
+  tasks:
+  - name: Task_45_1
+    skill: C++
+    ranges:
+    - - '2025-01-02'
+      - '2025-01-16'
+    workforce_count: 2
+  - name: Task_45_2
+    skill: Java
+    ranges:
+    - - '2025-05-30'
+      - '2025-06-03'
+    workforce_count: 3
+- name: Project_46
+  tasks:
+  - name: Task_46_1
+    skill: TypeScript
+    ranges:
+    - - '2025-06-24'
+      - '2025-07-07'
+    workforce_count: 2
+  - name: Task_46_2
+    skill: C++
+    ranges:
+    - - '2025-06-16'
+      - '2025-06-19'
+    workforce_count: 2
+  - name: Task_46_3
+    skill: SQL
+    ranges:
+    - - '2025-01-10'
+      - '2025-01-24'
+    workforce_count: 2
+  - name: Task_46_4
+    skill: Go
+    ranges:
+    - - '2025-02-28'
+      - '2025-03-02'
+    workforce_count: 2
+  - name: Task_46_5
+    skill: Rust
+    ranges:
+    - - '2025-01-03'
+      - '2025-01-08'
+    workforce_count: 2
+  - name: Task_46_6
+    skill: Go
+    ranges:
+    - - '2025-06-16'
+      - '2025-06-25'
+    workforce_count: 1
+  - name: Task_46_7
+    skill: AWS
+    ranges:
+    - - '2025-05-08'
+      - '2025-05-12'
+    workforce_count: 3
+- name: Project_47
+  tasks:
+  - name: Task_47_1
+    skill: Go
+    ranges:
+    - - '2025-05-15'
+      - '2025-05-20'
+    workforce_count: 2
+  - name: Task_47_2
+    skill: Docker
+    ranges:
+    - - '2025-05-18'
+      - '2025-05-24'
+    workforce_count: 1
+  - name: Task_47_3
+    skill: Java
+    ranges:
+    - - '2025-01-14'
+      - '2025-01-22'
+    workforce_count: 1
+  - name: Task_47_4
+    skill: Python
+    ranges:
+    - - '2025-01-01'
+      - '2025-01-12'
+    workforce_count: 1
+  - name: Task_47_5
+    skill: SQL
+    ranges:
+    - - '2025-06-13'
+      - '2025-06-26'
+    workforce_count: 2
+  - name: Task_47_6
+    skill: Python
+    ranges:
+    - - '2025-04-20'
+      - '2025-04-21'
+    workforce_count: 1
+  - name: Task_47_7
+    skill: SQL
+    ranges:
+    - - '2025-02-20'
+      - '2025-03-02'
+    workforce_count: 1
+- name: Project_48
+  tasks:
+  - name: Task_48_1
+    skill: AWS
+    ranges:
+    - - '2025-05-04'
+      - '2025-05-07'
+    workforce_count: 1
+  - name: Task_48_2
+    skill: Go
+    ranges:
+    - - '2025-05-25'
+      - '2025-06-08'
+    workforce_count: 2
+  - name: Task_48_3
+    skill: Python
+    ranges:
+    - - '2025-01-23'
+      - '2025-02-04'
+    workforce_count: 1
+  - name: Task_48_4
+    skill: C++
+    ranges:
+    - - '2025-06-18'
+      - '2025-06-22'
+    workforce_count: 3
+  - name: Task_48_5
+    skill: SQL
+    ranges:
+    - - '2025-04-06'
+      - '2025-04-16'
+    workforce_count: 3
+  - name: Task_48_6
+    skill: Java
+    ranges:
+    - - '2025-01-16'
+      - '2025-01-27'
+    workforce_count: 2
+  - name: Task_48_7
+    skill: Docker
+    ranges:
+    - - '2025-06-17'
+      - '2025-06-25'
+    workforce_count: 3
+  - name: Task_48_8
+    skill: Java
+    ranges:
+    - - '2025-03-13'
+      - '2025-03-27'
+    workforce_count: 2
+  - name: Task_48_9
+    skill: Go
+    ranges:
+    - - '2025-05-04'
+      - '2025-05-08'
+    workforce_count: 2
+- name: Project_49
+  tasks:
+  - name: Task_49_1
+    skill: Rust
+    ranges:
+    - - '2025-02-21'
+      - '2025-02-25'
+    workforce_count: 3
+  - name: Task_49_2
+    skill: Go
+    ranges:
+    - - '2025-01-26'
+      - '2025-02-06'
+    workforce_count: 3
+  - name: Task_49_3
+    skill: Java
+    ranges:
+    - - '2025-04-21'
+      - '2025-05-03'
+    workforce_count: 1
+  - name: Task_49_4
+    skill: SQL
+    ranges:
+    - - '2025-04-27'
+      - '2025-05-03'
+    workforce_count: 2
+  - name: Task_49_5
+    skill: C++
+    ranges:
+    - - '2025-06-15'
+      - '2025-06-17'
+    workforce_count: 3
+- name: Project_50
+  tasks:
+  - name: Task_50_1
+    skill: Rust
+    ranges:
+    - - '2025-04-13'
+      - '2025-04-24'
+    workforce_count: 3
+  - name: Task_50_2
+    skill: Java
+    ranges:
+    - - '2025-01-01'
+      - '2025-01-02'
+    workforce_count: 3
+  - name: Task_50_3
+    skill: Go
+    ranges:
+    - - '2025-03-15'
+      - '2025-03-17'
+    workforce_count: 2
+  - name: Task_50_4
+    skill: Python
+    ranges:
+    - - '2025-01-24'
+      - '2025-02-01'
+    workforce_count: 3
+  - name: Task_50_5
+    skill: Docker
+    ranges:
+    - - '2025-03-15'
+      - '2025-03-17'
+    workforce_count: 3
+  - name: Task_50_6
+    skill: AWS
+    ranges:
+    - - '2025-02-02'
+      - '2025-02-07'
+    workforce_count: 3
+  - name: Task_50_7
+    skill: Rust
+    ranges:
+    - - '2025-01-19'
+      - '2025-01-20'
+    workforce_count: 1
+- name: Project_51
+  tasks:
+  - name: Task_51_1
+    skill: AWS
+    ranges:
+    - - '2025-05-18'
+      - '2025-06-01'
+    workforce_count: 3
+  - name: Task_51_2
+    skill: Rust
+    ranges:
+    - - '2025-05-10'
+      - '2025-05-17'
+    workforce_count: 3
+  - name: Task_51_3
+    skill: TypeScript
+    ranges:
+    - - '2025-06-08'
+      - '2025-06-19'
+    workforce_count: 1
+  - name: Task_51_4
+    skill: AWS
+    ranges:
+    - - '2025-01-13'
+      - '2025-01-19'
+    workforce_count: 2
+  - name: Task_51_5
+    skill: TypeScript
+    ranges:
+    - - '2025-03-25'
+      - '2025-03-28'
+    workforce_count: 1
+  - name: Task_51_6
+    skill: AWS
+    ranges:
+    - - '2025-03-16'
+      - '2025-03-26'
+    workforce_count: 2
+  - name: Task_51_7
+    skill: AWS
+    ranges:
+    - - '2025-06-12'
+      - '2025-06-24'
+    workforce_count: 2
+  - name: Task_51_8
+    skill: SQL
+    ranges:
+    - - '2025-01-06'
+      - '2025-01-08'
+    workforce_count: 2
+  - name: Task_51_9
+    skill: Python
+    ranges:
+    - - '2025-05-17'
+      - '2025-05-22'
+    workforce_count: 1
+- name: Project_52
+  tasks:
+  - name: Task_52_1
+    skill: Python
+    ranges:
+    - - '2025-02-19'
+      - '2025-03-03'
+    workforce_count: 1
+  - name: Task_52_2
+    skill: C++
+    ranges:
+    - - '2025-04-02'
+      - '2025-04-13'
+    workforce_count: 3
+  - name: Task_52_3
+    skill: Java
+    ranges:
+    - - '2025-02-20'
+      - '2025-02-22'
+    workforce_count: 1
+  - name: Task_52_4
+    skill: C++
+    ranges:
+    - - '2025-06-09'
+      - '2025-06-17'
+    workforce_count: 1
+  - name: Task_52_5
+    skill: Python
+    ranges:
+    - - '2025-04-15'
+      - '2025-04-25'
+    workforce_count: 2
+  - name: Task_52_6
+    skill: TypeScript
+    ranges:
+    - - '2025-06-20'
+      - '2025-06-29'
+    workforce_count: 1
+- name: Project_53
+  tasks:
+  - name: Task_53_1
+    skill: TypeScript
+    ranges:
+    - - '2025-06-09'
+      - '2025-06-18'
+    workforce_count: 1
+  - name: Task_53_2
+    skill: Python
+    ranges:
+    - - '2025-02-05'
+      - '2025-02-16'
+    workforce_count: 3
+  - name: Task_53_3
+    skill: Go
+    ranges:
+    - - '2025-06-04'
+      - '2025-06-07'
+    workforce_count: 2
+  - name: Task_53_4
+    skill: SQL
+    ranges:
+    - - '2025-05-12'
+      - '2025-05-19'
+    workforce_count: 2
+  - name: Task_53_5
+    skill: Python
+    ranges:
+    - - '2025-05-18'
+      - '2025-05-21'
+    workforce_count: 2
+  - name: Task_53_6
+    skill: AWS
+    ranges:
+    - - '2025-03-28'
+      - '2025-04-11'
+    workforce_count: 2
+  - name: Task_53_7
+    skill: Rust
+    ranges:
+    - - '2025-04-22'
+      - '2025-05-04'
+    workforce_count: 2
+  - name: Task_53_8
+    skill: Java
+    ranges:
+    - - '2025-03-26'
+      - '2025-04-08'
+    workforce_count: 1
+- name: Project_54
+  tasks:
+  - name: Task_54_1
+    skill: TypeScript
+    ranges:
+    - - '2025-04-22'
+      - '2025-05-02'
+    workforce_count: 1
+  - name: Task_54_2
+    skill: Docker
+    ranges:
+    - - '2025-06-05'
+      - '2025-06-07'
+    workforce_count: 3
+  - name: Task_54_3
+    skill: Go
+    ranges:
+    - - '2025-02-17'
+      - '2025-02-21'
+    workforce_count: 2
+  - name: Task_54_4
+    skill: SQL
+    ranges:
+    - - '2025-03-19'
+      - '2025-03-27'
+    workforce_count: 2
+  - name: Task_54_5
+    skill: TypeScript
+    ranges:
+    - - '2025-05-05'
+      - '2025-05-06'
+    workforce_count: 1
+  - name: Task_54_6
+    skill: C++
+    ranges:
+    - - '2025-01-01'
+      - '2025-01-13'
+    workforce_count: 1
+  - name: Task_54_7
+    skill: Java
+    ranges:
+    - - '2025-02-04'
+      - '2025-02-11'
+    workforce_count: 1
+- name: Project_55
+  tasks:
+  - name: Task_55_1
+    skill: TypeScript
+    ranges:
+    - - '2025-02-12'
+      - '2025-02-14'
+    workforce_count: 3
+- name: Project_56
+  tasks:
+  - name: Task_56_1
+    skill: Python
+    ranges:
+    - - '2025-05-12'
+      - '2025-05-26'
+    workforce_count: 3
+- name: Project_57
+  tasks:
+  - name: Task_57_1
+    skill: Java
+    ranges:
+    - - '2025-02-12'
+      - '2025-02-24'
+    workforce_count: 2
+- name: Project_58
+  tasks:
+  - name: Task_58_1
+    skill: Java
+    ranges:
+    - - '2025-05-27'
+      - '2025-05-31'
+    workforce_count: 1
+  - name: Task_58_2
+    skill: Java
+    ranges:
+    - - '2025-06-27'
+      - '2025-06-29'
+    workforce_count: 1
+  - name: Task_58_3
+    skill: Python
+    ranges:
+    - - '2025-03-15'
+      - '2025-03-28'
+    workforce_count: 1
+  - name: Task_58_4
+    skill: Rust
+    ranges:
+    - - '2025-02-05'
+      - '2025-02-10'
+    workforce_count: 2
+  - name: Task_58_5
+    skill: C++
+    ranges:
+    - - '2025-02-10'
+      - '2025-02-22'
+    workforce_count: 2
+  - name: Task_58_6
+    skill: TypeScript
+    ranges:
+    - - '2025-03-19'
+      - '2025-03-26'
+    workforce_count: 1
+  - name: Task_58_7
+    skill: AWS
+    ranges:
+    - - '2025-04-24'
+      - '2025-04-25'
+    workforce_count: 2
+- name: Project_59
+  tasks:
+  - name: Task_59_1
+    skill: AWS
+    ranges:
+    - - '2025-01-25'
+      - '2025-02-07'
+    workforce_count: 2
+  - name: Task_59_2
+    skill: Docker
+    ranges:
+    - - '2025-06-04'
+      - '2025-06-10'
+    workforce_count: 2
+  - name: Task_59_3
+    skill: Python
+    ranges:
+    - - '2025-02-27'
+      - '2025-03-06'
+    workforce_count: 3
+  - name: Task_59_4
+    skill: Docker
+    ranges:
+    - - '2025-03-31'
+      - '2025-04-02'
+    workforce_count: 2
+  - name: Task_59_5
+    skill: SQL
+    ranges:
+    - - '2025-04-26'
+      - '2025-04-28'
+    workforce_count: 3
+  - name: Task_59_6
+    skill: Rust
+    ranges:
+    - - '2025-06-02'
+      - '2025-06-05'
+    workforce_count: 1
+  - name: Task_59_7
+    skill: C++
+    ranges:
+    - - '2025-04-03'
+      - '2025-04-17'
+    workforce_count: 3
+  - name: Task_59_8
+    skill: SQL
+    ranges:
+    - - '2025-04-16'
+      - '2025-04-24'
+    workforce_count: 3
+  - name: Task_59_9
+    skill: SQL
+    ranges:
+    - - '2025-05-07'
+      - '2025-05-09'
+    workforce_count: 1
+- name: Project_60
+  tasks:
+  - name: Task_60_1
+    skill: C++
+    ranges:
+    - - '2025-05-14'
+      - '2025-05-15'
+    workforce_count: 3
+  - name: Task_60_2
+    skill: Python
+    ranges:
+    - - '2025-05-16'
+      - '2025-05-18'
+    workforce_count: 3
+  - name: Task_60_3
+    skill: C++
+    ranges:
+    - - '2025-02-08'
+      - '2025-02-18'
+    workforce_count: 1
+  - name: Task_60_4
+    skill: C++
+    ranges:
+    - - '2025-02-08'
+      - '2025-02-22'
+    workforce_count: 1
+  - name: Task_60_5
+    skill: TypeScript
+    ranges:
+    - - '2025-06-18'
+      - '2025-06-22'
+    workforce_count: 2
+  - name: Task_60_6
+    skill: Java
+    ranges:
+    - - '2025-04-01'
+      - '2025-04-13'
+    workforce_count: 3
+  - name: Task_60_7
+    skill: Docker
+    ranges:
+    - - '2025-01-07'
+      - '2025-01-19'
+    workforce_count: 3
+  - name: Task_60_8
+    skill: C++
+    ranges:
+    - - '2025-03-27'
+      - '2025-03-31'
+    workforce_count: 3
+  - name: Task_60_9
+    skill: TypeScript
+    ranges:
+    - - '2025-05-25'
+      - '2025-06-04'
+    workforce_count: 3
+  - name: Task_60_10
+    skill: Docker
+    ranges:
+    - - '2025-06-19'
+      - '2025-06-28'
+    workforce_count: 2
+- name: Project_61
+  tasks:
+  - name: Task_61_1
+    skill: C++
+    ranges:
+    - - '2025-03-31'
+      - '2025-04-04'
+    workforce_count: 2
+- name: Project_62
+  tasks:
+  - name: Task_62_1
+    skill: Go
+    ranges:
+    - - '2025-04-03'
+      - '2025-04-11'
+    workforce_count: 2
+  - name: Task_62_2
+    skill: Docker
+    ranges:
+    - - '2025-01-04'
+      - '2025-01-07'
+    workforce_count: 1
+  - name: Task_62_3
+    skill: Java
+    ranges:
+    - - '2025-05-13'
+      - '2025-05-23'
+    workforce_count: 1
+  - name: Task_62_4
+    skill: Go
+    ranges:
+    - - '2025-02-20'
+      - '2025-03-02'
+    workforce_count: 3
+  - name: Task_62_5
+    skill: Go
+    ranges:
+    - - '2025-03-13'
+      - '2025-03-27'
+    workforce_count: 3
+  - name: Task_62_6
+    skill: Python
+    ranges:
+    - - '2025-05-20'
+      - '2025-05-25'
+    workforce_count: 1
+- name: Project_63
+  tasks:
+  - name: Task_63_1
+    skill: Python
+    ranges:
+    - - '2025-06-11'
+      - '2025-06-17'
+    workforce_count: 1
+  - name: Task_63_2
+    skill: SQL
+    ranges:
+    - - '2025-04-13'
+      - '2025-04-16'
+    workforce_count: 1
+  - name: Task_63_3
+    skill: AWS
+    ranges:
+    - - '2025-02-01'
+      - '2025-02-02'
+    workforce_count: 1
+- name: Project_64
+  tasks:
+  - name: Task_64_1
+    skill: C++
+    ranges:
+    - - '2025-04-06'
+      - '2025-04-20'
+    workforce_count: 2
+  - name: Task_64_2
+    skill: SQL
+    ranges:
+    - - '2025-02-06'
+      - '2025-02-15'
+    workforce_count: 2
+  - name: Task_64_3
+    skill: C++
+    ranges:
+    - - '2025-03-21'
+      - '2025-03-25'
+    workforce_count: 3
+  - name: Task_64_4
+    skill: TypeScript
+    ranges:
+    - - '2025-03-26'
+      - '2025-04-09'
+    workforce_count: 3
+  - name: Task_64_5
+    skill: Python
+    ranges:
+    - - '2025-01-22'
+      - '2025-02-05'
+    workforce_count: 3
+  - name: Task_64_6
+    skill: AWS
+    ranges:
+    - - '2025-06-27'
+      - '2025-07-01'
+    workforce_count: 2
+  - name: Task_64_7
+    skill: SQL
+    ranges:
+    - - '2025-01-14'
+      - '2025-01-17'
+    workforce_count: 3
+  - name: Task_64_8
+    skill: Java
+    ranges:
+    - - '2025-03-29'
+      - '2025-04-06'
+    workforce_count: 1
+  - name: Task_64_9
+    skill: Docker
+    ranges:
+    - - '2025-06-24'
+      - '2025-06-27'
+    workforce_count: 3
+  - name: Task_64_10
+    skill: Docker
+    ranges:
+    - - '2025-04-23'
+      - '2025-04-27'
+    workforce_count: 2
+- name: Project_65
+  tasks:
+  - name: Task_65_1
+    skill: TypeScript
+    ranges:
+    - - '2025-05-23'
+      - '2025-06-05'
+    workforce_count: 1
+  - name: Task_65_2
+    skill: Java
+    ranges:
+    - - '2025-01-20'
+      - '2025-01-31'
+    workforce_count: 2
+  - name: Task_65_3
+    skill: Rust
+    ranges:
+    - - '2025-04-24'
+      - '2025-05-06'
+    workforce_count: 1
+  - name: Task_65_4
+    skill: Rust
+    ranges:
+    - - '2025-05-16'
+      - '2025-05-22'
+    workforce_count: 1
+  - name: Task_65_5
+    skill: Java
+    ranges:
+    - - '2025-04-23'
+      - '2025-05-01'
+    workforce_count: 3
+  - name: Task_65_6
+    skill: Rust
+    ranges:
+    - - '2025-03-15'
+      - '2025-03-22'
+    workforce_count: 3
+  - name: Task_65_7
+    skill: Rust
+    ranges:
+    - - '2025-06-22'
+      - '2025-06-25'
+    workforce_count: 1
+  - name: Task_65_8
+    skill: TypeScript
+    ranges:
+    - - '2025-04-26'
+      - '2025-05-04'
+    workforce_count: 3
+- name: Project_66
+  tasks:
+  - name: Task_66_1
+    skill: Rust
+    ranges:
+    - - '2025-04-18'
+      - '2025-04-23'
+    workforce_count: 1
+  - name: Task_66_2
+    skill: Java
+    ranges:
+    - - '2025-01-31'
+      - '2025-02-03'
+    workforce_count: 1
+  - name: Task_66_3
+    skill: TypeScript
+    ranges:
+    - - '2025-02-08'
+      - '2025-02-12'
+    workforce_count: 1
+  - name: Task_66_4
+    skill: Docker
+    ranges:
+    - - '2025-05-09'
+      - '2025-05-11'
+    workforce_count: 3
+  - name: Task_66_5
+    skill: Java
+    ranges:
+    - - '2025-01-20'
+      - '2025-02-03'
+    workforce_count: 1
+  - name: Task_66_6
+    skill: TypeScript
+    ranges:
+    - - '2025-06-27'
+      - '2025-07-02'
+    workforce_count: 1
+  - name: Task_66_7
+    skill: Python
+    ranges:
+    - - '2025-03-06'
+      - '2025-03-08'
+    workforce_count: 1
+- name: Project_67
+  tasks:
+  - name: Task_67_1
+    skill: SQL
+    ranges:
+    - - '2025-06-04'
+      - '2025-06-15'
+    workforce_count: 3
+  - name: Task_67_2
+    skill: Rust
+    ranges:
+    - - '2025-05-29'
+      - '2025-06-08'
+    workforce_count: 2
+  - name: Task_67_3
+    skill: Rust
+    ranges:
+    - - '2025-06-29'
+      - '2025-07-01'
+    workforce_count: 2
+  - name: Task_67_4
+    skill: Docker
+    ranges:
+    - - '2025-05-22'
+      - '2025-06-04'
+    workforce_count: 3
+  - name: Task_67_5
+    skill: Go
+    ranges:
+    - - '2025-06-27'
+      - '2025-07-11'
+    workforce_count: 2
+  - name: Task_67_6
+    skill: Python
+    ranges:
+    - - '2025-05-08'
+      - '2025-05-19'
+    workforce_count: 2
+  - name: Task_67_7
+    skill: SQL
+    ranges:
+    - - '2025-05-24'
+      - '2025-06-02'
+    workforce_count: 1
+  - name: Task_67_8
+    skill: Java
+    ranges:
+    - - '2025-01-05'
+      - '2025-01-10'
+    workforce_count: 3
+  - name: Task_67_9
+    skill: Docker
+    ranges:
+    - - '2025-04-18'
+      - '2025-04-28'
+    workforce_count: 2
+- name: Project_68
+  tasks:
+  - name: Task_68_1
+    skill: Rust
+    ranges:
+    - - '2025-02-17'
+      - '2025-02-26'
+    workforce_count: 2
+  - name: Task_68_2
+    skill: C++
+    ranges:
+    - - '2025-05-24'
+      - '2025-06-06'
+    workforce_count: 2
+  - name: Task_68_3
+    skill: Java
+    ranges:
+    - - '2025-02-12'
+      - '2025-02-23'
+    workforce_count: 3
+  - name: Task_68_4
+    skill: TypeScript
+    ranges:
+    - - '2025-04-18'
+      - '2025-04-25'
+    workforce_count: 3
+  - name: Task_68_5
+    skill: Rust
+    ranges:
+    - - '2025-02-22'
+      - '2025-03-06'
+    workforce_count: 1
+  - name: Task_68_6
+    skill: Rust
+    ranges:
+    - - '2025-05-03'
+      - '2025-05-06'
+    workforce_count: 1
+  - name: Task_68_7
+    skill: TypeScript
+    ranges:
+    - - '2025-02-09'
+      - '2025-02-14'
+    workforce_count: 2
+  - name: Task_68_8
+    skill: Go
+    ranges:
+    - - '2025-01-10'
+      - '2025-01-20'
+    workforce_count: 1
+- name: Project_69
+  tasks:
+  - name: Task_69_1
+    skill: Docker
+    ranges:
+    - - '2025-03-03'
+      - '2025-03-06'
+    workforce_count: 2
+  - name: Task_69_2
+    skill: C++
+    ranges:
+    - - '2025-05-24'
+      - '2025-05-28'
+    workforce_count: 3
+  - name: Task_69_3
+    skill: TypeScript
+    ranges:
+    - - '2025-04-22'
+      - '2025-04-30'
+    workforce_count: 1
+  - name: Task_69_4
+    skill: Docker
+    ranges:
+    - - '2025-02-06'
+      - '2025-02-15'
+    workforce_count: 1
+  - name: Task_69_5
+    skill: Java
+    ranges:
+    - - '2025-02-14'
+      - '2025-02-26'
+    workforce_count: 1
+  - name: Task_69_6
+    skill: C++
+    ranges:
+    - - '2025-02-12'
+      - '2025-02-17'
+    workforce_count: 3
+- name: Project_70
+  tasks:
+  - name: Task_70_1
+    skill: Rust
+    ranges:
+    - - '2025-01-15'
+      - '2025-01-23'
+    workforce_count: 3
+  - name: Task_70_2
+    skill: Docker
+    ranges:
+    - - '2025-06-15'
+      - '2025-06-21'
+    workforce_count: 2
+  - name: Task_70_3
+    skill: Go
+    ranges:
+    - - '2025-02-01'
+      - '2025-02-02'
+    workforce_count: 1
+  - name: Task_70_4
+    skill: Go
+    ranges:
+    - - '2025-04-17'
+      - '2025-04-22'
+    workforce_count: 2
+  - name: Task_70_5
+    skill: Java
+    ranges:
+    - - '2025-05-06'
+      - '2025-05-14'
+    workforce_count: 1
+  - name: Task_70_6
+    skill: Java
+    ranges:
+    - - '2025-02-25'
+      - '2025-03-02'
+    workforce_count: 1
+  - name: Task_70_7
+    skill: C++
+    ranges:
+    - - '2025-03-20'
+      - '2025-03-24'
+    workforce_count: 1
+  - name: Task_70_8
+    skill: Go
+    ranges:
+    - - '2025-02-01'
+      - '2025-02-05'
+    workforce_count: 1
+  - name: Task_70_9
+    skill: C++
+    ranges:
+    - - '2025-03-14'
+      - '2025-03-23'
+    workforce_count: 2
+- name: Project_71
+  tasks:
+  - name: Task_71_1
+    skill: Java
+    ranges:
+    - - '2025-02-27'
+      - '2025-03-01'
+    workforce_count: 2
+- name: Project_72
+  tasks:
+  - name: Task_72_1
+    skill: C++
+    ranges:
+    - - '2025-01-07'
+      - '2025-01-10'
+    workforce_count: 3
+  - name: Task_72_2
+    skill: Rust
+    ranges:
+    - - '2025-04-25'
+      - '2025-05-01'
+    workforce_count: 3
+  - name: Task_72_3
+    skill: AWS
+    ranges:
+    - - '2025-01-01'
+      - '2025-01-02'
+    workforce_count: 3
+  - name: Task_72_4
+    skill: Docker
+    ranges:
+    - - '2025-03-30'
+      - '2025-04-11'
+    workforce_count: 2
+  - name: Task_72_5
+    skill: AWS
+    ranges:
+    - - '2025-02-21'
+      - '2025-02-24'
+    workforce_count: 1
+  - name: Task_72_6
+    skill: C++
+    ranges:
+    - - '2025-01-11'
+      - '2025-01-16'
+    workforce_count: 1
+  - name: Task_72_7
+    skill: Rust
+    ranges:
+    - - '2025-03-13'
+      - '2025-03-25'
+    workforce_count: 1
+  - name: Task_72_8
+    skill: C++
+    ranges:
+    - - '2025-01-27'
+      - '2025-02-04'
+    workforce_count: 3
+  - name: Task_72_9
+    skill: TypeScript
+    ranges:
+    - - '2025-05-18'
+      - '2025-06-01'
+    workforce_count: 1
+  - name: Task_72_10
+    skill: C++
+    ranges:
+    - - '2025-05-24'
+      - '2025-06-04'
+    workforce_count: 2
+- name: Project_73
+  tasks:
+  - name: Task_73_1
+    skill: Docker
+    ranges:
+    - - '2025-02-19'
+      - '2025-02-25'
+    workforce_count: 1
+  - name: Task_73_2
+    skill: Java
+    ranges:
+    - - '2025-04-24'
+      - '2025-04-30'
+    workforce_count: 2
+  - name: Task_73_3
+    skill: Python
+    ranges:
+    - - '2025-04-02'
+      - '2025-04-05'
+    workforce_count: 3
+  - name: Task_73_4
+    skill: Docker
+    ranges:
+    - - '2025-05-05'
+      - '2025-05-10'
+    workforce_count: 2
+  - name: Task_73_5
+    skill: Java
+    ranges:
+    - - '2025-03-18'
+      - '2025-03-23'
+    workforce_count: 1
+  - name: Task_73_6
+    skill: C++
+    ranges:
+    - - '2025-01-11'
+      - '2025-01-24'
+    workforce_count: 1
+- name: Project_74
+  tasks:
+  - name: Task_74_1
+    skill: Python
+    ranges:
+    - - '2025-03-22'
+      - '2025-03-25'
+    workforce_count: 1
+  - name: Task_74_2
+    skill: Python
+    ranges:
+    - - '2025-03-07'
+      - '2025-03-11'
+    workforce_count: 2
+  - name: Task_74_3
+    skill: SQL
+    ranges:
+    - - '2025-02-09'
+      - '2025-02-10'
+    workforce_count: 3
+  - name: Task_74_4
+    skill: Docker
+    ranges:
+    - - '2025-06-08'
+      - '2025-06-14'
+    workforce_count: 2
+  - name: Task_74_5
+    skill: SQL
+    ranges:
+    - - '2025-04-30'
+      - '2025-05-03'
+    workforce_count: 3
+  - name: Task_74_6
+    skill: TypeScript
+    ranges:
+    - - '2025-02-02'
+      - '2025-02-07'
+    workforce_count: 3
+  - name: Task_74_7
+    skill: Java
+    ranges:
+    - - '2025-06-17'
+      - '2025-07-01'
+    workforce_count: 1
+  - name: Task_74_8
+    skill: Java
+    ranges:
+    - - '2025-05-16'
+      - '2025-05-19'
+    workforce_count: 1
+  - name: Task_74_9
+    skill: C++
+    ranges:
+    - - '2025-03-03'
+      - '2025-03-14'
+    workforce_count: 2
+  - name: Task_74_10
+    skill: Rust
+    ranges:
+    - - '2025-04-29'
+      - '2025-05-04'
+    workforce_count: 2
+- name: Project_75
+  tasks:
+  - name: Task_75_1
+    skill: SQL
+    ranges:
+    - - '2025-04-20'
+      - '2025-04-24'
+    workforce_count: 3
+  - name: Task_75_2
+    skill: Rust
+    ranges:
+    - - '2025-02-12'
+      - '2025-02-25'
+    workforce_count: 1
+  - name: Task_75_3
+    skill: AWS
+    ranges:
+    - - '2025-05-06'
+      - '2025-05-09'
+    workforce_count: 3
+  - name: Task_75_4
+    skill: Go
+    ranges:
+    - - '2025-05-06'
+      - '2025-05-07'
+    workforce_count: 2
+  - name: Task_75_5
+    skill: TypeScript
+    ranges:
+    - - '2025-05-04'
+      - '2025-05-07'
+    workforce_count: 1
+  - name: Task_75_6
+    skill: TypeScript
+    ranges:
+    - - '2025-06-04'
+      - '2025-06-16'
+    workforce_count: 2
+- name: Project_76
+  tasks:
+  - name: Task_76_1
+    skill: SQL
+    ranges:
+    - - '2025-06-10'
+      - '2025-06-11'
+    workforce_count: 2
+  - name: Task_76_2
+    skill: Go
+    ranges:
+    - - '2025-03-03'
+      - '2025-03-08'
+    workforce_count: 3
+  - name: Task_76_3
+    skill: AWS
+    ranges:
+    - - '2025-06-06'
+      - '2025-06-11'
+    workforce_count: 1
+  - name: Task_76_4
+    skill: Go
+    ranges:
+    - - '2025-03-07'
+      - '2025-03-14'
+    workforce_count: 2
+  - name: Task_76_5
+    skill: SQL
+    ranges:
+    - - '2025-06-18'
+      - '2025-07-01'
+    workforce_count: 1
+  - name: Task_76_6
+    skill: Rust
+    ranges:
+    - - '2025-05-23'
+      - '2025-05-30'
+    workforce_count: 1
+- name: Project_77
+  tasks:
+  - name: Task_77_1
+    skill: SQL
+    ranges:
+    - - '2025-04-27'
+      - '2025-05-10'
+    workforce_count: 3
+  - name: Task_77_2
+    skill: TypeScript
+    ranges:
+    - - '2025-04-12'
+      - '2025-04-20'
+    workforce_count: 2
+  - name: Task_77_3
+    skill: C++
+    ranges:
+    - - '2025-01-21'
+      - '2025-01-23'
+    workforce_count: 1
+  - name: Task_77_4
+    skill: Rust
+    ranges:
+    - - '2025-05-09'
+      - '2025-05-13'
+    workforce_count: 3
+- name: Project_78
+  tasks:
+  - name: Task_78_1
+    skill: Java
+    ranges:
+    - - '2025-05-06'
+      - '2025-05-18'
+    workforce_count: 1
+  - name: Task_78_2
+    skill: Python
+    ranges:
+    - - '2025-02-28'
+      - '2025-03-09'
+    workforce_count: 3
+  - name: Task_78_3
+    skill: TypeScript
+    ranges:
+    - - '2025-06-05'
+      - '2025-06-16'
+    workforce_count: 2
+  - name: Task_78_4
+    skill: Python
+    ranges:
+    - - '2025-04-23'
+      - '2025-05-05'
+    workforce_count: 2
+  - name: Task_78_5
+    skill: Java
+    ranges:
+    - - '2025-05-23'
+      - '2025-05-26'
+    workforce_count: 3
+- name: Project_79
+  tasks:
+  - name: Task_79_1
+    skill: Rust
+    ranges:
+    - - '2025-01-17'
+      - '2025-01-27'
+    workforce_count: 3
+  - name: Task_79_2
+    skill: Docker
+    ranges:
+    - - '2025-01-07'
+      - '2025-01-18'
+    workforce_count: 3
+  - name: Task_79_3
+    skill: Go
+    ranges:
+    - - '2025-04-05'
+      - '2025-04-16'
+    workforce_count: 2
+  - name: Task_79_4
+    skill: Java
+    ranges:
+    - - '2025-05-13'
+      - '2025-05-16'
+    workforce_count: 2
+  - name: Task_79_5
+    skill: Go
+    ranges:
+    - - '2025-04-28'
+      - '2025-05-02'
+    workforce_count: 1
+  - name: Task_79_6
+    skill: Python
+    ranges:
+    - - '2025-03-04'
+      - '2025-03-16'
+    workforce_count: 3
+  - name: Task_79_7
+    skill: AWS
+    ranges:
+    - - '2025-04-02'
+      - '2025-04-09'
+    workforce_count: 2
+- name: Project_80
+  tasks:
+  - name: Task_80_1
+    skill: Python
+    ranges:
+    - - '2025-01-08'
+      - '2025-01-14'
+    workforce_count: 3
+  - name: Task_80_2
+    skill: Docker
+    ranges:
+    - - '2025-04-09'
+      - '2025-04-18'
+    workforce_count: 1
+  - name: Task_80_3
+    skill: Python
+    ranges:
+    - - '2025-04-16'
+      - '2025-04-23'
+    workforce_count: 2
+- name: Project_81
+  tasks:
+  - name: Task_81_1
+    skill: SQL
+    ranges:
+    - - '2025-03-24'
+      - '2025-04-07'
+    workforce_count: 3
+  - name: Task_81_2
+    skill: SQL
+    ranges:
+    - - '2025-03-09'
+      - '2025-03-10'
+    workforce_count: 1
+  - name: Task_81_3
+    skill: Go
+    ranges:
+    - - '2025-02-14'
+      - '2025-02-19'
+    workforce_count: 3
+  - name: Task_81_4
+    skill: C++
+    ranges:
+    - - '2025-02-01'
+      - '2025-02-07'
+    workforce_count: 3
+- name: Project_82
+  tasks:
+  - name: Task_82_1
+    skill: C++
+    ranges:
+    - - '2025-02-20'
+      - '2025-03-05'
+    workforce_count: 3
+- name: Project_83
+  tasks:
+  - name: Task_83_1
+    skill: C++
+    ranges:
+    - - '2025-03-06'
+      - '2025-03-16'
+    workforce_count: 1
+  - name: Task_83_2
+    skill: SQL
+    ranges:
+    - - '2025-01-16'
+      - '2025-01-27'
+    workforce_count: 1
+  - name: Task_83_3
+    skill: Docker
+    ranges:
+    - - '2025-03-07'
+      - '2025-03-20'
+    workforce_count: 1
+  - name: Task_83_4
+    skill: Docker
+    ranges:
+    - - '2025-03-19'
+      - '2025-03-20'
+    workforce_count: 3
+  - name: Task_83_5
+    skill: SQL
+    ranges:
+    - - '2025-01-08'
+      - '2025-01-16'
+    workforce_count: 1
+- name: Project_84
+  tasks:
+  - name: Task_84_1
+    skill: Python
+    ranges:
+    - - '2025-03-12'
+      - '2025-03-16'
+    workforce_count: 3
+  - name: Task_84_2
+    skill: SQL
+    ranges:
+    - - '2025-06-30'
+      - '2025-07-06'
+    workforce_count: 1
+  - name: Task_84_3
+    skill: TypeScript
+    ranges:
+    - - '2025-04-30'
+      - '2025-05-07'
+    workforce_count: 2
+  - name: Task_84_4
+    skill: AWS
+    ranges:
+    - - '2025-05-21'
+      - '2025-06-04'
+    workforce_count: 2
+  - name: Task_84_5
+    skill: Go
+    ranges:
+    - - '2025-06-25'
+      - '2025-06-29'
+    workforce_count: 3
+  - name: Task_84_6
+    skill: AWS
+    ranges:
+    - - '2025-01-23'
+      - '2025-01-25'
+    workforce_count: 3
+- name: Project_85
+  tasks:
+  - name: Task_85_1
+    skill: SQL
+    ranges:
+    - - '2025-03-10'
+      - '2025-03-19'
+    workforce_count: 1
+  - name: Task_85_2
+    skill: Java
+    ranges:
+    - - '2025-06-07'
+      - '2025-06-09'
+    workforce_count: 3
+  - name: Task_85_3
+    skill: TypeScript
+    ranges:
+    - - '2025-03-18'
+      - '2025-03-28'
+    workforce_count: 1
+- name: Project_86
+  tasks:
+  - name: Task_86_1
+    skill: SQL
+    ranges:
+    - - '2025-02-26'
+      - '2025-03-08'
+    workforce_count: 2
+  - name: Task_86_2
+    skill: Go
+    ranges:
+    - - '2025-06-27'
+      - '2025-07-09'
+    workforce_count: 1
+- name: Project_87
+  tasks:
+  - name: Task_87_1
+    skill: TypeScript
+    ranges:
+    - - '2025-03-20'
+      - '2025-03-23'
+    workforce_count: 2
+  - name: Task_87_2
+    skill: Python
+    ranges:
+    - - '2025-01-25'
+      - '2025-02-04'
+    workforce_count: 3
+  - name: Task_87_3
+    skill: Rust
+    ranges:
+    - - '2025-03-24'
+      - '2025-04-06'
+    workforce_count: 1
+  - name: Task_87_4
+    skill: C++
+    ranges:
+    - - '2025-01-26'
+      - '2025-01-27'
+    workforce_count: 3
+  - name: Task_87_5
+    skill: Go
+    ranges:
+    - - '2025-04-30'
+      - '2025-05-14'
+    workforce_count: 1
+  - name: Task_87_6
+    skill: Java
+    ranges:
+    - - '2025-03-07'
+      - '2025-03-12'
+    workforce_count: 2
+- name: Project_88
+  tasks:
+  - name: Task_88_1
+    skill: Docker
+    ranges:
+    - - '2025-04-22'
+      - '2025-05-05'
+    workforce_count: 3
+  - name: Task_88_2
+    skill: Java
+    ranges:
+    - - '2025-02-20'
+      - '2025-03-03'
+    workforce_count: 1
+  - name: Task_88_3
+    skill: TypeScript
+    ranges:
+    - - '2025-06-18'
+      - '2025-06-20'
+    workforce_count: 3
+- name: Project_89
+  tasks:
+  - name: Task_89_1
+    skill: Go
+    ranges:
+    - - '2025-01-13'
+      - '2025-01-27'
+    workforce_count: 2
+  - name: Task_89_2
+    skill: Docker
+    ranges:
+    - - '2025-06-17'
+      - '2025-06-18'
+    workforce_count: 2
+  - name: Task_89_3
+    skill: SQL
+    ranges:
+    - - '2025-04-14'
+      - '2025-04-19'
+    workforce_count: 1
+  - name: Task_89_4
+    skill: AWS
+    ranges:
+    - - '2025-06-14'
+      - '2025-06-25'
+    workforce_count: 3
+  - name: Task_89_5
+    skill: Docker
+    ranges:
+    - - '2025-03-29'
+      - '2025-04-11'
+    workforce_count: 1
+  - name: Task_89_6
+    skill: AWS
+    ranges:
+    - - '2025-03-24'
+      - '2025-03-29'
+    workforce_count: 3
+- name: Project_90
+  tasks:
+  - name: Task_90_1
+    skill: C++
+    ranges:
+    - - '2025-03-27'
+      - '2025-03-28'
+    workforce_count: 3
+  - name: Task_90_2
+    skill: Python
+    ranges:
+    - - '2025-06-01'
+      - '2025-06-07'
+    workforce_count: 2
+- name: Project_91
+  tasks:
+  - name: Task_91_1
+    skill: C++
+    ranges:
+    - - '2025-02-02'
+      - '2025-02-07'
+    workforce_count: 3
+- name: Project_92
+  tasks:
+  - name: Task_92_1
+    skill: TypeScript
+    ranges:
+    - - '2025-06-11'
+      - '2025-06-21'
+    workforce_count: 3
+  - name: Task_92_2
+    skill: Rust
+    ranges:
+    - - '2025-01-24'
+      - '2025-01-29'
+    workforce_count: 3
+  - name: Task_92_3
+    skill: Python
+    ranges:
+    - - '2025-04-20'
+      - '2025-04-29'
+    workforce_count: 2
+  - name: Task_92_4
+    skill: Rust
+    ranges:
+    - - '2025-06-15'
+      - '2025-06-19'
+    workforce_count: 1
+  - name: Task_92_5
+    skill: C++
+    ranges:
+    - - '2025-06-16'
+      - '2025-06-19'
+    workforce_count: 2
+  - name: Task_92_6
+    skill: C++
+    ranges:
+    - - '2025-05-08'
+      - '2025-05-16'
+    workforce_count: 2
+  - name: Task_92_7
+    skill: Java
+    ranges:
+    - - '2025-06-13'
+      - '2025-06-19'
+    workforce_count: 3
+  - name: Task_92_8
+    skill: Python
+    ranges:
+    - - '2025-03-28'
+      - '2025-04-09'
+    workforce_count: 3
+  - name: Task_92_9
+    skill: Docker
+    ranges:
+    - - '2025-06-27'
+      - '2025-06-30'
+    workforce_count: 2
+- name: Project_93
+  tasks:
+  - name: Task_93_1
+    skill: TypeScript
+    ranges:
+    - - '2025-05-08'
+      - '2025-05-12'
+    workforce_count: 1
+  - name: Task_93_2
+    skill: Rust
+    ranges:
+    - - '2025-03-18'
+      - '2025-03-30'
+    workforce_count: 1
+  - name: Task_93_3
+    skill: Java
+    ranges:
+    - - '2025-04-14'
+      - '2025-04-20'
+    workforce_count: 3
+  - name: Task_93_4
+    skill: Java
+    ranges:
+    - - '2025-02-18'
+      - '2025-02-24'
+    workforce_count: 2
+  - name: Task_93_5
+    skill: SQL
+    ranges:
+    - - '2025-05-03'
+      - '2025-05-17'
+    workforce_count: 1
+  - name: Task_93_6
+    skill: C++
+    ranges:
+    - - '2025-02-23'
+      - '2025-03-05'
+    workforce_count: 1
+- name: Project_94
+  tasks:
+  - name: Task_94_1
+    skill: SQL
+    ranges:
+    - - '2025-04-27'
+      - '2025-05-04'
+    workforce_count: 2
+  - name: Task_94_2
+    skill: Rust
+    ranges:
+    - - '2025-06-05'
+      - '2025-06-18'
+    workforce_count: 3
+- name: Project_95
+  tasks:
+  - name: Task_95_1
+    skill: Docker
+    ranges:
+    - - '2025-01-08'
+      - '2025-01-21'
+    workforce_count: 3
+  - name: Task_95_2
+    skill: Java
+    ranges:
+    - - '2025-05-01'
+      - '2025-05-07'
+    workforce_count: 3
+  - name: Task_95_3
+    skill: AWS
+    ranges:
+    - - '2025-03-26'
+      - '2025-04-01'
+    workforce_count: 2
+  - name: Task_95_4
+    skill: Java
+    ranges:
+    - - '2025-04-05'
+      - '2025-04-16'
+    workforce_count: 2
+  - name: Task_95_5
+    skill: Docker
+    ranges:
+    - - '2025-04-12'
+      - '2025-04-19'
+    workforce_count: 1
+- name: Project_96
+  tasks:
+  - name: Task_96_1
+    skill: AWS
+    ranges:
+    - - '2025-01-23'
+      - '2025-01-25'
+    workforce_count: 1
+  - name: Task_96_2
+    skill: AWS
+    ranges:
+    - - '2025-04-22'
+      - '2025-04-23'
+    workforce_count: 1
+  - name: Task_96_3
+    skill: C++
+    ranges:
+    - - '2025-03-02'
+      - '2025-03-03'
+    workforce_count: 1
+  - name: Task_96_4
+    skill: Docker
+    ranges:
+    - - '2025-05-29'
+      - '2025-06-07'
+    workforce_count: 2
+  - name: Task_96_5
+    skill: TypeScript
+    ranges:
+    - - '2025-05-19'
+      - '2025-05-26'
+    workforce_count: 1
+  - name: Task_96_6
+    skill: Go
+    ranges:
+    - - '2025-03-30'
+      - '2025-04-02'
+    workforce_count: 1
+  - name: Task_96_7
+    skill: Go
+    ranges:
+    - - '2025-02-23'
+      - '2025-03-02'
+    workforce_count: 3
+  - name: Task_96_8
+    skill: TypeScript
+    ranges:
+    - - '2025-06-30'
+      - '2025-07-01'
+    workforce_count: 2
+- name: Project_97
+  tasks:
+  - name: Task_97_1
+    skill: Rust
+    ranges:
+    - - '2025-02-19'
+      - '2025-03-01'
+    workforce_count: 2
+  - name: Task_97_2
+    skill: Go
+    ranges:
+    - - '2025-03-13'
+      - '2025-03-21'
+    workforce_count: 2
+  - name: Task_97_3
+    skill: Rust
+    ranges:
+    - - '2025-04-02'
+      - '2025-04-12'
+    workforce_count: 1
+- name: Project_98
+  tasks:
+  - name: Task_98_1
+    skill: Docker
+    ranges:
+    - - '2025-01-10'
+      - '2025-01-11'
+    workforce_count: 3
+  - name: Task_98_2
+    skill: TypeScript
+    ranges:
+    - - '2025-06-28'
+      - '2025-06-30'
+    workforce_count: 3
+  - name: Task_98_3
+    skill: Go
+    ranges:
+    - - '2025-01-14'
+      - '2025-01-20'
+    workforce_count: 1
+  - name: Task_98_4
+    skill: Rust
+    ranges:
+    - - '2025-02-17'
+      - '2025-02-27'
+    workforce_count: 1
+- name: Project_99
+  tasks:
+  - name: Task_99_1
+    skill: Python
+    ranges:
+    - - '2025-05-27'
+      - '2025-05-30'
+    workforce_count: 2
+  - name: Task_99_2
+    skill: AWS
+    ranges:
+    - - '2025-01-20'
+      - '2025-01-30'
+    workforce_count: 2
+  - name: Task_99_3
+    skill: SQL
+    ranges:
+    - - '2025-06-23'
+      - '2025-07-05'
+    workforce_count: 1
+  - name: Task_99_4
+    skill: Python
+    ranges:
+    - - '2025-06-07'
+      - '2025-06-16'
+    workforce_count: 3
+  - name: Task_99_5
+    skill: C++
+    ranges:
+    - - '2025-03-17'
+      - '2025-03-24'
+    workforce_count: 3
+  - name: Task_99_6
+    skill: Go
+    ranges:
+    - - '2025-04-05'
+      - '2025-04-17'
+    workforce_count: 2
+  - name: Task_99_7
+    skill: SQL
+    ranges:
+    - - '2025-01-19'
+      - '2025-01-29'
+    workforce_count: 2
+  - name: Task_99_8
+    skill: SQL
+    ranges:
+    - - '2025-05-29'
+      - '2025-05-31'
+    workforce_count: 1
+- name: Project_100
+  tasks:
+  - name: Task_100_1
+    skill: Java
+    ranges:
+    - - '2025-06-12'
+      - '2025-06-19'
+    workforce_count: 2
+  - name: Task_100_2
+    skill: C++
+    ranges:
+    - - '2025-05-26'
+      - '2025-05-30'
+    workforce_count: 2
+  - name: Task_100_3
+    skill: Java
+    ranges:
+    - - '2025-06-15'
+      - '2025-06-24'
+    workforce_count: 3
+  - name: Task_100_4
+    skill: Rust
+    ranges:
+    - - '2025-03-07'
+      - '2025-03-13'
+    workforce_count: 3
+  - name: Task_100_5
+    skill: SQL
+    ranges:
+    - - '2025-03-04'
+      - '2025-03-11'
+    workforce_count: 3
+  - name: Task_100_6
+    skill: TypeScript
+    ranges:
+    - - '2025-03-10'
+      - '2025-03-20'
+    workforce_count: 1
+  - name: Task_100_7
+    skill: Docker
+    ranges:
+    - - '2025-03-03'
+      - '2025-03-05'
+    workforce_count: 2
+  - name: Task_100_8
+    skill: C++
+    ranges:
+    - - '2025-02-21'
+      - '2025-03-04'
+    workforce_count: 3
