@@ -9,18 +9,38 @@ def calculate_supply_and_demand(projects: List[dict], people: List[dict]):
 
     demand_counts = defaultdict(lambda: defaultdict(int))
     
-    # Calculate Demand
+    # 1. Calculate Demand & identify person busy ranges from assignments
+    person_busy_dates = defaultdict(set) # person_id -> set of busy dates
+
     for project in projects:
         for task in project.get('tasks', []):
+            # Demand calculation
             skill_name = task['required_skill']['name']
+            
+            # If task has valid 'assignees', mark them as busy for the duration
+            assignees = task.get('assignees', [])
+            assigned_count = len(assignees)
+            total_needed = task.get('workforce_count', 1)
+            
+            # Unmet demand is what we still need
+            unmet_demand = max(0, total_needed - assigned_count)
+            
             for r in task.get('required_ranges', []):
                 start = date.fromisoformat(r['start'])
                 end = date.fromisoformat(r['end'])
                 
                 current = start
-                count = task.get('workforce_count', 1)
+                
                 while current <= end:
-                    demand_counts[skill_name][current.isoformat()] += count
+                    current_iso = current.isoformat()
+                    # Only add UNMET demand
+                    if unmet_demand > 0:
+                        demand_counts[skill_name][current_iso] += unmet_demand
+                    
+                    # Mark assignees as busy
+                    for p in assignees:
+                        person_busy_dates[p['id']].add(current_iso)
+                        
                     current += timedelta(days=1)
     
     if not demand_counts:
@@ -73,23 +93,31 @@ def calculate_supply_and_demand(projects: List[dict], people: List[dict]):
                     if term_date and d > term_date:
                         continue
                     
-                    # Check schedule (busy ranges)
-                    is_busy = False
+                    # Check defined busy ranges (external unavailability)
+                    is_busy_external = False
                     for busy in person.get('busy_ranges', []):
                         b_start = date.fromisoformat(busy['start'])
                         b_end = date.fromisoformat(busy['end'])
                         if b_start <= d <= b_end:
-                            is_busy = True
+                            is_busy_external = True
                             break
                     
-                    if not is_busy:
-                        # Find efficiency for this skill
-                        efficiency = 1
-                        for s in person.get('skills', []):
-                            if s['name'] == skill:
-                                efficiency = s.get('efficiency', 1)
-                                break
-                        supply_count += efficiency
+                    if is_busy_external:
+                        continue
+
+                    # Check assignment busy-ness (from current projects/tasks)
+                    # If person is assigned to ANY task on this date, they provide 0 supply for ALL skills
+                    if d_str in person_busy_dates[person['id']]:
+                        continue
+                    
+                    # If here, person is available
+                    # Find efficiency for this skill
+                    efficiency = 1
+                    for s in person.get('skills', []):
+                        if s['name'] == skill:
+                            efficiency = s.get('efficiency', 1)
+                            break
+                    supply_count += efficiency
             
             skill_supply.append(supply_count)
             

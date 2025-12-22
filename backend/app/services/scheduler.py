@@ -1,448 +1,882 @@
-from typing import List, Tuple, Dict, Optional
-from datetime import timedelta, date
+"""
+Workforce Scheduling Service using Google OR-Tools CP-SAT Solver.
+
+This module provides an optimized scheduler that assigns tasks to people while:
+- Maximizing the number of completed projects
+- Minimizing the number of assignments (prefer fewer, more efficient workers)
+- Balancing workload across the workforce
+- Respecting constraints like skills, availability, and employment dates
+"""
+
+from typing import List, Tuple, Dict, Optional, Set
+from datetime import date
+from dataclasses import dataclass
 from ortools.sat.python import cp_model
+
 from .models import (
-    Project, Person, Task, 
+    Project, Person, Task,
     ProjectAnalysisResult, TaskAnalysisResult, DateRange, PersonRead, SkillRead
 )
 
+
+@dataclass
+class SchedulerConfig:
+    """Configuration for the scheduler optimization."""
+    
+    # Objective function weights
+    project_weight: int = 1_000_000_000_000  # Maximize projects (highest priority)
+    assignment_cost: int = 1_000_000          # Minimize assignments (prefer efficiency)
+    workload_cost: int = 1                    # Minimize workload variance (balance)
+    
+    # Solver parameters
+    num_workers: int = 8                      # Parallel search workers
+    max_time_seconds: float = 60.0           # Maximum solve time
+    
+    # Time window
+    fallback_min_date: date = date(2020, 1, 1)
+
+
+@dataclass
+class TimeWindow:
+    """Represents the scheduling time window."""
+    min_date: date
+    start_day: int  # Relative to min_date
+    end_day: int    # Relative to min_date
+    
+    def date_to_index(self, d: date) -> int:
+        """Convert a date to an integer index relative to min_date."""
+        return (d - self.min_date).days
+    
+    def get_overlap_days(self, start_idx: int, end_idx: int) -> int:
+        """Calculate overlap between a range and the active window."""
+        s = max(start_idx, self.start_day)
+        e = min(end_idx, self.end_day + 1)
+        return max(0, e - s)
+
+
+@dataclass
+class PersonSkillMap:
+    """Efficient lookup for person skills and efficiencies."""
+    skill_to_efficiency: Dict[str, int]  # skill_id -> efficiency
+    
+    def has_skill(self, skill_id: str) -> bool:
+        """Check if person has a skill."""
+        return skill_id in self.skill_to_efficiency
+    
+    def get_efficiency(self, skill_id: str) -> int:
+        """Get efficiency for a skill (default 1)."""
+        return self.skill_to_efficiency.get(skill_id, 1)
+
+
+@dataclass
+class TaskGeometry:
+    """Precomputed task time ranges and load."""
+    ranges: List[Tuple[int, int]]  # List of (start_idx, end_idx) exclusive
+    total_load: int                 # Total days in active window
+
+
+@dataclass
+class AssignmentCandidate:
+    """Represents a potential task assignment to a person."""
+    task: Task
+    var: cp_model.IntVar
+    geometry: TaskGeometry
+
+
 class SchedulerService:
-    def schedule_all(self, projects: List[Project], people: List[Person]) -> Tuple[List[ProjectAnalysisResult], List[ProjectAnalysisResult]]:
+    """
+    Service for optimally scheduling tasks to people using constraint programming.
+    
+    The scheduler uses Google OR-Tools CP-SAT solver to find the optimal assignment
+    that maximizes completed projects while balancing workload.
+    """
+    
+    def __init__(self, config: Optional[SchedulerConfig] = None):
+        """
+        Initialize the scheduler service.
+        
+        Args:
+            config: Optional configuration for optimization parameters
+        """
+        self.config = config or SchedulerConfig()
+    
+    def schedule_all(
+        self, 
+        projects: List[Project], 
+        people: List[Person]
+    ) -> Tuple[List[ProjectAnalysisResult], List[ProjectAnalysisResult]]:
+        """
+        Schedule all projects optimally across available workforce.
+        
+        Args:
+            projects: List of projects with tasks to schedule
+            people: List of available workforce
+            
+        Returns:
+            Tuple of (feasible_projects, infeasible_projects)
+        """
+        # Initialize the constraint programming model
         model = cp_model.CpModel()
         
-        # --- Time Horizon ---
-        # Find min date to use as epoch 0
-        min_date = None
-        for p in people:
-            if not min_date or p.joining_date < min_date:
-                min_date = p.joining_date
-            for b in p.schedule:
-                if not min_date or b.start_date < min_date:
-                    min_date = b.start_date
+        # Step 1: Compute time window
+        time_window = self._compute_time_window(projects, people)
         
-        for p in projects:
-            for t in p.tasks:
-                for r in t.required_ranges:
+        # Step 2: Build skill maps for efficient lookup
+        skill_maps = self._build_skill_maps(people)
+        
+        # Step 3: Create project variables
+        project_vars = self._create_project_variables(model, projects)
+        
+        # Step 4: Create assignment variables and precompute task geometry
+        assignment_vars, person_assignments = self._create_assignment_variables(
+            model, projects, people, skill_maps, time_window
+        )
+        
+        # Step 5: Add fulfillment constraints (tasks must be completed)
+        self._add_fulfillment_constraints(
+            model, projects, people, project_vars, assignment_vars, skill_maps
+        )
+        
+        # Step 6: Add interval constraints (no conflicts, respect efficiency)
+        workload_vars = self._add_interval_constraints(
+            model, people, person_assignments, skill_maps, time_window, projects
+        )
+        
+        # Step 7: Define objective function
+        self._define_objective(model, project_vars, assignment_vars, workload_vars)
+        
+        # Step 8: Solve the model
+        solver = self._create_solver()
+        status = solver.Solve(model)
+        
+        # Step 9: Extract and analyze results
+        return self._extract_results(
+            status, solver, projects, people, project_vars, assignment_vars
+        )
+    
+    # ==================== Time Window ====================
+    
+    def _compute_time_window(
+        self, 
+        projects: List[Project], 
+        people: List[Person]
+    ) -> TimeWindow:
+        """
+        Compute the time window for scheduling.
+        
+        Finds the earliest date across all data and the active project window.
+        """
+        min_date = None
+        
+        # Find earliest date from people
+        for person in people:
+            if not min_date or person.joining_date < min_date:
+                min_date = person.joining_date
+            for busy_range in person.schedule:
+                if not min_date or busy_range.start_date < min_date:
+                    min_date = busy_range.start_date
+        
+        # Find earliest date from projects
+        project_starts = []
+        project_ends = []
+        for project in projects:
+            for task in project.tasks:
+                for r in task.required_ranges:
                     if not min_date or r.start_date < min_date:
                         min_date = r.start_date
-
-        if not min_date:
-            min_date = date(2020, 1, 1) # Fallback
-
-        def d2i(d):
-            return (d - min_date).days
-
-        # Determine active window for workload balancing
-        p_starts = []
-        p_ends = []
-        for p in projects:
-            for t in p.tasks:
-                for r in t.required_ranges:
-                    p_starts.append(r.start_date)
-                    p_ends.append(r.end_date)
+                    project_starts.append(r.start_date)
+                    project_ends.append(r.end_date)
         
-        if p_starts:
-            window_start_date = min(p_starts)
-            window_end_date = max(p_ends)
-            window_start = d2i(window_start_date)
-            window_end = d2i(window_end_date)
+        # Fallback if no dates found
+        if not min_date:
+            min_date = self.config.fallback_min_date
+        
+        # Determine active window for workload balancing
+        if project_starts:
+            window_start_date = min(project_starts)
+            window_end_date = max(project_ends)
+            window_start = (window_start_date - min_date).days
+            window_end = (window_end_date - min_date).days
         else:
             window_start = 0
             window_end = 365
-
-        # --- Variables & Precomputation ---
-        project_vars = {}
-        for p in projects:
-            project_vars[p.id] = model.NewBoolVar(f'project_{p.id}')
-            
-        task_assignment_vars = {} # (task_id, person_id) -> BoolVar
-        person_potential_assignments = {} # person_id -> list of (task, var, task_load_contribution)
         
-        # Precompute efficiency map
-        person_skills_map = {}
+        return TimeWindow(
+            min_date=min_date,
+            start_day=window_start,
+            end_day=window_end
+        )
+    
+    # ==================== Skill Maps ====================
+    
+    def _build_skill_maps(self, people: List[Person]) -> Dict[str, PersonSkillMap]:
+        """Build efficient skill lookup maps for each person."""
+        skill_maps = {}
         for person in people:
-            s_map = {}
-            for s in person.skills:
-                s_map[s.id] = getattr(s, 'efficiency', 1)
-            person_skills_map[person.id] = s_map
-            person_potential_assignments[person.id] = []
-
-        # Helper to calc overlap
-        def get_overlap_days(start_idx, end_idx):
-            s = max(start_idx, window_start)
-            e = min(end_idx, window_end + 1)
-            return max(0, e - s)
-
-        # Create Assignment Variables and Pre-calculate Loads
+            skill_to_eff = {}
+            for skill in person.skills:
+                skill_to_eff[skill.id] = getattr(skill, 'efficiency', 1)
+            skill_maps[person.id] = PersonSkillMap(skill_to_efficiency=skill_to_eff)
+        return skill_maps
+    
+    # ==================== Variables ====================
+    
+    def _create_project_variables(
+        self, 
+        model: cp_model.CpModel, 
+        projects: List[Project]
+    ) -> Dict[str, cp_model.IntVar]:
+        """Create boolean variables for each project (scheduled or not)."""
+        project_vars = {}
+        for project in projects:
+            project_vars[project.id] = model.NewBoolVar(f'project_{project.id}')
+        return project_vars
+    
+    def _create_assignment_variables(
+        self,
+        model: cp_model.CpModel,
+        projects: List[Project],
+        people: List[Person],
+        skill_maps: Dict[str, PersonSkillMap],
+        time_window: TimeWindow
+    ) -> Tuple[Dict[Tuple[str, str], cp_model.IntVar], Dict[str, List[AssignmentCandidate]]]:
+        """
+        Create assignment variables for valid person-task pairs.
+        
+        Returns:
+            - assignment_vars: Dict[(task_id, person_id)] -> BoolVar
+            - person_assignments: Dict[person_id] -> List[AssignmentCandidate]
+        """
+        assignment_vars = {}
+        person_assignments = {person.id: [] for person in people}
+        
         for project in projects:
             for task in project.tasks:
-                # Precompute task geometry (ranges converted to indices)
-                task_ranges_idx = []
-                task_load = 0
-                for r in task.required_ranges:
-                    s = d2i(r.start_date)
-                    e = d2i(r.end_date) + 1 # Exclusive end
-                    task_ranges_idx.append((s, e))
-                    task_load += get_overlap_days(s, e)
+                # Precompute task geometry
+                geometry = self._compute_task_geometry(task, time_window)
                 
-                # Assign vars
                 for person in people:
-                    if task.skill_id in person_skills_map[person.id]:
-                        # Employment check (Optimization: Filter before creating var)
-                        valid_employment = True
-                        for r in task.required_ranges:
-                            if r.start_date < person.joining_date: 
-                                valid_employment = False
-                            if person.termination_date and r.end_date > person.termination_date:
-                                valid_employment = False
-                        
-                        if not valid_employment:
-                            continue
-
-                        var = model.NewBoolVar(f't{task.id}_p{person.id}')
-                        task_assignment_vars[(task.id, person.id)] = var
-                        
-                        # Store for person-centric loops
-                        person_potential_assignments[person.id].append({
-                            'task': task,
-                            'var': var,
-                            'ranges': task_ranges_idx,
-                            'load': task_load
-                        })
-
-        # --- Constraints 1: Fulfillment ---
+                    # Check if person has required skill
+                    if not skill_maps[person.id].has_skill(task.skill_id):
+                        continue
+                    
+                    # Check employment validity
+                    if not self._is_employment_valid(person, task):
+                        continue
+                    
+                    # Create assignment variable
+                    var = model.NewBoolVar(f't{task.id}_p{person.id}')
+                    assignment_vars[(task.id, person.id)] = var
+                    
+                    # Track for person-centric constraints
+                    person_assignments[person.id].append(
+                        AssignmentCandidate(task=task, var=var, geometry=geometry)
+                    )
+        
+        return assignment_vars, person_assignments
+    
+    def _compute_task_geometry(
+        self, 
+        task: Task, 
+        time_window: TimeWindow
+    ) -> TaskGeometry:
+        """Precompute task time ranges and total load."""
+        ranges = []
+        total_load = 0
+        
+        for r in task.required_ranges:
+            start_idx = time_window.date_to_index(r.start_date)
+            end_idx = time_window.date_to_index(r.end_date) + 1  # Exclusive
+            ranges.append((start_idx, end_idx))
+            total_load += time_window.get_overlap_days(start_idx, end_idx)
+        
+        return TaskGeometry(ranges=ranges, total_load=total_load)
+    
+    def _is_employment_valid(self, person: Person, task: Task) -> bool:
+        """Check if person is employed during all task ranges."""
+        for r in task.required_ranges:
+            if r.start_date < person.joining_date:
+                return False
+            if person.termination_date and r.end_date > person.termination_date:
+                return False
+        return True
+    
+    # ==================== Constraints ====================
+    
+    def _add_fulfillment_constraints(
+        self,
+        model: cp_model.CpModel,
+        projects: List[Project],
+        people: List[Person],
+        project_vars: Dict[str, cp_model.IntVar],
+        assignment_vars: Dict[Tuple[str, str], cp_model.IntVar],
+        skill_maps: Dict[str, PersonSkillMap]
+    ):
+        """
+        Add constraints ensuring tasks are fulfilled if project is scheduled.
+        
+        For each task in a scheduled project:
+        - Sum of (assignment * efficiency) >= workforce_count
+        - If project is not scheduled, no assignments
+        """
         for project in projects:
             p_var = project_vars[project.id]
+            
             for task in project.tasks:
                 relevant_vars = []
                 efficiencies = []
                 
                 for person in people:
-                    if (task.id, person.id) in task_assignment_vars:
-                        var = task_assignment_vars[(task.id, person.id)]
-                        eff = person_skills_map[person.id][task.skill_id]
+                    if (task.id, person.id) in assignment_vars:
+                        var = assignment_vars[(task.id, person.id)]
+                        eff = skill_maps[person.id].get_efficiency(task.skill_id)
                         relevant_vars.append(var)
                         efficiencies.append(eff)
                 
+                # If no one can do this task, project cannot be scheduled
                 if not relevant_vars:
                     if task.workforce_count > 0:
                         model.Add(p_var == 0)
                     continue
-
-                model.Add(sum(v * e for v, e in zip(relevant_vars, efficiencies)) >= task.workforce_count).OnlyEnforceIf(p_var)
                 
+                # If project is scheduled, task must be fulfilled
+                model.Add(
+                    sum(v * e for v, e in zip(relevant_vars, efficiencies)) >= task.workforce_count
+                ).OnlyEnforceIf(p_var)
+                
+                # If project is not scheduled, no assignments
                 for var in relevant_vars:
                     model.Add(var == 0).OnlyEnforceIf(p_var.Not())
-
-        # --- Constraints 2: Intervals & Consistency ---
+    
+    def _add_interval_constraints(
+        self,
+        model: cp_model.CpModel,
+        people: List[Person],
+        person_assignments: Dict[str, List[AssignmentCandidate]],
+        skill_maps: Dict[str, PersonSkillMap],
+        time_window: TimeWindow,
+        projects: List[Project]
+    ) -> List[cp_model.IntVar]:
+        """
+        Add interval constraints for each person to prevent conflicts.
         
-        # Identify "Locked" tasks
-        project_task_ids = set()
-        for p in projects:
-            for t in p.tasks:
-                project_task_ids.add(t.id)
-
+        Returns:
+            List of workload squared variables for objective function
+        """
+        # Track which tasks are in projects being scheduled
+        project_task_ids = self._get_project_task_ids(projects)
+        
         workload_sq_vars = []
-
+        
         for person in people:
-            # We track intervals along with their [start, end) for static overlap checking
-            # List of (IntervalVar, SkillID, start_idx, end_idx)
-            person_intervals_data = []
+            # Build interval data for this person
+            intervals_data = []
             
-            # 1. Busy Schedule
-            busy_intervals_data = [] # (IntervalVar, start, end)
-            busy_load = 0
-            for b in person.schedule:
-                start = d2i(b.start_date)
-                dur = (b.end_date - b.start_date).days + 1
+            # 1. Add busy schedule intervals (fixed)
+            busy_intervals, busy_load = self._add_busy_intervals(
+                model, person, time_window
+            )
+            intervals_data.extend(busy_intervals)
+            
+            # 2. Add locked task intervals (fixed assignments not in current projects)
+            locked_intervals, locked_load = self._add_locked_task_intervals(
+                model, person, project_task_ids, time_window
+            )
+            intervals_data.extend(locked_intervals)
+            
+            # 3. Add new assignment intervals (optional, controlled by variables)
+            new_intervals, new_load_expr = self._add_assignment_intervals(
+                model, person, person_assignments[person.id], busy_intervals
+            )
+            intervals_data.extend(new_intervals)
+            
+            # 4. Add efficiency and conflict constraints
+            self._add_person_interval_constraints(
+                model, person, intervals_data, skill_maps[person.id]
+            )
+            
+            # 5. Track workload for balancing
+            workload_sq_var = self._add_workload_tracking(
+                model, person, busy_load, locked_load, new_load_expr
+            )
+            workload_sq_vars.append(workload_sq_var)
+        
+        return workload_sq_vars
+    
+    def _get_project_task_ids(self, projects: List[Project]) -> Set[str]:
+        """Get set of all task IDs in the projects being scheduled."""
+        task_ids = set()
+        for project in projects:
+            for task in project.tasks:
+                task_ids.add(task.id)
+        return task_ids
+    
+    def _add_busy_intervals(
+        self,
+        model: cp_model.CpModel,
+        person: Person,
+        time_window: TimeWindow
+    ) -> Tuple[List[Tuple], int]:
+        """
+        Add busy schedule intervals for a person.
+        
+        Returns:
+            - List of (interval_var, skill_id, start, end, control_var)
+            - Total busy load
+        """
+        intervals = []
+        total_load = 0
+        
+        for busy_range in person.schedule:
+            start = time_window.date_to_index(busy_range.start_date)
+            dur = (busy_range.end_date - busy_range.start_date).days + 1
+            end = start + dur
+            
+            interval_var = model.NewIntervalVar(
+                start, dur, end, f'busy_p{person.id}_{start}'
+            )
+            
+            # Busy intervals block all skills (use None as skill_id marker)
+            intervals.append((interval_var, None, start, end, None))
+            total_load += time_window.get_overlap_days(start, end)
+        
+        return intervals, total_load
+    
+    def _add_locked_task_intervals(
+        self,
+        model: cp_model.CpModel,
+        person: Person,
+        project_task_ids: Set[str],
+        time_window: TimeWindow
+    ) -> Tuple[List[Tuple], int]:
+        """
+        Add intervals for locked (pre-assigned) tasks not in current projects.
+        
+        Returns:
+            - List of (interval_var, skill_id, start, end, control_var)
+            - Total locked load
+        """
+        intervals = []
+        total_load = 0
+        
+        for task in person.assigned_tasks:
+            # Skip tasks that are in the projects being scheduled
+            if task.id in project_task_ids:
+                continue
+            
+            skill_id = task.skill_id
+            
+            for r in task.required_ranges:
+                start = time_window.date_to_index(r.start_date)
+                dur = (r.end_date - r.start_date).days + 1
                 end = start + dur
                 
-                busy_int = model.NewIntervalVar(start, dur, end, f'busy_p{person.id}_{start}')
-                busy_intervals_data.append((busy_int, start, end))
-                busy_load += get_overlap_days(start, end)
-
-            # 2. Locked Tasks
-            locked_load = 0
-            for t in person.assigned_tasks:
-                if t.id not in project_task_ids:
-                    s_id = t.skill_id
-                    for r in t.required_ranges:
-                        start = d2i(r.start_date)
-                        dur = (r.end_date - r.start_date).days + 1
-                        end = start + dur
-                        
-            # 2. Locked Tasks (from assigned_tasks)
-            # These are fixed.
-            locked_load = 0
-            for t in person.assigned_tasks:
-                if t.id not in project_task_ids:
-                    s_id = t.skill_id
-                    for r in t.required_ranges:
-                        start = d2i(r.start_date)
-                        dur = (r.end_date - r.start_date).days + 1
-                        end = start + dur
-                        
-                        locked_int = model.NewIntervalVar(start, dur, end, f'locked_t{t.id}_p{person.id}')
-                        # Fixed interval -> control_var is None (implied True/1)
-                        person_intervals_data.append((locked_int, s_id, start, end, None))
-                        locked_load += get_overlap_days(start, end)
-            
-            # 3. New Assignments
-            new_load_expr = []
-            possible_assignments = person_potential_assignments[person.id]
-            
-            for item in possible_assignments:
-                task = item['task']
-                var = item['var']
-                ranges = item['ranges'] # List of (s, e)
-                t_load = item['load']
-                s_id = task.skill_id
+                interval_var = model.NewIntervalVar(
+                    start, dur, end, f'locked_t{task.id}_p{person.id}'
+                )
                 
-                # Check Busy Conflict immediately
-                is_blocked_by_busy = False
-                for (b_int, b_start, b_end) in busy_intervals_data:
-                    # Check overlap
-                    for (start, end) in ranges:
-                        if max(start, b_start) < min(end, b_end):
-                            is_blocked_by_busy = True
-                            break
-                    if is_blocked_by_busy: break
-                
-                if is_blocked_by_busy:
-                    model.Add(var == 0)
-                    continue
-
-                # Add to load expression
-                if t_load > 0:
-                    new_load_expr.append(var * t_load)
-                
-                for i, (start, end) in enumerate(ranges):
-                    dur = end - start
-                    opt_int = model.NewOptionalIntervalVar(start, dur, end, var, f'opt_t{task.id}_p{person.id}_{i}')
-                    person_intervals_data.append((opt_int, s_id, start, end, var))
-            
-            # --- Enforce Efficiency & conflicts per person ---
-            
-            # Group by Skill
-            by_skill = {}
-            for data in person_intervals_data:
-                iv, s_id, start, end, ctrl = data
-                if s_id not in by_skill:
-                    by_skill[s_id] = []
-                by_skill[s_id].append(data)
-                
-            # A. Same Skill: Cumulative Constraint
-            for s_id, data_list in by_skill.items():
-                eff = person_skills_map[person.id].get(s_id, 1)
-                intervals = [d[0] for d in data_list]
-                if intervals:
-                    model.AddCumulative(intervals, [1]*len(intervals), eff)
-                    
-            # B. Different Skills: Explicit Exclusion (Sum <= 1)
-            skill_ids = list(by_skill.keys())
-            for i in range(len(skill_ids)):
-                for j in range(i + 1, len(skill_ids)):
-                    s1 = skill_ids[i]
-                    s2 = skill_ids[j]
-                    
-                    data1 = by_skill[s1]
-                    data2 = by_skill[s2]
-                    
-                    for (_, _, st1, en1, c1) in data1:
-                        for (_, _, st2, en2, c2) in data2:
-                            # Check overlap
-                            if max(st1, st2) < min(en1, en2):
-                                # Conflict!
-                                if c1 is None and c2 is None:
-                                    # Both fixed and overlapping -> Data error or unavoidable double booking in inputs.
-                                    # Ignore strict enforcement for existing data, or fail?
-                                    # Existing assignments should be respected.
-                                    pass
-                                elif c1 is None:
-                                    # c1 fixed, c2 variable -> c2 must be 0
-                                    model.Add(c2 == 0)
-                                elif c2 is None:
-                                    # c2 fixed, c1 variable -> c1 must be 0
-                                    model.Add(c1 == 0)
-                                else:
-                                    # Both variable
-                                    model.Add(c1 + c2 <= 1)
-
-            # --- Workload Setup ---
-            base_load = busy_load + locked_load
-            w_var = model.NewIntVar(0, 100000, f'workload_{person.id}')
-            model.Add(w_var == base_load + sum(new_load_expr))
-            
-            w_sq_var = model.NewIntVar(0, 100000**2, f'sq_workload_{person.id}')
-            model.AddMultiplicationEquality(w_sq_var, [w_var, w_var])
-            workload_sq_vars.append(w_sq_var)
-
-        # --- Objective ---
-        PROJECT_WEIGHT = 1000000000000 # 10^12
-        ASSIGNMENT_COST = 1000000      # 10^6
-        WORKLOAD_COST = 1
+                # Fixed interval (control_var = None means always active)
+                intervals.append((interval_var, skill_id, start, end, None))
+                total_load += time_window.get_overlap_days(start, end)
         
-        total_assignments = sum(task_assignment_vars.values())
+        return intervals, total_load
+    
+    def _add_assignment_intervals(
+        self,
+        model: cp_model.CpModel,
+        person: Person,
+        candidates: List[AssignmentCandidate],
+        busy_intervals: List[Tuple]
+    ) -> Tuple[List[Tuple], List]:
+        """
+        Add optional intervals for new task assignments.
+        
+        Returns:
+            - List of (interval_var, skill_id, start, end, control_var)
+            - List of load expressions for workload tracking
+        """
+        intervals = []
+        load_expressions = []
+        
+        for candidate in candidates:
+            task = candidate.task
+            var = candidate.var
+            geometry = candidate.geometry
+            
+            # Check if blocked by busy schedule
+            if self._is_blocked_by_busy(geometry.ranges, busy_intervals):
+                model.Add(var == 0)
+                continue
+            
+            # Add to load tracking
+            if geometry.total_load > 0:
+                load_expressions.append(var * geometry.total_load)
+            
+            # Create optional intervals for each time range
+            for i, (start, end) in enumerate(geometry.ranges):
+                dur = end - start
+                opt_interval = model.NewOptionalIntervalVar(
+                    start, dur, end, var, f'opt_t{task.id}_p{person.id}_{i}'
+                )
+                intervals.append((opt_interval, task.skill_id, start, end, var))
+        
+        return intervals, load_expressions
+    
+    def _is_blocked_by_busy(
+        self, 
+        task_ranges: List[Tuple[int, int]], 
+        busy_intervals: List[Tuple]
+    ) -> bool:
+        """Check if task ranges overlap with any busy intervals."""
+        for _, _, b_start, b_end, _ in busy_intervals:
+            for start, end in task_ranges:
+                if max(start, b_start) < min(end, b_end):
+                    return True
+        return False
+    
+    def _add_person_interval_constraints(
+        self,
+        model: cp_model.CpModel,
+        person: Person,
+        intervals_data: List[Tuple],
+        skill_map: PersonSkillMap
+    ):
+        """
+        Add constraints to prevent conflicts and respect efficiency limits.
+        
+        - Same skill: Use cumulative constraint with efficiency limit
+        - Different skills: Cannot overlap (sum <= 1)
+        """
+        # Group intervals by skill
+        by_skill = {}
+        for interval_var, skill_id, start, end, control_var in intervals_data:
+            if skill_id not in by_skill:
+                by_skill[skill_id] = []
+            by_skill[skill_id].append((interval_var, skill_id, start, end, control_var))
+        
+        # Same skill: Cumulative constraint
+        for skill_id, skill_intervals in by_skill.items():
+            if skill_id is None:  # Busy intervals (block everything)
+                continue
+            
+            efficiency = skill_map.get_efficiency(skill_id)
+            intervals = [data[0] for data in skill_intervals]
+            
+            if intervals:
+                # Sum of demands <= efficiency capacity
+                model.AddCumulative(intervals, [1] * len(intervals), efficiency)
+        
+        # Different skills: Explicit exclusion
+        skill_ids = list(by_skill.keys())
+        for i in range(len(skill_ids)):
+            for j in range(i + 1, len(skill_ids)):
+                self._add_cross_skill_exclusion(
+                    model, by_skill[skill_ids[i]], by_skill[skill_ids[j]]
+                )
+    
+    def _add_cross_skill_exclusion(
+        self,
+        model: cp_model.CpModel,
+        intervals1: List[Tuple],
+        intervals2: List[Tuple]
+    ):
+        """Add exclusion constraints between different skill intervals."""
+        for _, _, st1, en1, c1 in intervals1:
+            for _, _, st2, en2, c2 in intervals2:
+                # Check if intervals overlap
+                if max(st1, st2) < min(en1, en2):
+                    # They overlap - add exclusion constraint
+                    if c1 is None and c2 is None:
+                        # Both fixed - this is a data conflict, allow it
+                        # (existing assignments should be respected)
+                        pass
+                    elif c1 is None:
+                        # c1 fixed, c2 variable -> c2 must be 0
+                        model.Add(c2 == 0)
+                    elif c2 is None:
+                        # c2 fixed, c1 variable -> c1 must be 0
+                        model.Add(c1 == 0)
+                    else:
+                        # Both variable -> at most one can be active
+                        model.Add(c1 + c2 <= 1)
+    
+    def _add_workload_tracking(
+        self,
+        model: cp_model.CpModel,
+        person: Person,
+        busy_load: int,
+        locked_load: int,
+        new_load_expr: List
+    ) -> cp_model.IntVar:
+        """
+        Track total workload and create squared variable for balancing.
+        
+        Returns:
+            Workload squared variable
+        """
+        base_load = busy_load + locked_load
+        
+        # Total workload
+        workload_var = model.NewIntVar(0, 100000, f'workload_{person.id}')
+        model.Add(workload_var == base_load + sum(new_load_expr))
+        
+        # Squared workload for variance minimization
+        workload_sq_var = model.NewIntVar(0, 100000**2, f'sq_workload_{person.id}')
+        model.AddMultiplicationEquality(workload_sq_var, [workload_var, workload_var])
+        
+        return workload_sq_var
+    
+    # ==================== Objective ====================
+    
+    def _define_objective(
+        self,
+        model: cp_model.CpModel,
+        project_vars: Dict[str, cp_model.IntVar],
+        assignment_vars: Dict[Tuple[str, str], cp_model.IntVar],
+        workload_sq_vars: List[cp_model.IntVar]
+    ):
+        """
+        Define the optimization objective function.
+        
+        Maximize:
+            1. Number of completed projects (highest priority)
+            2. Minimize number of assignments (prefer efficiency)
+            3. Minimize workload variance (balance load)
+        """
         total_projects = sum(project_vars.values())
+        total_assignments = sum(assignment_vars.values())
         total_sq_workload = sum(workload_sq_vars)
         
         model.Maximize(
-            total_projects * PROJECT_WEIGHT 
-            - total_assignments * ASSIGNMENT_COST 
-            - total_sq_workload * WORKLOAD_COST
+            total_projects * self.config.project_weight
+            - total_assignments * self.config.assignment_cost
+            - total_sq_workload * self.config.workload_cost
         )
-        
-        # --- Solve ---
+    
+    # ==================== Solver ====================
+    
+    def _create_solver(self) -> cp_model.CpSolver:
+        """Create and configure the CP-SAT solver."""
         solver = cp_model.CpSolver()
-        # Optimization parameters
-        solver.parameters.num_search_workers = 8 
-        solver.parameters.max_time_in_seconds = 60.0 
-        
-        status = solver.Solve(model)
-        
+        solver.parameters.num_search_workers = self.config.num_workers
+        solver.parameters.max_time_in_seconds = self.config.max_time_seconds
+        return solver
+    
+    # ==================== Results ====================
+    
+    def _extract_results(
+        self,
+        status: int,
+        solver: cp_model.CpSolver,
+        projects: List[Project],
+        people: List[Person],
+        project_vars: Dict[str, cp_model.IntVar],
+        assignment_vars: Dict[Tuple[str, str], cp_model.IntVar]
+    ) -> Tuple[List[ProjectAnalysisResult], List[ProjectAnalysisResult]]:
+        """Extract and analyze results from the solved model."""
         feasible_results = []
         infeasible_results = []
         
-        if status in (cp_model.OPTIMAL, cp_model.FEASIBLE):
-            # Pass 1: Apply Feasible Assignments
+        if status not in (cp_model.OPTIMAL, cp_model.FEASIBLE):
+            # Solver failed
             for project in projects:
-                p_var = project_vars[project.id]
-                is_active = (solver.Value(p_var) == 1)
-                
-                # Reset assignees to be safe
-                for task in project.tasks:
-                    task.assignees = []
-                
-                if is_active:
-                    for task in project.tasks:
-                        for person in people:
-                            if (task.id, person.id) in task_assignment_vars:
-                                var = task_assignment_vars[(task.id, person.id)]
-                                if solver.Value(var) == 1:
-                                    task.assignees.append(person)
-                                    if task not in person.assigned_tasks:
-                                        person.assigned_tasks.append(task)
-                                        
-                    result = self._build_result(project, True, None, {})
-                    feasible_results.append(result)
-
-            # Pass 2: Analyze Infeasible Projects
-            for project in projects:
-                p_var = project_vars[project.id]
-                is_active = (solver.Value(p_var) == 1)
-                
-                if not is_active:
-                    reason, task_errors = self._analyze_failure_reason(project, people)
-                    result = self._build_result(project, False, reason, task_errors)
-                    infeasible_results.append(result)
+                result = self._build_result(
+                    project, False, "Solver failed to find solution", {}
+                )
+                infeasible_results.append(result)
+            return feasible_results, infeasible_results
+        
+        # Apply assignments for feasible projects
+        for project in projects:
+            p_var = project_vars[project.id]
+            is_active = (solver.Value(p_var) == 1)
             
-        else:
-            for project in projects:
-                infeasible_results.append(self._build_result(project, False, "Solver failed to find solution", {}))
+            # Reset assignees
+            for task in project.tasks:
+                task.assignees = []
+            
+            if is_active:
+                # Apply assignments
+                for task in project.tasks:
+                    for person in people:
+                        if (task.id, person.id) in assignment_vars:
+                            var = assignment_vars[(task.id, person.id)]
+                            if solver.Value(var) == 1:
+                                task.assignees.append(person)
+                                if task not in person.assigned_tasks:
+                                    person.assigned_tasks.append(task)
                 
+                result = self._build_result(project, True, None, {})
+                feasible_results.append(result)
+            else:
+                # Analyze why project failed
+                reason, task_errors = self._analyze_failure_reason(project, people)
+                result = self._build_result(project, False, reason, task_errors)
+                infeasible_results.append(result)
+        
         return feasible_results, infeasible_results
-
-    def _analyze_failure_reason(self, project: Project, people: List[Person]) -> Tuple[str, Dict[int, str]]:
+    
+    # ==================== Failure Analysis ====================
+    
+    def _analyze_failure_reason(
+        self, 
+        project: Project, 
+        people: List[Person]
+    ) -> Tuple[str, Dict[str, str]]:
+        """
+        Analyze why a project could not be scheduled.
+        
+        Returns:
+            - Overall failure reason
+            - Dict of task_id -> specific failure message
+        """
         task_failures = {}
         project_reasons = []
-
+        
         for task in project.tasks:
-            # 1. Total Skill availability check
-            skilled_people = [p for p in people if any(s.id == task.skill_id for s in p.skills)]
+            # 1. Check if anyone has the required skill
+            skilled_people = [
+                p for p in people 
+                if any(s.id == task.skill_id for s in p.skills)
+            ]
+            
             if not skilled_people:
                 msg = f"No workforce found with skill ID {task.skill_id}"
                 task_failures[task.id] = msg
                 project_reasons.append(msg)
                 continue
-
-            # 2. Employment check
-            employed_people = []
-            for p in skilled_people:
-                valid_employment = True
-                for r in task.required_ranges:
-                     if r.start_date < p.joining_date:
-                         valid_employment = False
-                     if p.termination_date and r.end_date > p.termination_date:
-                         valid_employment = False
-                if valid_employment:
-                    employed_people.append(p)
+            
+            # 2. Check employment validity
+            employed_people = [
+                p for p in skilled_people 
+                if self._is_employment_valid(p, task)
+            ]
             
             if not employed_people:
-                msg = f"No skilled workforce employed during task dates"
+                msg = "No skilled workforce employed during task dates"
                 task_failures[task.id] = msg
                 project_reasons.append(msg)
                 continue
-
-            # 3. Efficiency/Overlap check
-            # Calculate max available efficiency for this task's ranges
-            # considering ALREADY ASSIGNED tasks (from Pass 1 and locked) and BUSY ranges.
             
-            total_efficiency = 0
-            for p in employed_people:
-                eff = next((s.efficiency for s in p.skills if s.id == task.skill_id), 1)
-                
-                # Check conflicts
-                is_available = True
-                for r in task.required_ranges:
-                    # Check busy
-                    for b in p.schedule:
-                        # Overlap logic
-                        if not (r.end_date < b.start_date or r.start_date > b.end_date):
-                            is_available = False
-                            break
-                    if not is_available: break
-                    
-                    # Check assigned tasks
-                    for at in p.assigned_tasks:
-                        for ar in at.required_ranges:
-                            if not (r.end_date < ar.start_date or r.start_date > ar.end_date):
-                                is_available = False
-                                break
-                        if not is_available: break
-                    if not is_available: break
-                
-                if is_available:
-                    total_efficiency += eff
+            # 3. Check available capacity
+            total_efficiency = self._calculate_available_efficiency(
+                task, employed_people
+            )
             
             if total_efficiency < task.workforce_count:
                 msg = f"Insufficient capacity. Required: {task.workforce_count}, Available: {total_efficiency}"
                 task_failures[task.id] = msg
                 project_reasons.append(f"Task '{task.name}': {msg}")
-
+        
         if not project_reasons:
             return "Conflict with other assignments or internal project overlap", task_failures
         
         return "; ".join(project_reasons[:3]), task_failures
-
-
-    def _build_result(self, project: Project, feasible: bool, failure_reason: str, task_failures: Dict[int, str]) -> ProjectAnalysisResult:
+    
+    def _calculate_available_efficiency(
+        self, 
+        task: Task, 
+        people: List[Person]
+    ) -> int:
+        """
+        Calculate total available efficiency for a task.
+        
+        Considers existing assignments and busy schedules.
+        """
+        total_efficiency = 0
+        
+        for person in people:
+            # Get person's efficiency for this skill
+            efficiency = next(
+                (s.efficiency for s in person.skills if s.id == task.skill_id), 
+                1
+            )
+            
+            # Check if person is available for all task ranges
+            is_available = True
+            for task_range in task.required_ranges:
+                # Check busy schedule
+                for busy_range in person.schedule:
+                    if self._ranges_overlap(task_range, busy_range):
+                        is_available = False
+                        break
+                
+                if not is_available:
+                    break
+                
+                # Check assigned tasks
+                for assigned_task in person.assigned_tasks:
+                    for assigned_range in assigned_task.required_ranges:
+                        if self._ranges_overlap(task_range, assigned_range):
+                            is_available = False
+                            break
+                    if not is_available:
+                        break
+                
+                if not is_available:
+                    break
+            
+            if is_available:
+                total_efficiency += efficiency
+        
+        return total_efficiency
+    
+    def _ranges_overlap(self, range1: DateRange, range2: DateRange) -> bool:
+        """Check if two date ranges overlap."""
+        return not (range1.end_date < range2.start_date or range1.start_date > range2.end_date)
+    
+    # ==================== Result Building ====================
+    
+    def _build_result(
+        self, 
+        project: Project, 
+        feasible: bool, 
+        failure_reason: Optional[str], 
+        task_failures: Dict[str, str]
+    ) -> ProjectAnalysisResult:
+        """Build a ProjectAnalysisResult from project data."""
         tasks_analyzed = []
-        for t in project.tasks:
-            req_ranges = [DateRange(start_date=r.start_date, end_date=r.end_date) for r in t.required_ranges]
+        
+        for task in project.tasks:
+            # Convert required ranges
+            req_ranges = [
+                DateRange(start_date=r.start_date, end_date=r.end_date) 
+                for r in task.required_ranges
+            ]
             
+            # Convert assignees
             assignees_read = []
-            for p in t.assignees:
+            for person in task.assignees:
                 assignees_read.append(PersonRead(
-                    id=p.id,
-                    name=p.name,
-                    joining_date=p.joining_date,
-                    termination_date=p.termination_date,
-                    skills=[SkillRead(id=s.id, name=s.name, efficiency=s.efficiency) for s in p.skills],
-                    busy_ranges=[DateRange(start_date=b.start_date, end_date=b.end_date) for b in p.schedule]
+                    id=person.id,
+                    name=person.name,
+                    joining_date=person.joining_date,
+                    termination_date=person.termination_date,
+                    skills=[
+                        SkillRead(id=s.id, name=s.name, efficiency=s.efficiency) 
+                        for s in person.skills
+                    ],
+                    busy_ranges=[
+                        DateRange(start_date=b.start_date, end_date=b.end_date) 
+                        for b in person.schedule
+                    ]
                 ))
-
-            tasks_analyzed.append(TaskAnalysisResult(
-                id=t.id,
-                name=t.name,
-                project_id=project.id,
-                skill_id=t.skill_id,
-                assignees=assignees_read,
-                required_skill=SkillRead(id=t.required_skill.id, name=t.required_skill.name),
-                required_ranges=req_ranges,
-                workforce_count=t.workforce_count,
-                failure_reason=task_failures.get(t.id)
-            ))
             
+            tasks_analyzed.append(TaskAnalysisResult(
+                id=task.id,
+                name=task.name,
+                project_id=project.id,
+                skill_id=task.skill_id,
+                assignees=assignees_read,
+                required_skill=SkillRead(
+                    id=task.required_skill.id, 
+                    name=task.required_skill.name
+                ),
+                required_ranges=req_ranges,
+                workforce_count=task.workforce_count,
+                failure_reason=task_failures.get(task.id)
+            ))
+        
         return ProjectAnalysisResult(
             id=project.id,
             name=project.name,
@@ -450,8 +884,14 @@ class SchedulerService:
             feasible=feasible,
             failure_reason=failure_reason
         )
-
-    # Legacy method, might not be needed but kept if referenced elsewhere (unlikely based on usage).
-    # We can remove check_assignment_viability and rollback as they are not used in CP approach.
+    
+    # ==================== Legacy Methods ====================
+    
     def schedule_project(self, project: Project, people: List[Person]):
+        """
+        Legacy method - use schedule_all instead.
+        
+        Raises:
+            NotImplementedError: This method is deprecated
+        """
         raise NotImplementedError("Use schedule_all with optimization")

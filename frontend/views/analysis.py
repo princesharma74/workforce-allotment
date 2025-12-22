@@ -99,11 +99,30 @@ def render_analysis():
     st.divider()
     st.header("Skill Demand & Supply Analytics")
     
-    projects = get_projects()
+    current_projects = get_projects()
     people = get_people()
     
-    if projects:
-        data = calculate_supply_and_demand(projects, people)
+    # Merge scheduler results if available to show projected availability
+    projects_for_analytics = copy.deepcopy(current_projects)
+    if "scheduler_results" in st.session_state and st.session_state.scheduler_results:
+        feasible = st.session_state.scheduler_results.get("feasible", [])
+        # Create a map of project_id -> project from the current projects list for easier updating
+        proj_map = {p['id']: p for p in projects_for_analytics}
+        
+        for sim_proj in feasible:
+            if sim_proj['id'] in proj_map:
+                # Update tasks with proposed assignees
+                target_proj = proj_map[sim_proj['id']]
+                # Map task_id -> task in target
+                task_map = {t['id']: t for t in target_proj.get('tasks', [])}
+                
+                for sim_task in sim_proj.get('tasks', []):
+                    if sim_task['id'] in task_map:
+                        # Overwrite assignees with simulation result
+                        task_map[sim_task['id']]['assignees'] = sim_task.get('assignees', [])
+
+    if projects_for_analytics:
+        data = calculate_supply_and_demand(projects_for_analytics, people)
         
         if data:
             st.write("Below charts show the **Demand** vs **Available Workforce** for each skill.")

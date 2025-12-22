@@ -21,7 +21,11 @@ from backend.app.services.models import (
     PersonBusyRange as ServiceBusyRange,
     TaskRequiredRange as ServiceAssignRange,
     TaskRequiredRange as ServiceTaskRange,
-    ProjectAnalysisResult as ServiceProjectResult, # Service result dataclass
+    ProjectAnalysisResult as ServiceProjectResult,
+    TaskAnalysisResult as ServiceTaskResult,
+    PersonRead as ServicePersonRead,
+    SkillRead as ServiceSkillRead,
+    DateRange as ServiceDateRange
 )
 
 router = APIRouter(prefix="/scheduler", tags=["scheduler"])
@@ -163,40 +167,118 @@ def run_scheduler(dry_run: bool = False, session: Session = Depends(get_session)
     # 2. Map to Service layer objects
     s_projects, s_people = to_service_models(db_projects, db_people, efficiency_map)
     
-    # 3. Run Scheduler
-    scheduler = SchedulerService()
-    feasible, infeasible = scheduler.schedule_all(s_projects, s_people)
+    # 3. Identify and filter locked tasks
+    projects_to_schedule = []
+    locked_tasks_map = {} # project_id -> list of ServiceTask (locked)
     
-    # 4. If not dry_run, apply changes to DB
+    for sp in s_projects:
+        unassigned_tasks = []
+        locked_tasks = []
+        
+        for task in sp.tasks:
+            if task.assignees:
+                locked_tasks.append(task)
+            else:
+                unassigned_tasks.append(task)
+        
+        if locked_tasks:
+            locked_tasks_map[sp.id] = locked_tasks
+            
+        if unassigned_tasks:
+            # Create shallow copy with only unassigned tasks
+            new_sp = ServiceProject(
+                id=sp.id,
+                name=sp.name,
+                tasks=unassigned_tasks
+            )
+            projects_to_schedule.append(new_sp)
+
+    # 4. Run Scheduler
+    scheduler = SchedulerService()
+    feasible, infeasible = scheduler.schedule_all(projects_to_schedule, s_people)
+    
+    # 5. Merge locked tasks back into results
+    
+    def create_task_result(t: ServiceTask) -> ServiceTaskResult:
+        # Map ServiceTask + assignees to ServiceTaskResult
+        assignees_read = []
+        for p in t.assignees:
+            skills_read = [ServiceSkillRead(id=s.id, name=s.name, efficiency=s.efficiency) for s in p.skills]
+            busy_read = [ServiceDateRange(start_date=b.start_date, end_date=b.end_date) for b in p.schedule]
+            assignees_read.append(ServicePersonRead(
+                id=p.id, name=p.name, joining_date=p.joining_date, 
+                termination_date=p.termination_date, skills=skills_read, busy_ranges=busy_read
+            ))
+            
+        req_ranges = [ServiceDateRange(start_date=r.start_date, end_date=r.end_date) for r in t.required_ranges]
+        
+        return ServiceTaskResult(
+            id=t.id, name=t.name, project_id=t.project_id, skill_id=t.skill_id,
+            assignees=assignees_read, 
+            required_skill=ServiceSkillRead(id=t.required_skill.id, name=t.required_skill.name),
+            required_ranges=req_ranges, workforce_count=t.workforce_count, failure_reason=None
+        )
+
+    # Add back to feasible/infeasible lists
+    processed_project_ids = set()
+    
+    for res in feasible:
+        processed_project_ids.add(res.id)
+        if res.id in locked_tasks_map:
+            for t in locked_tasks_map[res.id]:
+                res.tasks.append(create_task_result(t))
+                
+    for res in infeasible:
+        processed_project_ids.add(res.id)
+        if res.id in locked_tasks_map:
+            for t in locked_tasks_map[res.id]:
+                res.tasks.append(create_task_result(t))
+
+    # Identify projects that were skipped (fully locked)
+    for sp in s_projects:
+        if sp.id not in processed_project_ids and sp.id in locked_tasks_map:
+            # This must be a fully locked project
+            # Create a feasible result for it
+            task_results = [create_task_result(t) for t in sp.tasks]
+            res = ServiceProjectResult(
+                id=sp.id, name=sp.name, tasks=task_results, feasible=True, failure_reason=None
+            )
+            feasible.append(res)
+            
+    # 6. If not dry_run, apply changes to DB
     if not dry_run:
         # Create lookup for db people
         db_people_map = {p.id: p for p in db_people}
         
-        for s_proj in s_projects:
-            # Find corresponding db project (we can iterate parallel or look up)
-            # Since we fetched all, we can assume order or match by ID.
-            # Matching by ID is safer.
-            db_proj = next((p for p in db_projects if p.id == s_proj.id), None)
+        # Only update tasks that were actually scheduled (in feasible list)
+        # But we also need to consider that "projects_to_schedule" might not be all projects.
+        # We need to iterate over the results (feasible) to find what changed.
+        
+        for res in feasible:
+            # ServiceProjectResult has tasks with assignees.
+            
+            # Find DB project
+            db_proj = next((p for p in db_projects if p.id == res.id), None)
             if not db_proj:
                 continue
                 
-            for s_task in s_proj.tasks:
-                db_task = next((t for t in db_proj.tasks if t.id == s_task.id), None)
+            for task_res in res.tasks:
+                db_task = next((t for t in db_proj.tasks if t.id == task_res.id), None)
                 if db_task:
                     # Update assignees
-                    # We need to map ServicePerson back to DB Person
                     new_assignees = []
-                    for sp in s_task.assignees:
-                        if sp.id in db_people_map:
-                            new_assignees.append(db_people_map[sp.id])
+                    for assignee_read in task_res.assignees:
+                        if assignee_read.id in db_people_map:
+                            new_assignees.append(db_people_map[assignee_read.id])
                     
                     db_task.assignees = new_assignees
                     session.add(db_task)
         
         session.commit()
     
-    # 5. Adapt back to API Schema
+    # 7. Adapt back to API Schema
     return {
         "feasible": to_api_response(feasible),
         "infeasible": to_api_response(infeasible)
     }
+

@@ -1,18 +1,23 @@
 # Optimization of Workforce Scheduling: From Greedy Heuristics to Exact Constraint Programming
 
 ## Abstract
-This paper documents the evolution of a workforce scheduling system designed to maximize project accommodation under complex skill and efficiency constraints. We demonstrate how transitioning from a naive Greedy algorithm to a Constraint Programming (CP) model using Google OR-Tools resulted in a **70% increase in feasible project assignments** (from 10/20 to 17/20 in benchmarks). We provide a detailed implementation guide for modeling multi-skill, efficiency-weighted scheduling problems.
+This paper documents the evolution of a workforce scheduling system designed to maximize project accommodation under complex skill and efficiency constraints. We demonstrate how transitioning from a naive Greedy algorithm to a Constraint Programming (CP) model using Google OR-Tools resulted in a **70% increase in feasible project assignments** (from 10/20 to 17/20 in benchmarks). We provide a detailed implementation guide for modeling multi-skill, efficiency-weighted scheduling problems with **multi-objective optimization** (Projects > Efficiency > Workload Balancing).
 
 ---
 
 ## 1. Introduction
 The core problem is a variation of the **Resource-Constrained Project Scheduling Problem (RCPSP)**.
-**Objective:** Maximize the number of "Active Projects".
+**Objectives:** 
+1. **Primary:** Maximize the number of "Active Projects".
+2. **Secondary:** Minimize total assignments (prefer fewer, more efficient workers).
+3. **Tertiary:** Minimize workload variance (distribute load evenly).
+
 **Constraints:**
 1.  **Skills:** People must possess the specific skill required by a task.
 2.  **Efficiency Density:** A task requires a total "Efficiency Sum" (e.g., 3 units). A senior engineer might contribute 3 units, while a junior contributes 1.
 3.  **Multitasking:** A person can work on multiple tasks *simultaneously* if they share the **same skill** and their total efficiency capacity is not exceeded.
 4.  **Exclusive Contexts:** A person **cannot** work on tasks requiring *different skills* at the same time (Context Switching penalty/impossibility).
+5.  **Workload Balancing:** The solver should minimize the variance in workload across the team.
 
 ---
 
@@ -66,9 +71,16 @@ Instead of *writing the steps* to find a solution (Procedural), we *describe the
 **Variables:**
 *   $X_p \in \{0, 1\}$: Is Project $p$ active?
 *   $Y_{t,u} \in \{0, 1\}$: Is Person $u$ assigned to Task $t$?
+*   $W_u$: Total workload for Person $u$.
+*   $S_u$: Squared workload for Person $u$ (for variance minimization).
 
 **Objective Function:**
-$$ \text{Maximize } \sum_{p \in Projects} X_p $$
+$$ \text{Maximize } (C_1 \sum X_p) - (C_2 \sum Y_{t,u}) - (C_3 \sum S_u) $$
+
+Where weights are prioritized: $C_1 \gg C_2 \gg C_3$ (e.g., $10^{12}, 10^6, 1$).
+1.  **Projects:** Priority.
+2.  **Assignments:** Cost (Minimize to prefer high-efficiency workers).
+3.  **Workload:** Cost (Minimize sum of squares to balance load).
 
 ### 4.2. Modeling Constraints
 
@@ -85,10 +97,16 @@ We treat a Person's time as a set of **Intervals**.
     *   **CP Tool:** `AddCumulative(intervals, demands=[1,1,...], capacity=Efficiency)`
     *   *Analogy:* Filling a bucket. You can pour multiple streams in as long as they don't overflow the rim.
 
-2.  **Cross-Skill Conflict (No Overlap):**
+3.  **Cross-Skill Conflict (No Overlap):**
     If a person has tasks for *different skills* (e.g., Java vs SQL), they cannot overlap at all.
     *   **CP Tool:** `AddNoOverlap([Interval_Java, Interval_SQL])`
     *   *Analogy:* You can't be in two rooms at once.
+
+#### C. Workload Balancing
+To ensure fair distribution of work, we calculate the total duration of all assigned tasks for each person.
+*   **Variable:** `workload_sq_var = (total_days)^2`
+*   **Objective:** Minimize $\sum workload\_sq\_var$
+*   *Effect:* The solver prefers assigning tasks to 2 people with 5 days each ($5^2+5^2=50$) rather than 1 person with 10 days ($10^2+0^2=100$).
 
 ---
 
@@ -115,6 +133,10 @@ for skill, intervals in intervals_by_skill.items():
 for i in intervals_by_skill['Java']:
     for j in intervals_by_skill['SQL']:
         model.AddNoOverlap([i, j])
+
+# 5. Workload Balancing
+model.AddMultiplicationEquality(workload_sq, [workload, workload])
+# Add to objective (minimize sum of squares)
 ```
 
 ---
