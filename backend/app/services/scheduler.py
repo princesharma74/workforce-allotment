@@ -26,6 +26,7 @@ class SchedulerConfig:
     # Objective function weights
     project_weight: int = 1_000_000_000_000  # Maximize projects (highest priority)
     assignment_cost: int = 1_000_000          # Minimize assignments (prefer efficiency)
+    preference_weight: int = 1_000            # Maximize preference (tertiary priority)
     workload_cost: int = 1                    # Minimize workload variance (balance)
     
     # Solver parameters
@@ -58,6 +59,8 @@ class TimeWindow:
 class PersonSkillMap:
     """Efficient lookup for person skills and efficiencies."""
     skill_to_efficiency: Dict[str, int]  # skill_id -> efficiency
+    skill_to_preference: Dict[str, int]  # skill_id -> preference
+
     
     def has_skill(self, skill_id: str) -> bool:
         """Check if person has a skill."""
@@ -66,6 +69,10 @@ class PersonSkillMap:
     def get_efficiency(self, skill_id: str) -> int:
         """Get efficiency for a skill (default 1)."""
         return self.skill_to_efficiency.get(skill_id, 1)
+
+    def get_preference(self, skill_id: str) -> int:
+        """Get preference for a skill (default 1)."""
+        return self.skill_to_preference.get(skill_id, 1)
 
 
 @dataclass
@@ -143,7 +150,7 @@ class SchedulerService:
         )
         
         # Step 7: Define objective function
-        self._define_objective(model, project_vars, assignment_vars, workload_vars)
+        self._define_objective(model, project_vars, assignment_vars, workload_vars, projects, skill_maps)
         
         # Step 8: Solve the model
         solver = self._create_solver()
@@ -214,9 +221,14 @@ class SchedulerService:
         skill_maps = {}
         for person in people:
             skill_to_eff = {}
+            skill_to_pref = {}
             for skill in person.skills:
                 skill_to_eff[skill.id] = getattr(skill, 'efficiency', 1)
-            skill_maps[person.id] = PersonSkillMap(skill_to_efficiency=skill_to_eff)
+                skill_to_pref[skill.id] = getattr(skill, 'preference_score', 1)
+            skill_maps[person.id] = PersonSkillMap(
+                skill_to_efficiency=skill_to_eff,
+                skill_to_preference=skill_to_pref
+            )
         return skill_maps
     
     # ==================== Variables ====================
@@ -633,7 +645,9 @@ class SchedulerService:
         model: cp_model.CpModel,
         project_vars: Dict[str, cp_model.IntVar],
         assignment_vars: Dict[Tuple[str, str], cp_model.IntVar],
-        workload_sq_vars: List[cp_model.IntVar]
+        workload_sq_vars: List[cp_model.IntVar],
+        projects: List[Project],
+        skill_maps: Dict[str, PersonSkillMap]
     ):
         """
         Define the optimization objective function.
@@ -641,15 +655,36 @@ class SchedulerService:
         Maximize:
             1. Number of completed projects (highest priority)
             2. Minimize number of assignments (prefer efficiency)
-            3. Minimize workload variance (balance load)
+            3. Maximize preference score (preference_weight)
+            4. Minimize workload variance (balance load)
         """
         total_projects = sum(project_vars.values())
         total_assignments = sum(assignment_vars.values())
         total_sq_workload = sum(workload_sq_vars)
+
+        # Calculate total preference score
+        total_preference = 0
+        
+        # Iterate over all potential assignments
+        # assignment_vars keys are (task_id, person_id)
+        # We need to map task_id back to skill_id to look up preference
+        
+        # Build task_id -> skill_id map
+        task_skill_map = {}
+        for project in projects:
+            for task in project.tasks:
+                task_skill_map[task.id] = task.skill_id
+        
+        for (task_id, person_id), var in assignment_vars.items():
+            skill_id = task_skill_map.get(task_id)
+            if skill_id:
+                preference = skill_maps[person_id].get_preference(skill_id)
+                total_preference += var * preference
         
         model.Maximize(
             total_projects * self.config.project_weight
             - total_assignments * self.config.assignment_cost
+            + total_preference * self.config.preference_weight
             - total_sq_workload * self.config.workload_cost
         )
     
@@ -853,7 +888,12 @@ class SchedulerService:
                     joining_date=person.joining_date,
                     termination_date=person.termination_date,
                     skills=[
-                        SkillRead(id=s.id, name=s.name, efficiency=s.efficiency) 
+                        SkillRead(
+                            id=s.id, 
+                            name=s.name, 
+                            efficiency=s.efficiency,
+                            preference_score=getattr(s, 'preference_score', 1)
+                        ) 
                         for s in person.skills
                     ],
                     busy_ranges=[

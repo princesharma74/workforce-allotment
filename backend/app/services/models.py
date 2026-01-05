@@ -10,6 +10,7 @@ class Skill:
 @dataclass
 class PersonSkill(Skill):
     efficiency: int = 1
+    preference_score: int = 1
 
 @dataclass
 class DateRange:
@@ -63,6 +64,7 @@ class SkillRead:
     id: str
     name: str
     efficiency: int = 1
+    preference_score: int = 1
 
 @dataclass
 class PersonRead:
