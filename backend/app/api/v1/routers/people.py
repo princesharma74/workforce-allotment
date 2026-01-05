@@ -32,7 +32,12 @@ def create_person(person: PersonCreate, session: Session = Depends(get_session))
             session.refresh(skill)
         
         # Link
-        link = PersonSkillLink(person_id=db_person.id, skill_id=skill.id, efficiency=efficiency)
+        link = PersonSkillLink(
+            person_id=db_person.id, 
+            skill_id=skill.id, 
+            efficiency=efficiency,
+            preference_score=skill_input.preference_score
+        )
         session.add(link)
     
     # Add busy ranges
@@ -108,7 +113,12 @@ def update_person(person_id: str, person_in: PersonUpdate, session: Session = De
                 session.commit()
                 session.refresh(skill)
             
-            link = PersonSkillLink(person_id=db_person.id, skill_id=skill.id, efficiency=efficiency)
+            link = PersonSkillLink(
+                person_id=db_person.id, 
+                skill_id=skill.id, 
+                efficiency=efficiency,
+                preference_score=skill_input.preference_score
+            )
             session.add(link)
             
     if person_in.busy_ranges is not None:
@@ -135,12 +145,17 @@ def _person_to_read(person: Person) -> PersonRead:
     from backend.app.schemas import DateRange, PersonSkillRead
     
     # Map efficient
-    skills_map = {l.skill_id: l.efficiency for l in person.skill_links}
+    skills_map = {l.skill_id: (l.efficiency, l.preference_score) for l in person.skill_links}
     
     skills_read = []
     for s in person.skills:
-        eff = skills_map.get(s.id, 1)
-        skills_read.append(PersonSkillRead(id=s.id, name=s.name, efficiency=eff))
+        eff, pref = skills_map.get(s.id, (1, 1))
+        skills_read.append(PersonSkillRead(
+            id=s.id, 
+            name=s.name, 
+            efficiency=eff,
+            preference_score=pref
+        ))
         
     return PersonRead(
         id=person.id,

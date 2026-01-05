@@ -20,9 +20,11 @@ class SkillRead(SkillBase):
 class PersonSkillCreate(SQLModel):
     name: str
     efficiency: int = 1
+    preference_score: int = 1
 
 class PersonSkillRead(SkillRead):
     efficiency: int = 1
+    preference_score: int = 1
 
 class PersonBase(SQLModel):
     name: str
