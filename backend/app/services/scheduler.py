@@ -554,63 +554,44 @@ class SchedulerService:
         skill_map: PersonSkillMap
     ):
         """
-        Add constraints to prevent conflicts and respect efficiency limits.
+        Add constraints to prevent conflicts.
         
-        - Same skill: Use cumulative constraint with efficiency limit
-        - Different skills: Cannot overlap (sum <= 1)
+        Enforces strict 'One Person, One Task' policy:
+        - No two intervals can overlap (regardless of skill).
+        - Efficiency is treated as 'Rate of Work', not 'Concurrency Capacity'.
+        - Existing data conflicts (Fixed vs Fixed) are ignored to be robust.
         """
-        # Group intervals by skill
-        by_skill = {}
-        for interval_var, skill_id, start, end, control_var in intervals_data:
-            if skill_id not in by_skill:
-                by_skill[skill_id] = []
-            by_skill[skill_id].append((interval_var, skill_id, start, end, control_var))
-        
-        # Same skill: Cumulative constraint
-        for skill_id, skill_intervals in by_skill.items():
-            if skill_id is None:  # Busy intervals (block everything)
-                continue
-            
-            efficiency = skill_map.get_efficiency(skill_id)
-            intervals = [data[0] for data in skill_intervals]
-            
-            if intervals:
-                # Sum of demands <= efficiency capacity
-                model.AddCumulative(intervals, [1] * len(intervals), efficiency)
-        
-        # Different skills: Explicit exclusion
-        skill_ids = list(by_skill.keys())
-        for i in range(len(skill_ids)):
-            for j in range(i + 1, len(skill_ids)):
-                self._add_cross_skill_exclusion(
-                    model, by_skill[skill_ids[i]], by_skill[skill_ids[j]]
-                )
-    
-    def _add_cross_skill_exclusion(
+        # Iterate all pairs to enforce non-overlap
+        for i in range(len(intervals_data)):
+            for j in range(i + 1, len(intervals_data)):
+                self._add_single_exclusion(model, intervals_data[i], intervals_data[j])
+
+    def _add_single_exclusion(
         self,
         model: cp_model.CpModel,
-        intervals1: List[Tuple],
-        intervals2: List[Tuple]
+        data1: Tuple,
+        data2: Tuple
     ):
-        """Add exclusion constraints between different skill intervals."""
-        for _, _, st1, en1, c1 in intervals1:
-            for _, _, st2, en2, c2 in intervals2:
-                # Check if intervals overlap
-                if max(st1, st2) < min(en1, en2):
-                    # They overlap - add exclusion constraint
-                    if c1 is None and c2 is None:
-                        # Both fixed - this is a data conflict, allow it
-                        # (existing assignments should be respected)
-                        pass
-                    elif c1 is None:
-                        # c1 fixed, c2 variable -> c2 must be 0
-                        model.Add(c2 == 0)
-                    elif c2 is None:
-                        # c2 fixed, c1 variable -> c1 must be 0
-                        model.Add(c1 == 0)
-                    else:
-                        # Both variable -> at most one can be active
-                        model.Add(c1 + c2 <= 1)
+        """Add exclusion constraint between two intervals if they overlap."""
+        _, _, st1, en1, c1 = data1
+        _, _, st2, en2, c2 = data2
+        
+        # Check if intervals overlap
+        if max(st1, st2) < min(en1, en2):
+            # They overlap - add exclusion constraint
+            if c1 is None and c2 is None:
+                # Both fixed - this is a data conflict, allow it
+                # (existing assignments should be respected)
+                pass
+            elif c1 is None:
+                # c1 fixed, c2 variable -> c2 must be 0
+                model.Add(c2 == 0)
+            elif c2 is None:
+                # c2 fixed, c1 variable -> c1 must be 0
+                model.Add(c1 == 0)
+            else:
+                # Both variable -> at most one can be active
+                model.Add(c1 + c2 <= 1)
     
     def _add_workload_tracking(
         self,
@@ -776,7 +757,7 @@ class SchedulerService:
             ]
             
             if not skilled_people:
-                msg = f"No workforce found with skill ID {task.skill_id}"
+                msg = f"No workforce found with skill: {task.required_skill.name}"
                 task_failures[task.id] = msg
                 project_reasons.append(msg)
                 continue
@@ -799,7 +780,10 @@ class SchedulerService:
             )
             
             if total_efficiency < task.workforce_count:
-                msg = f"Insufficient capacity. Required: {task.workforce_count}, Available: {total_efficiency}"
+                # IMPORTANT: Detailed Analysis
+                details = self._explain_unavailability(task, employed_people)
+                
+                msg = f"Insufficient capacity. Required: {task.workforce_count}, Available: {total_efficiency}. {details}"
                 task_failures[task.id] = msg
                 project_reasons.append(f"Task '{task.name}': {msg}")
         
@@ -807,6 +791,45 @@ class SchedulerService:
             return "Conflict with other assignments or internal project overlap", task_failures
         
         return "; ".join(project_reasons[:3]), task_failures
+
+    def _explain_unavailability(self, task: Task, people: List[Person]) -> str:
+        """
+        Generate a detailed explanation of why skilled people are unavailable.
+        """
+        reasons = []
+        
+        for person in people:
+            # Check availability again to find the blocker
+            blocked_by = []
+            
+            is_busy = False
+            for task_range in task.required_ranges:
+                # Check busy schedule
+                for busy_range in person.schedule:
+                    if self._ranges_overlap(task_range, busy_range):
+                        range_str = f"{busy_range.start_date} to {busy_range.end_date}"
+                        blocked_by.append(f"Busy: {range_str}")
+                        is_busy = True
+                        break
+                if is_busy: break
+                
+                # Check assigned tasks
+                for assigned_task in person.assigned_tasks:
+                    for assigned_range in assigned_task.required_ranges:
+                        if self._ranges_overlap(task_range, assigned_range):
+                            blocked_by.append(f"Assigned to {assigned_task.name}")
+                            is_busy = True
+                            break
+                    if is_busy: break
+                if is_busy: break
+            
+            if blocked_by:
+                reasons.append(f"{person.name} ({', '.join(blocked_by)})")
+        
+        if not reasons:
+            return "All skilled people are fully booked."
+            
+        return "Blocked: " + ", ".join(reasons)
     
     def _calculate_available_efficiency(
         self, 
