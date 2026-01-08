@@ -77,7 +77,7 @@ def run_testcase(filepath: str):
     project_counter = 1
     
     for proj_data in data.get('projects', []):
-        proj_id = project_counter
+        proj_id = proj_data['name']
         project_counter += 1
         
         tasks = []

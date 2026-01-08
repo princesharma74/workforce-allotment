@@ -1954,7 +1954,7 @@ wheels = [
 [[package]]
 name = "workforce-allotment"
 version = "0.1.0"
-source = { virtual = "." }
+source = { editable = "." }
 dependencies = [
     { name = "fastapi" },
     { name = "matplotlib" },

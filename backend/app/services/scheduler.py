@@ -353,7 +353,7 @@ class SchedulerService:
                 
                 # If project is scheduled, task must be fulfilled
                 model.Add(
-                    sum(v * e for v, e in zip(relevant_vars, efficiencies)) >= task.workforce_count
+                    sum(v * min(e, task.workforce_count) for v, e in zip(relevant_vars, efficiencies)) >= task.workforce_count
                 ).OnlyEnforceIf(p_var)
                 
                 # If project is not scheduled, no assignments
@@ -449,7 +449,7 @@ class SchedulerService:
             )
             
             # Busy intervals block all skills (use None as skill_id marker)
-            intervals.append((interval_var, None, start, end, None))
+            intervals.append((interval_var, None, start, end, None, None))
             total_load += time_window.get_overlap_days(start, end)
         
         return intervals, total_load
@@ -488,7 +488,7 @@ class SchedulerService:
                 )
                 
                 # Fixed interval (control_var = None means always active)
-                intervals.append((interval_var, skill_id, start, end, None))
+                intervals.append((interval_var, skill_id, start, end, None, task.workforce_count))
                 total_load += time_window.get_overlap_days(start, end)
         
         return intervals, total_load
@@ -530,7 +530,7 @@ class SchedulerService:
                 opt_interval = model.NewOptionalIntervalVar(
                     start, dur, end, var, f'opt_t{task.id}_p{person.id}_{i}'
                 )
-                intervals.append((opt_interval, task.skill_id, start, end, var))
+                intervals.append((opt_interval, task.skill_id, start, end, var, task.workforce_count))
         
         return intervals, load_expressions
     
@@ -540,7 +540,7 @@ class SchedulerService:
         busy_intervals: List[Tuple]
     ) -> bool:
         """Check if task ranges overlap with any busy intervals."""
-        for _, _, b_start, b_end, _ in busy_intervals:
+        for _, _, b_start, b_end, _, _ in busy_intervals:
             for start, end in task_ranges:
                 if max(start, b_start) < min(end, b_end):
                     return True
@@ -561,10 +561,36 @@ class SchedulerService:
         - Efficiency is treated as 'Rate of Work', not 'Concurrency Capacity'.
         - Existing data conflicts (Fixed vs Fixed) are ignored to be robust.
         """
-        # Iterate all pairs to enforce non-overlap
+        # 1. Enforce Cross-Skill Exclusion (Different Skills cannot overlap)
+        # Iterate all pairs to enforce non-overlap for DIFFERENT skills
         for i in range(len(intervals_data)):
             for j in range(i + 1, len(intervals_data)):
                 self._add_single_exclusion(model, intervals_data[i], intervals_data[j])
+                
+        # 2. Enforce Cumulative Capacity for SAME Skill
+        # Group intervals by skill
+        skill_intervals = {}
+        for data in intervals_data:
+            interval_var, skill_id, _, _, control_var, _ = data
+            if skill_id is None: continue # Busy/Global constraints handled by exclusion
+            
+            if skill_id not in skill_intervals:
+                skill_intervals[skill_id] = []
+            skill_intervals[skill_id].append(data)
+            
+        for skill_id, data_list in skill_intervals.items():
+            eff = skill_map.get_efficiency(skill_id)
+            intervals = [d[0] for d in data_list]
+            
+            # Demand is min(efficiency, task_workforce_count)
+            demands = []
+            for d in data_list:
+                _, _, _, _, _, wf_count = d
+                demands.append(min(eff, wf_count))
+            
+            # Cumulative Constraint
+            # Ensures that at any point, sum(demand) <= capacity (efficiency)
+            model.AddCumulative(intervals, demands, eff)
 
     def _add_single_exclusion(
         self,
@@ -573,12 +599,21 @@ class SchedulerService:
         data2: Tuple
     ):
         """Add exclusion constraint between two intervals if they overlap."""
-        _, _, st1, en1, c1 = data1
-        _, _, st2, en2, c2 = data2
+        _, _, st1, en1, c1, _ = data1
+        _, _, st2, en2, c2, _ = data2
+        
         
         # Check if intervals overlap
         if max(st1, st2) < min(en1, en2):
-            # They overlap - add exclusion constraint
+            # Check skill conflict
+            s1 = data1[1]
+            s2 = data2[1]
+            
+            # If skills are same (and not None/Busy), logic is handled by Cumulative
+            if s1 is not None and s2 is not None and s1 == s2:
+                return
+
+            # They overlap and are different skills (or one is Busy) - add exclusion constraint
             if c1 is None and c2 is None:
                 # Both fixed - this is a data conflict, allow it
                 # (existing assignments should be respected)
@@ -702,7 +737,9 @@ class SchedulerService:
                 infeasible_results.append(result)
             return feasible_results, infeasible_results
         
-        # Apply assignments for feasible projects
+        # Pass 1: Apply ALL assignments for feasible projects first
+        # This ensures that when we analyze failures in Pass 2, the 'people' objects
+        # reflect the complete state of the schedule.
         for project in projects:
             p_var = project_vars[project.id]
             is_active = (solver.Value(p_var) == 1)
@@ -721,7 +758,15 @@ class SchedulerService:
                                 task.assignees.append(person)
                                 if task not in person.assigned_tasks:
                                     person.assigned_tasks.append(task)
-                
+
+        # Pass 2: Build results and analyze failures
+        # Now that all feasible assignments are applied, failure analysis will
+        # correctly see busy slots.
+        for project in projects:
+            p_var = project_vars[project.id]
+            is_active = (solver.Value(p_var) == 1)
+            
+            if is_active:
                 result = self._build_result(project, True, None, {})
                 feasible_results.append(result)
             else:
@@ -792,6 +837,7 @@ class SchedulerService:
         
         return "; ".join(project_reasons[:3]), task_failures
 
+
     def _explain_unavailability(self, task: Task, people: List[Person]) -> str:
         """
         Generate a detailed explanation of why skilled people are unavailable.
@@ -799,38 +845,64 @@ class SchedulerService:
         reasons = []
         
         for person in people:
-            # Check availability again to find the blocker
+            # Get person's max efficiency for this skill
+            max_efficiency = next(
+                (s.efficiency for s in person.skills if s.id == task.skill_id), 
+                1
+            )
+            
             blocked_by = []
             
+            # Check vs Busy Ranges
             is_busy = False
-            for task_range in task.required_ranges:
-                # Check busy schedule
-                for busy_range in person.schedule:
-                    if self._ranges_overlap(task_range, busy_range):
-                        range_str = f"{busy_range.start_date} to {busy_range.end_date}"
-                        blocked_by.append(f"Busy: {range_str}")
-                        is_busy = True
-                        break
-                if is_busy: break
-                
-                # Check assigned tasks
-                for assigned_task in person.assigned_tasks:
-                    for assigned_range in assigned_task.required_ranges:
-                        if self._ranges_overlap(task_range, assigned_range):
-                            blocked_by.append(f"Assigned to {assigned_task.name}")
-                            is_busy = True
-                            break
-                    if is_busy: break
+            for r in task.required_ranges:
+                for b in person.schedule:
+                    if self._ranges_overlap(r, b):
+                        range_str = f"{b.start_date} to {b.end_date}"
+                        blocked_by.append(f"Busy: {range_str} (Blocks All)")
+                        is_busy = True; break
                 if is_busy: break
             
-            if blocked_by:
+            if is_busy:
                 reasons.append(f"{person.name} ({', '.join(blocked_by)})")
-        
-        if not reasons:
-            return "All skilled people are fully booked."
+                continue
             
-        return "Blocked: " + ", ".join(reasons)
-    
+            # Check vs Assigned Tasks
+            assigned_load = 0
+            has_cross_skill_conflict = False
+            
+            for assigned_task in person.assigned_tasks:
+                overlaps = False
+                for r1 in task.required_ranges:
+                    for r2 in assigned_task.required_ranges:
+                        if self._ranges_overlap(r1, r2):
+                            overlaps = True; break
+                    if overlaps: break
+                
+                if overlaps:
+                    if assigned_task.skill_id != task.skill_id:
+                        blocked_by.append(f"Conflict: Task {assigned_task.name} (Diff Skill: {assigned_task.skill_id})")
+                        has_cross_skill_conflict = True
+                        break
+                    else:
+                        load = min(max_efficiency, assigned_task.workforce_count)
+                        assigned_load += load
+                        blocked_by.append(f"Task {assigned_task.name} [Project {assigned_task.project_id}] (Load {load})")
+
+            remaining = max_efficiency - assigned_load
+            
+            if has_cross_skill_conflict:
+                reasons.append(f"{person.name} ({', '.join(blocked_by)})")
+            elif remaining <= 0:
+                 reasons.append(f"{person.name} (Fully Utilized: {', '.join(blocked_by)})")
+            elif remaining < task.workforce_count and remaining < max_efficiency:
+                reasons.append(f"{person.name} (Partial {remaining}/{max_efficiency}: {', '.join(blocked_by)})")
+            
+        if not reasons:
+            return "No obvious blockers found, likely fragmentation."
+            
+        return "Status: " + "; ".join(reasons[:5])
+
     def _calculate_available_efficiency(
         self, 
         task: Task, 
@@ -838,44 +910,57 @@ class SchedulerService:
     ) -> int:
         """
         Calculate total available efficiency for a task.
-        
-        Considers existing assignments and busy schedules.
+        Considers existing assignments and busy schedules with Cumulative Logic.
         """
         total_efficiency = 0
         
         for person in people:
-            # Get person's efficiency for this skill
-            efficiency = next(
+            # Get person's max efficiency for this skill
+            max_efficiency = next(
                 (s.efficiency for s in person.skills if s.id == task.skill_id), 
                 1
             )
             
-            # Check if person is available for all task ranges
-            is_available = True
-            for task_range in task.required_ranges:
-                # Check busy schedule
-                for busy_range in person.schedule:
-                    if self._ranges_overlap(task_range, busy_range):
-                        is_available = False
-                        break
-                
-                if not is_available:
-                    break
-                
-                # Check assigned tasks
-                for assigned_task in person.assigned_tasks:
-                    for assigned_range in assigned_task.required_ranges:
-                        if self._ranges_overlap(task_range, assigned_range):
-                            is_available = False
-                            break
-                    if not is_available:
-                        break
-                
-                if not is_available:
-                    break
+            min_remaining_capacity = max_efficiency
             
-            if is_available:
-                total_efficiency += efficiency
+            # Check vs Busy Ranges (Strict Block)
+            is_busy = False
+            for r in task.required_ranges:
+                for b in person.schedule:
+                    if self._ranges_overlap(r, b):
+                        is_busy = True; break
+                if is_busy: break
+            
+            if is_busy:
+                continue
+                
+            current_load = 0
+            for assigned_task in person.assigned_tasks:
+                if assigned_task.skill_id != task.skill_id:
+                     # Cross-skill conflict check
+                     conflict = False
+                     for r1 in task.required_ranges:
+                         for r2 in assigned_task.required_ranges:
+                             if self._ranges_overlap(r1, r2):
+                                 conflict = True; break
+                         if conflict: break
+                     if conflict:
+                         min_remaining_capacity = 0; break
+                else:
+                    # Same skill: Subtract load if overlap
+                    overlaps = False
+                    for r1 in task.required_ranges:
+                        for r2 in assigned_task.required_ranges:
+                            if self._ranges_overlap(r1, r2):
+                                overlaps = True; break
+                        if overlaps: break
+                    
+                    if overlaps:
+                        term_load = min(max_efficiency, assigned_task.workforce_count)
+                        current_load += term_load
+            
+            remaining = max(0, min_remaining_capacity - current_load)
+            total_efficiency += remaining
         
         return total_efficiency
     
